@@ -1,0 +1,28 @@
+// -------------------------------------------
+// 			- Compiler Directives
+// ------------------------------------------
+#![allow(unused_variables)]
+#[allow(dead_code)]
+fn square(x: i32) -> i32 {
+    let temp = 42;
+    x * x
+}
+fn main() {
+    let i = 10;
+    let s = String::from("Hi there");
+}
+
+/*
+Topic                      | Summary
+---------------------------|--------------------------------------------------------------
+Compiler Directives        | Annotations that instruct the compiler on how to parse and handle code
+                           | Can be applied to lines, functions, or entire files
+                           | Starts with # and square brackets containing the directive
+Allow Directive            | Permits behavior that would normally trigger a compiler warning
+Common Syntax Pattern      | All directives follow the #[directive] or #![directive] format
+Placement of a directive   | Controls the application at variable-level, function-level or file-level
+Placement Rule             | Global directives must be the first line in the file before any code.
+Other Directives           | Not all directives handle bad behavior
+                           | Some improve efficiency or provide conveniences
+---------------------------|--------------------------------------------------------------
+*/

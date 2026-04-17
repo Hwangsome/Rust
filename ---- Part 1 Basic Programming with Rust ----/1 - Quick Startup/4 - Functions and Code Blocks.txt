@@ -1,0 +1,83 @@
+// -------------------------------------------------
+// 			- Functions
+// 			- Code Blocks
+// -------------------------------------------------
+
+fn my_fn(s: &str) {
+    println!("{s}");
+}
+
+fn multiplication(num1: i32, num2: i32) -> i32 {
+    // return 45;
+    println!("Computing Multiplication");
+    num1 * num2
+}
+
+fn basic_math(num1: i32, num2: i32) -> (i32, i32, i32) {
+    (num1 * num2, num1 + num2, num1 - num2)
+}
+// Expression versus Statements
+// Expression returns a valid value
+// Statement returns a unit value
+fn main() {
+    my_fn("This is my function");
+    let str = "Function call with a variable";
+    my_fn(str);
+    let answer = multiplication(10, 15);
+    let result = basic_math(10, 15);
+    let (multiplication, addition, subtraction) = basic_math(10, 15);
+
+    // Code Blocks
+
+    let full_name = {
+        let first_name = "Nouman";
+        let last_name = "Azam";
+        println!("{answer}");
+        format!("{first_name} {last_name}")
+    };
+    // println!("{first_name}");
+}
+
+/*
+Similarities
+-----------------------------------------------------------------------------------------------------------------------------
+Code Blocks                      | Functions
+-----------------------------------------------------------------------------------------------------------------------------
+Have their own separate body     | Have their own separate body
+Can return a value               | Can return a value
+Variables inside are limited     | Variables inside are limited to the function’s scope
+to the block’s scope
+-----------------------------------------------------------------------------------------------------------------------------
+
+Differences
+-----------------------------------------------------------------------------------------------------------------------------
+Code Blocks                                 | Functions
+-----------------------------------------------------------------------------------------------------------------------------
+Not designed for reuse                      | Designed for reuse
+No explicit parameters                      | Have an explicit parameter list,
+Can access variables in the scope it lies   | Can access variables passed in as parameters or variables locally defined
+-----------------------------------------------------------------------------------------------------------------------------
+*/
+
+
+/*
+Summary
+-----------------------------------------------------------------------------------------------------------------------------
+Topic                              | Key Points
+-----------------------------------------------------------------------------------------------------------------------------
+Functions                          | Declared using fn keyword, fn name should be snake_case,
+                                   | Parameters types must be annotated,
+                                   | Function called by writting their names,
+                                   | Returns value are mentioned using `->` followed by type,
+                                   | Last expression without semicolon is returned,
+                                   | Early return uses `return` keyword,
+                                   | Functions without explicit return return `()`,
+                                   | Use compound data types to return mutliple values,
+                                   | Functions cannot access variables from `main` unless passed as parameters;
+                                   | local variables inside functions are not visible outside.
+
+Code Blocks                        | Enclosed in `{}`, have their own scope,
+                                   | Can return a value and can access variables from scopes in which they lie
+-----------------------------------------------------------------------------------------------------------------------------
+*/
+

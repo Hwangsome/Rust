@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "chapters/chapter01",
+    "chapters/chapter02",
+    "chapters/chapter03",
+    "chapters/chapter04",
+    "chapters/chapter05",
+]
+resolver = "2"

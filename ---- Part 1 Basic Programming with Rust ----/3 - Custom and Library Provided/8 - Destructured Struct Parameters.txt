@@ -1,0 +1,56 @@
+// --------------------------------------------
+// 	   Destructured Struct Parameters
+// --------------------------------------------
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn print_coord(Point { x, y }: Point) {
+    // Value: p or Point {x: 5, y: 6}
+    // Pattern: Point {x, y}
+
+    println!("x: {}, y: {}", x, y);
+}
+fn main() {
+    let p = Point { x: 0, y: 7 };
+    match p {
+        Point { x: 0, y } => println!("Point y-axis value: {}", y),
+        Point { x, y: 0 } => println!("Point x-axis value: {}", x),
+        Point { x, y } => println!("Point at ({}, {})", x, y),
+    }
+    let x = 5;
+    if let x = 5 {}
+    // Value: 5
+    // Pattern: x
+
+    // Value: p or Point {x: 7, y: 0}
+    // Pattern: Point {x: 0, y}
+
+    let p = Point { x: 5, y: 6 };
+    print_coord(p);
+}
+
+
+
+/*
+--------------------------------------------------------------------------------------------------------------
+Concept / Topic                 | Explanation / Details
+------------------------------- | ----------------------------------------------------------------------------
+Pattern Matching in Structs     | - Allows destructuring of structured fields.
+                                | - Helps in accessing only requirement specific fields.
+
+Matching on Structs Field       | - Each arm defines a pattern that specifies which field values to match.
+                                | - Fields with concrete values are compared/matched,
+                                | - While fields with variables are binded.
+                                | - Only the binded variables are accessible within the corresponding arm’s.
+
+Matching in Function Parameters | - Function parameters can destructure struct fields directly.
+                                | - Variables are in the fucntion parameters are binded to struct fields.
+                                | - Concrete values cannot be used in function parameters.
+
+Variable Patterns vs Values     | - A variable in the place of a pattern always matches.
+                                | - Rust treats variable patterns as bindings, not comparisons.
+                                | - Concrete value matching is allowed in match, but not in function parameters.
+--------------------------------------------------------------------------------------------------------------
+*/

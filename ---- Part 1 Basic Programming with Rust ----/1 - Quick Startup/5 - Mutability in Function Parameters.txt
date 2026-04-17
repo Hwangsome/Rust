@@ -1,0 +1,26 @@
+// -------------------------------------------------
+// 			Mutability in Function Parameters
+// -------------------------------------------------
+
+fn prints_number(x: i32) -> i32 {
+    let mut x = x;
+    x = x + 2;
+    println!("{x}");
+    x
+}
+fn main() {
+    let mut num = 10;
+    let y = prints_number(num);
+    y = y + 3;
+}
+
+/*
+----------------------------------------------------------------------------------------------------------------------
+Concept                                 | Description
+----------------------------------------------------------------------------------------------------------------------
+Mutability is explicit in rust          | Variables and parameters are immutable by default 
+Values passed into a function           | Only values are passed and not their mutability configuration
+Changing Mutability via Shadowing       | Mutability of a parameter can be updated using shadowing 
+Returning values and mutability         | Returning a value from a function passes only the value, not its mutability
+----------------------------------------------------------------------------------------------------------------------
+*/

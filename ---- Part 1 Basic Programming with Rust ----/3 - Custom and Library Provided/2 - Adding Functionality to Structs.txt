@@ -1,0 +1,194 @@
+// -------------------------------------------
+// 	Adding Functionality to Structs
+// -------------------------------------------
+
+struct Car {
+    owner: String,
+    year: u32,
+    fuel_level: f32,
+    price: u32,
+}
+
+// later on move to inside the impl block
+// fn display_car_info(car: &Car) {
+//     println!(
+//         "Owner: {}, Year: {}, Price: {}",
+//         car.owner, car.year, car.price
+//     );
+// }
+
+// Requirements for a function to be considered as a method:
+//      - Must be inside an implementation block
+//      - First parameter must be self
+
+// Three forms of self a method could take
+//      - First form: An immutable reference to self (&self)
+//      - Second form: A mutable reference to self (&mut self)
+//      - Third form: An owned form of self (self)
+
+impl Car {
+    // First form: An immutable reference to self (&self)
+    fn display_car_info(&self) {
+        println!(
+            "Owner: {}, Year: {}, Price: {}",
+            self.owner, self.year, self.price
+        );
+    }
+
+    // Second form: A mutable reference to self (&mut self)
+    fn refuel(&mut self, gallons: f32) {
+        self.fuel_level += gallons;
+    }
+
+    // Third form: An owned form of self (self)
+    fn sell(self) -> Self {
+        // change to Car and then revert back
+        self
+    }
+
+    // Associated functions
+
+    fn monthly_insurance() -> u32 {
+        123
+    }
+
+    fn selling_price(&self) -> u32 {
+        self.price + self.monthly_insurance() // change to Car::
+    }
+
+    // Associated function: new (constructor)
+    fn new(name: String, year: u32) -> Self {
+        Self {
+            owner: name,
+            year: year,
+            fuel_level: 0.0,
+            price: 0,
+        }
+    }
+}
+
+fn main() {
+    let mut my_car = Car {
+        owner: String::from("ABC"),
+        year: 2010,
+        fuel_level: 0.0,
+        price: 5_000,
+    };
+	
+ // display_car_info(&my_car);
+    my_car.display_car_info();
+   
+
+    my_car.refuel(10.5);
+    let new_owner = my_car.sell();
+    // my_car.refuel(10.5);
+
+    let new_car = Car::new("XYZ".to_string(), 2020);
+}
+
+// -------------------------------------------
+// 	Adding Functionality to Structs
+// -------------------------------------------
+struct Car {
+    owner: String,
+    year: u32,
+    fuel_level: f32,
+    price: u32,
+}
+
+// Two requirement for a function to be considered as a method:
+//      - Must be inside an implementation block
+//      - First parameter must be self
+
+// Three forms of self a method could take
+//      - First form: An immutable reference to self (&self)
+//      - Second form: A mutable reference to self (&mut self)
+//      - Third form: An owned form of self (self)
+
+impl Car {
+    //      - First form: An immutable reference to self (&self)
+    fn display_car_info(&self) {
+        println!(
+            "Onwer: {}, Year: {}, Price: {}",
+            self.owner, self.year, self.price
+        );
+    }
+
+    //      - Second form: A mutable reference to self (&mut self)
+    fn refuel(&mut self, gallons: f32) {
+        self.fuel_level += gallons;
+    }
+
+    //      - Third form: An owned form of self (self)
+    fn sell(self) -> Self {
+        // refers to the implementing type
+        self
+    }
+
+    // Associated functions
+    fn monthly_insurance() -> u32 {
+        123
+    }
+
+    fn selling_price(&self) -> u32 {
+        self.price + Car::monthly_insurance()
+    }
+
+    // Associated function: new (constructor)
+    fn new(name: String, year: u32) -> Self {
+        Self {
+            owner: name,
+            year,
+            fuel_level: 0.0,
+            price: 0,
+        }
+    }
+}
+fn main() {
+    let mut my_car = Car {
+        owner: String::from("ABC"),
+        year: 2010,
+        fuel_level: 0.0,
+        price: 5_000,
+    };
+    my_car.display_car_info();
+
+    my_car.refuel(10.5);
+    let new_owner = my_car.sell();
+    // my_car.refuel(10.5);
+
+    let new_car = Car::new(String::from("XYZ"), 2020);
+}
+/*
+--------------------------------------------------------------------------------------------------
+         Concepts           |                          Details / Explanations
+--------------------------------------------------------------------------------------------------
+Why to add functionality    | - Structs store data, but data alone is not powerful
+                            | - Adding functionality lets structs act on their own data
+                            | - Making structs more useful and expressive building blocks
+--------------------------------------------------------------------------------------------------
+Implementation Blocks       | - Provide a way to attach functions directly to a type
+                            | - Defined using "impl TypeName { ... }"
+                            | - Organize functionality associated with the type
+--------------------------------------------------------------------------------------------------
+Free Functions vs Methods   | - Free functions are stand alone and not part of impl blocks
+                            | - Methods are inside an "impl" blocks and uses "self"
+                            | - Methods are called via dot notation
+--------------------------------------------------------------------------------------------------
+The "self" Parameter        | - Refers to the instance on which the method is called
+                            | - Automatically passed; no need to write explicitly during call
+                            | - Two rules for a method: inside "impl" - first parameter is "self"
+--------------------------------------------------------------------------------------------------
+Three forms of "self"       | - &self: Immutable reference (read-only access)
+                            | - &mut self: Mutable reference (allows modifications)
+                            | - self: Owned form (takes ownership of the instance)
+--------------------------------------------------------------------------------------------------
+The "Self" Keyword          | - "Self" (capital S) refers to the type itself in an "impl" block
+                            | - Preferred over type’s name inside impl blocks
+--------------------------------------------------------------------------------------------------
+Associated Functions        | - Functions in "impl" that do not take "self"
+                            | - Called using "TypeName::function_name()"
+                            | - new constructor function is a common type of associated function
+                            | - Returns a new instance of the type with given and default fields
+--------------------------------------------------------------------------------------------------
+*/

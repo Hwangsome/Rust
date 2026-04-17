@@ -1,0 +1,77 @@
+// -------------------------------------------------
+// 			- Variables
+// 			    - Definition
+// 			    - Mutability
+// 			    - Scope
+// 			    - Shadowing
+// 			 - Constants
+// -------------------------------------------------
+
+fn main() {
+    // Variables Definition
+    let x: i16 = 10;
+    println!("x is: {x}");
+
+    // Mutability
+    let mut y = 5;
+    y = 10;
+
+    // Scopes
+    {
+        let z = 50;
+    }
+    // let s = z;
+
+    // Shadowing
+    let t = 10;
+    let t = t + 10;
+    println!("t is: {t}");
+
+    let u = 3;
+    let u = 3.0;
+
+    let v = 30;
+    {
+        let v = 40;
+        println!("inner v is: {v}");
+    }
+    println!("v is: {v}");
+
+    // Constants
+    const MAX_VALUE: u32 = 100;
+}
+
+/*
+Summary
+---------------------------------------------------------------------------------------------------------------------------
+Concept        | Summary
+---------------------------------------------------------------------------------------------------------------------------
+Variable       | Declareted with let
+               | Type is inferred
+               | Type can be manually annotated
+               | Manual type annotation overrides this inference
+
+
+Mutability     | Variables are immutable by default
+               | Use mut to allow mutation or changing of value
+
+Scope          | Code regions defined using {} braces
+               | Each variable is valid within the scope in which it resides
+
+Shadowing      | Allows creating a new variable with the same name
+               | It replaces the previous variables, in the current scope or inner scopes.
+
+Constants      | Declared using const,
+               | Require explicit type annotations,
+               | Cannot be mutated,
+               | Must be initialized
+---------------------------------------------------------------------------------------------------------------------------
+Additional Concepts
+---------------------------------------------------------------------------------------------------------------------------
+Binding                 | Using let keyword for associating a variable name with a value
+Shadowing vs Mutation   | Mutation modifies the same variable while
+                        | Shadowing creates a new variable with the same name
+                        | Taking precedence over the previous one
+---------------------------------------------------------------------------------------------------------------------------
+
+*/

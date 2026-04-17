@@ -1,0 +1,52 @@
+// -------------------------------------------
+//          Control Flow
+// 			- Loops
+// 			- For loops
+// 			- while loops
+// ------------------------------------------
+fn main() {
+    // Loops
+    'outer: loop {
+        loop {
+            println!("Simple loop");
+            break 'outer;
+        }
+    }
+
+    let a = loop {
+        break 5;
+    };
+
+    // For loops
+    let vec = vec![45, 30, 85, 90, 41, 39];
+    for i in vec {
+        println!("{i}");
+    }
+
+    // Compound Data Types versus Collections
+
+    // While loops
+    let mut num = 0;
+    while num < 10 {
+        num = num + 1;
+    }
+}
+/*
+Summary 
+------------------|---------------------------------------------------------------------------
+Loop Type         | Summary
+------------------|---------------------------------------------------------------------------
+loop              | Runs forever unless stopped with break
+                  | Break exits current loop
+                  | labels allow breaking outer loops
+                  | Can return a value when broken
+for loop          | Best when number of iterations is known or iterating over a collection
+while loop        | Runs until a condition becomes false
+                  | Ideal when number of iterations is unknown in advance
+------------------|---------------------------------------------------------------------------
+Additional concept (Compound data versus Collection)
+------------------|---------------------------------------------------------------------------
+Compound Data     | Fixed-size, known at compile time (e.g., tuple, array).
+Collection        | Variable-size, can grow or shrink at runtime (e.g., vector, hash map).
+---------------------------------------------------------------------------------------------
+*/

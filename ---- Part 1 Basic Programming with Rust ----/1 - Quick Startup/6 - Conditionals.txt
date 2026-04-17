@@ -1,0 +1,66 @@
+// -------------------------------------------
+// 			Conditionals
+// 			- If else
+// 			- If else if ladder
+// 			- Match
+// -------------------------------------------
+fn main() {
+    // If else
+    let num = 40;
+    if num < 50 {
+        println!("The number is lesser than 50");
+    } else {
+        println!("The number is greater than or equal to 50");
+    }
+
+    // If else if ladder
+    let marks = 95;
+    // let mut grade = 'N';
+
+    let grade = if marks >= 90 {
+        'A'
+    } else if marks >= 80 {
+        'B'
+    } else if marks >= 70 {
+        'C'
+    } else {
+        'F'
+    };
+
+    // Match
+
+    let marks = 95;
+    //let mut grade = 'N';
+
+    let grade = match marks {
+        90..=100 => 'A',
+        80..=89 => 'B',
+        70..=79 => 'C',
+        _ => 'N',
+    };
+}
+
+/*
+Summary
+------------------------------------------------------------------------------------------------------------------
+Conditional                         | Description
+------------------------------------------------------------------------------------------------------------------
+If-Else                             | Checks a condition, runs the first code block if true, else runs the second
+                                    | else is optional, condition must be Boolean
+
+If-Else-If Ladder                   | Checks multiple conditions in sequence,
+                                    | The first true condition's block executes,
+                                    | Final else is default and optional
+                                    | Not necessarily exhaustive,
+                                    | Can be written as an expression
+
+
+Match                               | Compares a value against patterns,
+                                    | Runs the block for the first matching pattern
+                                    | It is exhaustive,
+                                    | Can be treated as expression,
+
+
+Common Match Mistakes               | Unreachable patterns and overlapping patterns
+------------------------------------------------------------------------------------------------------------------
+*/

@@ -1,0 +1,59 @@
+// -------------------------------------------
+//      Common For Loop Syntaxes with Ranges
+// -------------------------------------------
+
+fn main() {
+    // Iterating over a range of values in an ascending order.
+    // for i in 0..=5 {
+    //     println!("i = {i}");
+    // }
+
+    // Iterating over a range of values in decending order.
+    // start..end or start..=end is only computed when start < end.
+    // range is empty -> start >= end.
+
+    // for i in (0..=5).rev() {
+    //     println!("i = {i}");
+    // }
+
+    // Iterating with a step size.
+    for i in (1..=10).step_by(2) {
+        println!("i = {i}");
+    }
+
+    // for i in 0.0..10.0 {} // not valid
+    // 0.0 0.2 0.4 0.6 0.8 1.0
+    for i in 0..=5 {
+        let value = i as f32 * 0.2; // value = start + i * step
+    }
+
+    let r = 0..5;
+    // count(), contains() etc
+
+    let pairs = vec![(1, "one"), (2, "two")];
+
+    for (num, word) in pairs {
+        println!("{}: {}", num, word);
+    }
+}
+
+/*
+--------------------------------------------------------------------------------------
+Concept / Topic            | Details
+---------------------------|----------------------------------------------------------
+Iterating Over Ranges      | - Use start..end or start..=end for ascending order
+                           | - Removing start of range compiles but causes infinite loop
+
+Descending Order Iteration | - Ranges in Rust must be from lower to higher values
+                           | - A range like 5..0 is empty and yields no output
+                           | - Use (start..=end).rev() to reverse the order
+
+Step Size in Iteration     | - Default step is 1 when iterating over a range
+                           | - Customize step with step_by(n) for values like 2, 5, etc.
+                           | - Useful for skipping values or sampling at intervals
+
+Ranges as Types            | - start..end is Range type
+                           | - Ranges have methods like rev(), step_by(), count()
+                           | - Dot notation accesses methods or fields on a type
+--------------------------------------------------------------------------------------
+*/

@@ -1,0 +1,66 @@
+// -------------------------------------------------
+// 			- Operators Precedence
+// -------------------------------------------------
+
+/*
+Operator             Associativity
+* / %	            left to right
++ -	                left to right
+<< >>	            left to right
+&	                left to right
+^	                left to right
+|	                left to right
+== != < > <= >=	    Require parentheses
+&&	                left to right
+||	                left to right
+.. ..=	            Require parentheses
+= += -= *= /= %=
+&= |= ^= <<= >>=	right to left
+*/
+fn main() {
+    let result = 5 + 2 * 3; // 5 + (2 * 3)
+    let expression = 16 / 4 * 2; // ((16 / 4) * 2)
+
+
+/*
+Operator             Associativity
+* / %	            left to right
++ -	                left to right
+<< >>	            left to right
+&	                left to right
+^	                left to right
+|	                left to right
+== != < > <= >=	    Require parentheses
+&&	                left to right
+||	                left to right
+.. ..=	            Require parentheses
+= += -= *= /= %=
+&= |= ^= <<= >>=	right to left
+*/
+    let x = (5 + 2) * 3;
+    let a = 3;
+    let b = 4;
+    let c = 5;
+    let result = a + b - c == 2 || a == 3; 
+    // 1. a + b = 7 
+    // 2. 7 - c = 2 
+    // 3. 2 == 2 -> true 
+    // 4. a == 3 -> true 
+    // 5. true || true -> true 
+
+}
+
+
+/* 
+Topic                  | Key Points
+-----------------------|-----------------------------------------------------------
+Operator Precedence    | Defines which operations are evaluated first in an expression
+                       | Operators on the same row in precedence table have equal precedence
+Associativity          | Determines order when operators have same precedence
+                       | Most arithmetic operators are left-to-right associative
+Parentheses            | Have the highest precedence
+                       | Used to explicitly control order of evaluation
+Complex Expressions    | Precedence table helps resolve compound expressions
+                       | Writing very complex expressions is discouraged
+                       | Parentheses recommended for clarity
+ */

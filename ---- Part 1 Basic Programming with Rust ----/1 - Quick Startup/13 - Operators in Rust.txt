@@ -1,0 +1,90 @@
+// ------------------------------------
+// 			- Operators
+// ------------------------------------
+fn main() {
+    // Arithmetic Operators
+    // +, -, *, /, %
+    // Note: ^ is not for exponential
+    // pow() method is used for exponential
+    println!("Remainder after dividing 17 by 5: {}", 17 % 5);
+
+    // Comparison Operators
+    // Equality: == (Not to be confused with assignment, i.e., =)
+    // Inequality: !=
+    // Relational: >, <, >=, <=
+
+    let a = 10;
+    let b = 10;
+    println!(
+        "a == b: {}, a != b: {}, a < b: {}, a > b: {}, a <= b: {}, a >= b: {}",
+        a == b,
+        a != b,
+        a < b,
+        a > b,
+        a <= b,
+        a >= b,
+    );
+
+    // Logical Operators
+    // And: &&
+    // Or: ||
+    // Not: !
+
+    let a = 10;
+    let b = 20;
+    if (a > 5) && (b < 25) {
+        println!("Conditions satisfied");
+    } else {
+        println!("Conditions not satisfiedd");
+    }
+
+    // Assignment Operators
+    // Add and assign: +=
+    // Subtract and assign: -=
+    // Multiply and assign: *=
+    // Divide and assign: /=
+    // Remainder and assign: %=
+
+    let mut x = 5;
+    x += 5; // => x = x + 5;
+    x -= 5; // => x = x - 5;
+    x *= 5; // => x = x * 5;
+    x /= 5; // => x = x / 5;
+    x %= 5; // => x = x % 5;
+
+    // Bitwise Operators
+    // And: &
+    // Or: |
+    // Xor: ^
+    // Not: ~
+    // Left Shift: <<
+    // Right Shift: >>
+
+    let x: u8 = 4;
+    println!("{}", x & x); // => 0000_0100 & 0000_0100 = 0000_0100
+    let y: u8 = 4 << 1; // => 0000_0100 -> 0000_1000
+}
+
+/*
+-------------------------------------------------------------------------------------------------
+Operator Type               | Explanation
+----------------------------|-----------------------------------------------------------
+Arithmetic Operators        | Perform basic math on numeric types (i32, f64, etc.)  
+                            | Include +, -, *, /, and % (modulo)  
+                            | Exponentiation not supported with ^, use .pow method  
+
+Comparison Operators        | Compare two values, return true/false  
+                            | Equality (==), Inequality (!=), Relational (<, >, <=, >=)  
+                            | Must not confuse == (equality) with = (assignment)  
+
+Logical Operators           | Combine or negate Boolean conditions  
+                            | AND (&&), OR (||) and NOT (!)
+
+Assignment Operators        | Assign or update values in variables  
+                            | They include +=, -=, *=, /=, %=  
+
+Bitwise Operators           | Operate on binary representation of integers (u8, i32, etc.)  
+                            | AND (&), OR (|), XOR (^), NOT (~), << (left shift), >> (right shift)  
+                            | Useful in systems programming, embedded, performance-critical apps  
+-------------------------------------------------------------------------------------------------
+ */

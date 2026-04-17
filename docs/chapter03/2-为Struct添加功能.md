@@ -1,0 +1,128 @@
+# 2. 为 Struct 添加功能
+
+> 类型：**Study note**
+> 关键词：`impl`、method、associated function、`self`
+> 上一篇：[1. Struct 基础](./1-Struct基础.md)
+> 下一篇：[3. Enum](./3-Enum.md)
+
+## 一分钟结论
+
+- `impl` 让 `struct` 不只是“装数据”，还能“带行为”
+- `new()` 只是常见命名，不是关键字
+- `&self` / `&mut self` / `self` 三种接收方式分别表达不同的所有权语义
+
+## 证据来源
+
+- 对应模块：[adding_functionality_to_structs.rs](../../chapters/chapter03/src/adding_functionality_to_structs.rs)
+- 运行章节：`cargo run -p chapter03`
+
+关键输出：
+
+```text
+Owner: ABC, Year: 2010, Fuel: 0, Price: 5000
+selling price = 5123
+Owner: ABC, Year: 2010, Fuel: 10.5, Price: 5000
+```
+
+## 定义
+
+`impl` 块是给类型增加方法和关联函数的地方。
+
+## 作用
+
+- 把“和这个类型强相关的行为”收拢到一起
+- 用方法签名表达读取、修改、消费实例的语义
+- 提升 API 可发现性和可维护性
+
+## 原理
+
+### 1. 关联函数不一定依赖实例
+
+```rust
+fn new(owner: String, year: u32, price: u32) -> Self
+```
+
+这种函数常写成 `Type::new(...)`，主要用来构造实例。
+
+### 2. 方法接收者表达所有权语义
+
+| 写法 | 含义 |
+| --- | --- |
+| `&self` | 只读借用实例 |
+| `&mut self` | 可变借用实例 |
+| `self` | 消费实例本身 |
+
+当前示例中的：
+
+- `display_car_info(&self)`：只读
+- `refuel(&mut self, ...)`：修改
+- `sell(self)`：拿走整个实例
+
+### 3. `Self` 让实现更紧凑
+
+在 `impl Car` 里，`Self` 就表示 `Car` 本身。
+
+## 最小示例
+
+```rust
+struct Car {
+    owner: String,
+    fuel_level: f32,
+}
+
+impl Car {
+    fn new(owner: String) -> Self {
+        Self { owner, fuel_level: 0.0 }
+    }
+
+    fn refuel(&mut self, gallons: f32) {
+        self.fuel_level += gallons;
+    }
+
+    fn owner(&self) -> &str {
+        &self.owner
+    }
+}
+```
+
+## 注意点
+
+### 1. `new` 只是约定，不是语法
+
+你完全可以叫别的名字，但 `new` 最容易被读者理解。
+
+### 2. `self`、`&self`、`&mut self` 差异非常大
+
+这不是风格差异，而是所有权模型的一部分。
+
+### 3. 消费型方法调用后，原实例可能就不能继续用了
+
+像 `sell(self)` 这种方法会把实例拿走。
+
+## 常见错误
+
+### ❌ 错误 1：方法签名只按“能编过”写，不按语义写
+
+正确问题应该是：这个方法到底要读、改，还是消费实例？
+
+### ❌ 错误 2：把关联函数和方法混成一类
+
+- 关联函数：`Type::new()`
+- 方法：`value.method()`
+
+### ❌ 错误 3：调用消耗型方法后还想继续用原值
+
+这本质上还是所有权问题。
+
+## 我的理解
+
+- `struct` 是数据模型
+- `impl` 是行为模型
+- `self` 的不同写法，就是 Rust 把对象行为和所有权系统绑定在一起的方式
+
+## 下一步
+
+下一篇转向另一类自定义类型：`enum`。它解决的不是“多个字段”，而是“多个可能状态”。
+
+- 继续阅读：[3. Enum](./3-Enum.md)
+- 回到目录：[第 3 章：Custom and Library Provided](./README.md)
