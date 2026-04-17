@@ -15,7 +15,7 @@
 - Cargo package: `chapter01`
 - Run chapter: `cargo run -p chapter01`
 - Chapter entry: [chapters/chapter01/src/main.rs](../../chapters/chapter01/src/main.rs)
-- Reference module: [chapters/chapter01/src/first_program.rs](../../chapters/chapter01/src/first_program.rs)
+- Reference module: [chapters/chapter01/src/topic_01_first_program.rs](../../chapters/chapter01/src/topic_01_first_program.rs)
 - Chapter lab: [chapters/chapter01/src/lab.rs](../../chapters/chapter01/src/lab.rs)
 
 当前仓库采用“每章一个 Cargo package”的结构，所以本节运行的是 `chapter01` 这个 package，而不是根目录 `src/main.rs`。在当前整理方式下，环境配置、首个程序、变量、函数和控制流都统一归到 `chapter01 = Quick Startup`。
@@ -46,26 +46,25 @@ chapters/
     ├── Cargo.toml            # package = chapter01
     └── src/
         ├── main.rs           # 本章入口
-        └── first_program.rs  # 本节主题模块
+        └── topic_01_first_program.rs  # 本节主题模块
 ```
 
 `chapters/chapter01/src/main.rs` 负责启动本章：
 
 ```rust
-mod first_program;
+mod topic_01_first_program;
 
 fn main() {
-    println!("Chapter 01: 环境与第一个程序");
+    println!("Chapter 01: Quick Startup");
     println!();
-    first_program::run();
+    topic_01_first_program::run();
 }
 ```
 
-`chapters/chapter01/src/first_program.rs` 负责演示本节主题：
+`chapters/chapter01/src/topic_01_first_program.rs` 负责演示本节主题：
 
 ```rust
 pub fn run() {
-    println!("== First Program ==");
     println!("Hello, world!");
     println!();
 }
@@ -104,8 +103,8 @@ pub fn run() {
 chapters/chapter01/src/main.rs
   -> cargo run -p chapter01
   -> target/debug/chapter01
-  -> Chapter 01: 环境与第一个程序
-  -> == First Program ==
+  -> Chapter 01: Quick Startup
+  -> [01/15] First Program
   -> Hello, world!
 ```
 
@@ -116,8 +115,8 @@ chapters/chapter01/src/main.rs
   -> cargo build -p chapter01 --release
   -> target/release/chapter01
   -> 手动运行二进制
-  -> Chapter 01: 环境与第一个程序
-  -> == First Program ==
+  -> Chapter 01: Quick Startup
+  -> [01/15] First Program
   -> Hello, world!
 ```
 
@@ -230,7 +229,7 @@ target/release/chapter01
 - package：`chapter01`
 - 入口文件：`chapters/chapter01/src/main.rs`
 
-`first_program.rs` 不是独立入口，它是被 `main.rs` 调用的主题模块。
+`topic_01_first_program.rs` 不是独立入口，它是被 `main.rs` 调用的主题模块。
 
 这也是当前仓库选择“每章一个 Cargo package”的原因：
 
@@ -253,7 +252,7 @@ target/release/chapter01
 ### 误解 3：每个 `.rs` 文件都会变成一个独立程序
 
 不对。  
-在当前结构下，独立程序是 `chapter01` 这个 package；`first_program.rs` 只是它的一个模块。
+在当前结构下，独立程序是 `chapter01` 这个 package；`topic_01_first_program.rs` 只是它的一个模块。
 
 ## 复盘时最值得记住的结论
 

@@ -13,7 +13,7 @@
 
 ## 证据来源
 
-- 对应模块：[enums.rs](../../chapters/chapter03/src/enums.rs)
+- 对应模块：[topic_03_enums.rs](../../chapters/chapter03/src/topic_03_enums.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

@@ -1,7 +1,6 @@
 // 学习阶段最直接的观察工具就是打印。
 // 这一节重点不是输出什么内容，而是理解不同打印宏和格式化写法的差异。
 pub fn run() {
-    println!("== Comments And Printing ==");
 
     let language = "Rust";
     let section = "Quick Startup";

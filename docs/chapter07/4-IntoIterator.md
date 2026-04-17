@@ -3,7 +3,7 @@
 - Cargo package: `chapter07`
 - Run chapter: `cargo run -p chapter07`
 - Chapter entry: `chapters/chapter07/src/main.rs`
-- Reference module: `chapters/chapter07/src/into_iter.rs`
+- Reference module: `chapters/chapter07/src/topic_04_into_iter.rs`
 - Chapter lab: `chapters/chapter07/src/lab.rs`
 
 ## 定义

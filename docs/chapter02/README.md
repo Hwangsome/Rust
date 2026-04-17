@@ -35,11 +35,11 @@
 - 运行方式：`cargo run -p chapter02`
 - 章节入口：[chapters/chapter02/src/main.rs](../../chapters/chapter02/src/main.rs)
 - 主题模块：
-  - [ownership_basics.rs](../../chapters/chapter02/src/ownership_basics.rs)
-  - [ownership_in_functions.rs](../../chapters/chapter02/src/ownership_in_functions.rs)
-  - [borrowing_basics.rs](../../chapters/chapter02/src/borrowing_basics.rs)
-  - [borrowing_in_functions.rs](../../chapters/chapter02/src/borrowing_in_functions.rs)
-  - [dereferencing.rs](../../chapters/chapter02/src/dereferencing.rs)
+  - [topic_01_ownership_basics.rs](../../chapters/chapter02/src/topic_01_ownership_basics.rs)
+  - [topic_02_ownership_in_functions.rs](../../chapters/chapter02/src/topic_02_ownership_in_functions.rs)
+  - [topic_03_borrowing_basics.rs](../../chapters/chapter02/src/topic_03_borrowing_basics.rs)
+  - [topic_04_borrowing_in_functions.rs](../../chapters/chapter02/src/topic_04_borrowing_in_functions.rs)
+  - [topic_05_dereferencing.rs](../../chapters/chapter02/src/topic_05_dereferencing.rs)
 - 练习模块：[lab.rs](../../chapters/chapter02/src/lab.rs)
 
 ## 本章关键输出

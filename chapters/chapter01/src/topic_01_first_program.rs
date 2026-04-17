@@ -4,7 +4,6 @@
 // 2. `main.rs` 可以调用其他模块
 // 3. 程序输出来自真正运行的二进制，而不是文档中的静态示例
 pub fn run() {
-    println!("== First Program ==");
 
     // 这是几乎所有 Rust 入门都会先看到的最小输出。
     println!("Hello, world!");

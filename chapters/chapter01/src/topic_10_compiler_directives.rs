@@ -10,7 +10,6 @@ fn square(x: i32) -> i32 {
 }
 
 pub fn run() {
-    println!("== Compiler Directives ==");
 
     // 这里故意保留一个普通变量，配合文件级 attribute 演示“允许未使用变量”。
     let message = String::from("attributes use #[] syntax");

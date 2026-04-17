@@ -18,7 +18,7 @@
 - Cargo package: `chapter01`
 - Run chapter: `cargo run -p chapter01`
 - Chapter entry: [chapters/chapter01/src/main.rs](../../chapters/chapter01/src/main.rs)
-- Reference module: [chapters/chapter01/src/primitive_data_types.rs](../../chapters/chapter01/src/primitive_data_types.rs)
+- Reference module: [chapters/chapter01/src/topic_03_primitive_data_types.rs](../../chapters/chapter01/src/topic_03_primitive_data_types.rs)
 - Chapter lab: [chapters/chapter01/src/lab.rs](../../chapters/chapter01/src/lab.rs)
 
 当前仓库采用“每章一个 Cargo package”的结构，所以本节不是独立 binary，而是 `chapter01` 中的一个主题模块。

@@ -15,7 +15,7 @@
 ## 证据来源
 
 - 章节入口：[chapters/chapter01/src/main.rs](../../chapters/chapter01/src/main.rs)
-- 对应模块：[operators_in_rust.rs](../../chapters/chapter01/src/operators_in_rust.rs)
+- 对应模块：[topic_12_operators_in_rust.rs](../../chapters/chapter01/src/topic_12_operators_in_rust.rs)
 
 章节中演示了：
 

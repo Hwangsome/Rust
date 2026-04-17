@@ -12,7 +12,7 @@
 
 ## 证据来源
 
-- 对应模块：[publishing_your_crate.rs](../../chapters/chapter04/src/publishing_your_crate.rs)
+- 对应模块：[topic_06_publishing_your_crate.rs](../../chapters/chapter04/src/topic_06_publishing_your_crate.rs)
 - 运行章节：`cargo run -p chapter04`
 
 关键输出：

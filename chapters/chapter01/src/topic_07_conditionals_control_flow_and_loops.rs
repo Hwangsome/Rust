@@ -1,7 +1,6 @@
 // 这一节把最常见的控制流放在一起对比：
 // `if` 负责分支，`loop`/`while`/`for` 负责重复执行。
 pub fn run() {
-    println!("== Conditionals, Control Flow And Loops ==");
 
     let temperature = 28;
 

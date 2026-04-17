@@ -4,7 +4,6 @@ static WELCOME: &str = "Welcome to Rust";
 const PI: f32 = 3.14;
 
 pub fn run() {
-    println!("== Variable Conventions And Statics ==");
 
     // 前导下划线告诉编译器：这个变量暂时不用，不要给未使用告警。
     let _unused_number = 45;

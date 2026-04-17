@@ -3,7 +3,7 @@
 - Cargo package: `chapter08`
 - Run chapter: `cargo run -p chapter08`
 - Chapter entry: `chapters/chapter08/src/main.rs`
-- Reference module: `chapters/chapter08/src/lifetimes_in_structs.rs`
+- Reference module: `chapters/chapter08/src/topic_04_lifetimes_in_structs.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
 ## 定义

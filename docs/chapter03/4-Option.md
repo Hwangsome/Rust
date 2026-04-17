@@ -13,7 +13,7 @@
 
 ## 证据来源
 
-- 对应模块：[option_type.rs](../../chapters/chapter03/src/option_type.rs)
+- 对应模块：[topic_04_option_type.rs](../../chapters/chapter03/src/topic_04_option_type.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

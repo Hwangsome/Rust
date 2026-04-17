@@ -7,7 +7,6 @@ fn increase(mut value: i32) -> i32 {
 }
 
 pub fn run() {
-    println!("== Mutability In Function Parameters ==");
 
     // `score` 传进函数时，因为 `i32` 是 Copy 类型，所以函数里拿到的是一个副本。
     let score = 10;

@@ -34,14 +34,14 @@
 
 主题模块：
 
-- [generics.rs](../../chapters/chapter06/src/generics.rs)
-- [traits.rs](../../chapters/chapter06/src/traits.rs)
-- [trait_bounds.rs](../../chapters/chapter06/src/trait_bounds.rs)
-- [super_traits.rs](../../chapters/chapter06/src/super_traits.rs)
-- [trait_objects.rs](../../chapters/chapter06/src/trait_objects.rs)
-- [derived_and_marker_traits.rs](../../chapters/chapter06/src/derived_and_marker_traits.rs)
-- [associated_types_in_traits.rs](../../chapters/chapter06/src/associated_types_in_traits.rs)
-- [choosing_associated_vs_generic_type.rs](../../chapters/chapter06/src/choosing_associated_vs_generic_type.rs)
+- [topic_01_generics.rs](../../chapters/chapter06/src/topic_01_generics.rs)
+- [topic_02_traits.rs](../../chapters/chapter06/src/topic_02_traits.rs)
+- [topic_03_trait_bounds.rs](../../chapters/chapter06/src/topic_03_trait_bounds.rs)
+- [topic_04_super_traits.rs](../../chapters/chapter06/src/topic_04_super_traits.rs)
+- [topic_05_trait_objects.rs](../../chapters/chapter06/src/topic_05_trait_objects.rs)
+- [topic_06_derived_and_marker_traits.rs](../../chapters/chapter06/src/topic_06_derived_and_marker_traits.rs)
+- [topic_07_associated_types_in_traits.rs](../../chapters/chapter06/src/topic_07_associated_types_in_traits.rs)
+- [topic_08_choosing_associated_vs_generic_type.rs](../../chapters/chapter06/src/topic_08_choosing_associated_vs_generic_type.rs)
 
 ## 这一章最容易混淆的地方
 

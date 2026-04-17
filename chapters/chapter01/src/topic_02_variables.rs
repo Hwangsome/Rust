@@ -4,7 +4,6 @@
 // 2. `mut` 是显式允许修改
 // 3. 遮蔽不是修改旧值，而是创建同名新绑定
 pub fn run() {
-    println!("== Variables ==");
 
     // `language` 没有写 `mut`，所以这个绑定默认不可变。
     let language = "Rust";

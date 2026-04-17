@@ -6,7 +6,6 @@ fn add(a: i32, b: i32) -> i32 {
 }
 
 pub fn run() {
-    println!("== Functions And Code Blocks ==");
 
     // 这是最普通的函数调用。
     let result = add(2, 3);

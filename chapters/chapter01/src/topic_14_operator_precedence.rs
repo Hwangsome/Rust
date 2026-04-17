@@ -1,6 +1,5 @@
 // 这一节只做一件事：让读者看到“默认优先级”和“括号强制分组”会导致不同结果。
 pub fn run() {
-    println!("== Operator Precedence ==");
 
     let default_order = 2 + 3 * 4;
     let grouped_order = (2 + 3) * 4;

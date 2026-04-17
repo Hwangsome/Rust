@@ -3,7 +3,7 @@
 - Cargo package: `chapter10`
 - Run chapter: `cargo run -p chapter10`
 - Chapter entry: `chapters/chapter10/src/main.rs`
-- Reference module: `chapters/chapter10/src/initializing_struct_instances.rs`
+- Reference module: `chapters/chapter10/src/topic_01_initializing_struct_instances.rs`
 - Chapter lab: `chapters/chapter10/src/lab.rs`
 
 ## 定义

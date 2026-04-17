@@ -12,7 +12,7 @@
 
 ## 证据来源
 
-- 对应模块：[structs_basics.rs](../../chapters/chapter03/src/structs_basics.rs)
+- 对应模块：[topic_01_structs_basics.rs](../../chapters/chapter03/src/topic_01_structs_basics.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

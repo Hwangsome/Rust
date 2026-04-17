@@ -13,7 +13,7 @@
 
 ## 证据来源
 
-- 对应模块：[hashmaps.rs](../../chapters/chapter03/src/hashmaps.rs)
+- 对应模块：[topic_06_hashmaps.rs](../../chapters/chapter03/src/topic_06_hashmaps.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

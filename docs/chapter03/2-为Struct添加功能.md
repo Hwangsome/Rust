@@ -13,7 +13,7 @@
 
 ## 证据来源
 
-- 对应模块：[adding_functionality_to_structs.rs](../../chapters/chapter03/src/adding_functionality_to_structs.rs)
+- 对应模块：[topic_02_adding_functionality_to_structs.rs](../../chapters/chapter03/src/topic_02_adding_functionality_to_structs.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

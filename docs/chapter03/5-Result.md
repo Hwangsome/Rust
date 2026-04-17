@@ -13,7 +13,7 @@
 
 ## 证据来源
 
-- 对应模块：[result_type.rs](../../chapters/chapter03/src/result_type.rs)
+- 对应模块：[topic_05_result_type.rs](../../chapters/chapter03/src/topic_05_result_type.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

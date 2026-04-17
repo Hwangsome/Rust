@@ -3,7 +3,7 @@
 - Cargo package: `chapter08`
 - Run chapter: `cargo run -p chapter08`
 - Chapter entry: `chapters/chapter08/src/main.rs`
-- Reference module: `chapters/chapter08/src/box_pointer_usecases.rs`
+- Reference module: `chapters/chapter08/src/topic_06_box_pointer_usecases.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
 ## 定义

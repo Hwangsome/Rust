@@ -24,9 +24,9 @@
 
 主题模块：
 
-- [initializing_struct_instances.rs](../../chapters/chapter10/src/initializing_struct_instances.rs)
-- [builder_pattern.rs](../../chapters/chapter10/src/builder_pattern.rs)
-- [simplifying_structures.rs](../../chapters/chapter10/src/simplifying_structures.rs)
+- [topic_01_initializing_struct_instances.rs](../../chapters/chapter10/src/topic_01_initializing_struct_instances.rs)
+- [topic_02_builder_pattern.rs](../../chapters/chapter10/src/topic_02_builder_pattern.rs)
+- [topic_03_simplifying_structures.rs](../../chapters/chapter10/src/topic_03_simplifying_structures.rs)
 
 ## 本章提醒
 

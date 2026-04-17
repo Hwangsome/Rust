@@ -13,7 +13,7 @@
 
 ## 证据来源
 
-- 对应模块：[destructured_struct_parameters.rs](../../chapters/chapter03/src/destructured_struct_parameters.rs)
+- 对应模块：[topic_08_destructured_struct_parameters.rs](../../chapters/chapter03/src/topic_08_destructured_struct_parameters.rs)
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：
