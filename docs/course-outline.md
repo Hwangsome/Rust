@@ -4,7 +4,7 @@
 > 公开课程页与公开课程摘要页
 > 核对日期：2026-04-16
 
-这份文档不是照搬课程目录，而是把仓库顶层章节调整成更接近课程大章的 5 个 chapter，并继续参考本地目录 `---- Part 1 Basic Programming with Rust ----` 补齐章内 topic。
+这份文档不是照搬课程目录，而是把仓库顶层章节调整成更接近课程大章的 11 个 chapter，并继续参考本地目录 `---- Part 1 Basic Programming with Rust ----` 与 `---- Part 2 Intermediate Level Concepts ----` 补齐章内 topic。
 
 ## 课程大章与仓库映射
 
@@ -15,6 +15,12 @@
 | Custom and Library Provided Useful Types | `chapter03` | struct、enum、Option、Result、HashMap |
 | Organizing your Code | `chapter04` | modules、visibility、crate、re-export |
 | Testing | `chapter05` | unit test、integration test、benchmark |
+| Flexibility and Abstraction with Generics and Traits | `chapter06` | generics、traits、trait bounds、trait objects、associated types |
+| Functional Programming Aspects | `chapter07` | closures、function pointers、iterators、IntoIterator、combinators |
+| Memory Management Features | `chapter08` | lifetimes、Box、Rc、RefCell |
+| Implementing Typical Data Structures | `chapter09` | singly linked list、doubly linked list、reference cycles |
+| Useful Patterns for Handling Structs | `chapter10` | struct initialization、builder pattern、structure decomposition |
+| Error Handling | `chapter11` | Result、Option、`?`、layered outcomes、`anyhow`、`thiserror` |
 
 ## 当前仓库状态
 
@@ -71,4 +77,75 @@
 - Integration Tests
 - Benchmarking
 
-后续继续扩展时，直接在对应章节内追加主题页和模块，不再新增新的顶层 chapter 粒度。
+### `chapter06`
+
+已经创建：
+
+- Generics
+- Traits
+- Trait Bounds
+- Super Traits
+- Trait Objects
+- Derived and Marker Traits
+- Associated Types in Traits
+- Choosing Associated vs Generic Type
+
+### `chapter07`
+
+已经创建：
+
+- Closures
+- Function Pointers
+- Iterators
+- IntoIterator
+- Iterating Through Collections
+- Combinators
+- Iterating Through Option
+
+### `chapter08`
+
+已经创建：
+
+- Concrete Lifetimes
+- Generic Lifetimes
+- Lifetime Elision
+- Lifetimes in Structs
+- Box Smart Pointer
+- Box Pointer Usecases
+- Rc Smart Pointer
+- RefCell
+- RefCell Example
+
+### `chapter09`
+
+已经创建：
+
+- Singly Linked List (Part 1)
+- Singly Linked List (Part 2)
+- Doubly Linked List (Part 1)
+- Doubly Linked List (Part 2)
+- Reference Cycles
+
+### `chapter10`
+
+已经创建：
+
+- Initializing Struct Instances
+- Builder Pattern
+- Simplifying Structures
+
+### `chapter11`
+
+已经创建：
+
+- Rust Error Handling Approach
+- Propagating Errors
+- Multiple Error Types
+- Chaining Question Marks
+- Layered Outcomes: `Result<Option<T>, E>`
+- Layered Outcomes: `Option<Result<T, E>>`
+- anyhow
+- thiserror
+- Method Chaining Constraints in Error Handling
+
+后续继续扩展时，直接在对应章节内追加主题页和模块；如果继续进入课程 Part 3，再按同样规则新增新的顶层 chapter。

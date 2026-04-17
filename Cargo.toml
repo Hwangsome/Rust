@@ -5,5 +5,11 @@ members = [
     "chapters/chapter03",
     "chapters/chapter04",
     "chapters/chapter05",
+    "chapters/chapter06",
+    "chapters/chapter07",
+    "chapters/chapter08",
+    "chapters/chapter09",
+    "chapters/chapter10",
+    "chapters/chapter11",
 ]
 resolver = "2"

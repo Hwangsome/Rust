@@ -66,6 +66,65 @@
 3. [集成测试](./chapter05/3-集成测试.md)
 4. [基准测试](./chapter05/4-基准测试.md)
 
+### [第 6 章：Generics and Traits](./chapter06/README.md)
+
+1. [泛型](./chapter06/1-泛型.md)
+2. [Trait](./chapter06/2-Trait.md)
+3. [Trait 约束](./chapter06/3-Trait约束.md)
+4. [Super Trait](./chapter06/4-SuperTrait.md)
+5. [Trait Object](./chapter06/5-TraitObject.md)
+6. [Derive 与 Marker Trait](./chapter06/6-Derive与MarkerTrait.md)
+7. [Trait 中的关联类型](./chapter06/7-Trait中的关联类型.md)
+8. [关联类型与泛型参数的取舍](./chapter06/8-关联类型与泛型参数的取舍.md)
+
+### [第 7 章：Functional Programming Aspects](./chapter07/README.md)
+
+1. [闭包](./chapter07/1-闭包.md)
+2. [函数指针](./chapter07/2-函数指针.md)
+3. [迭代器](./chapter07/3-迭代器.md)
+4. [IntoIterator](./chapter07/4-IntoIterator.md)
+5. [遍历集合](./chapter07/5-遍历集合.md)
+6. [组合子](./chapter07/6-组合子.md)
+7. [遍历 Option](./chapter07/7-遍历Option.md)
+
+### [第 8 章：Memory Management Features](./chapter08/README.md)
+
+1. [具体生命周期](./chapter08/1-具体生命周期.md)
+2. [泛型生命周期](./chapter08/2-泛型生命周期.md)
+3. [生命周期省略](./chapter08/3-生命周期省略.md)
+4. [Struct 中的生命周期](./chapter08/4-Struct中的生命周期.md)
+5. [Box 智能指针](./chapter08/5-Box智能指针.md)
+6. [Box 的典型用法](./chapter08/6-Box的典型用法.md)
+7. [Rc 智能指针](./chapter08/7-Rc智能指针.md)
+8. [RefCell](./chapter08/8-RefCell.md)
+9. [RefCell 示例](./chapter08/9-RefCell示例.md)
+
+### [第 9 章：Typical Data Structures](./chapter09/README.md)
+
+1. [单向链表（基础结构）](./chapter09/1-单向链表（基础结构）.md)
+2. [单向链表（添加与移除）](./chapter09/2-单向链表（添加与移除）.md)
+3. [双向链表（前端插入）](./chapter09/3-双向链表（前端插入）.md)
+4. [双向链表（移除与遍历）](./chapter09/4-双向链表（移除与遍历）.md)
+5. [引用环](./chapter09/5-引用环.md)
+
+### [第 10 章：Useful Patterns for Structs](./chapter10/README.md)
+
+1. [初始化 Struct 实例](./chapter10/1-初始化Struct实例.md)
+2. [Builder 模式](./chapter10/2-Builder模式.md)
+3. [简化大型 Struct](./chapter10/3-简化大型Struct.md)
+
+### [第 11 章：Error Handling](./chapter11/README.md)
+
+1. [Rust 错误处理思路](./chapter11/1-Rust错误处理思路.md)
+2. [传播错误](./chapter11/2-传播错误.md)
+3. [统一多种错误类型](./chapter11/3-统一多种错误类型.md)
+4. [链式调用中的问号运算符](./chapter11/4-链式调用中的问号运算符.md)
+5. [分层结果类型：Result<Option<T>, E>](./chapter11/5-分层结果类型：ResultOption.md)
+6. [分层结果类型：Option<Result<T, E>>](./chapter11/6-分层结果类型：OptionResult.md)
+7. [anyhow](./chapter11/7-anyhow.md)
+8. [thiserror](./chapter11/8-thiserror.md)
+9. [错误处理里的方法链约束](./chapter11/9-错误处理里的方法链约束.md)
+
 ## 课程对齐路线
 
 - [基于课程大纲的学习路线](./course-outline.md)
@@ -77,4 +136,10 @@
 - 已深化：第 3 章 Custom and Library Provided 10 个主题
 - 已深化：第 4 章 Organizing your Code 6 个主题
 - 已深化：第 5 章 Testing 4 个主题
-- 后续方向：继续补更多实验、错误输出、对比表和章节间交叉引用
+- 已新增：第 6 章 Generics and Traits 8 个主题
+- 已新增：第 7 章 Functional Programming Aspects 7 个主题
+- 已新增：第 8 章 Memory Management Features 9 个主题
+- 已新增：第 9 章 Typical Data Structures 5 个主题
+- 已新增：第 10 章 Useful Patterns for Structs 3 个主题
+- 已新增：第 11 章 Error Handling 9 个主题
+- 后续方向：继续补更多实验输出、对比表、练习答案版和章节间交叉引用

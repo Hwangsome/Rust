@@ -1,0 +1,16 @@
+[package]
+name = "chapter11"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+
+[dependencies]
+anyhow = "1.0.102"
+thiserror = "2.0.18"
+
+[lints.rust]
+unsafe_code = "warn"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
