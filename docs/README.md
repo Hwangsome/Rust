@@ -125,6 +125,105 @@
 8. [thiserror](./chapter11/8-thiserror.md)
 9. [错误处理里的方法链约束](./chapter11/9-错误处理里的方法链约束.md)
 
+### [第 12 章：Understanding Size in Rust](./chapter12/README.md)
+
+1. `Size in Rust`
+2. `References to Unsized type`
+3. `Sized and Optionally Sized Trait`
+4. `Optionally Sized Trait and Generic Parameters`
+5. `Unsized Coercion`
+6. `Zero Sized Types- Never Type`
+7. `Zero Sized Types- Unit Type`
+8. `Zero Sized Types- Unit Structs`
+9. `Zero Sized Types - Phantom Data`
+
+### [第 13 章：Coercion in Rust](./chapter13/README.md)
+
+1. `Coercion Basics (Deref Coercion)`
+2. `Coercion Sites`
+3. `Reference Coercion`
+4. `Function Item Coercion`
+5. `Trait Objects Coercion`
+6. `Unsized Coercion`
+7. `Coercion in Generics`
+8. `Transitivity in Coercion`
+9. `Least Upper Bound Coercion`
+
+### [第 14 章：Concurrency](./chapter14/README.md)
+
+1. `Thread basics`
+2. `Ownership in Threads`
+3. `Message passing through channels (Part 1)`
+4. `Message passing through channels (Part 2)`
+5. `Sharing States (Part 1)`
+6. `Sharing States (Part 2)`
+7. `Synchronization through Barriers`
+8. `Scoped Threads`
+9. `Thread Parking`
+10. `Async-Await (Basics)`
+11. `Tokio Tasks`
+12. `Computationally Expensive Functions`
+13. `Project- Webscrapping using Threads`
+
+### [第 15 章：Beyond Basic References](./chapter15/README.md)
+
+1. `Types of References`
+2. `Destructing References`
+3. `Forcing Variables to use References`
+4. `Referencing in Compound Data Types`
+
+### [第 16 章：Variance and Its Types](./chapter16/README.md)
+
+1. `Background for Variance (References Refresher (Part 1))`
+2. `Background for Variance (References Refresher (Part 2))`
+3. `Background for Variance (Lifetime Bounds)`
+4. `Background for Variance (Implied bounds)`
+5. `Subtyping and Variance (Covariance )`
+6. `Contravariance`
+7. `Invariance (Part 1)`
+8. `Invariance (Part 2)`
+
+### [第 17 章：Trait Objects Limitations](./chapter17/README.md)
+
+1. `Orphan Rule`
+2. `Multiple Traits`
+3. `Associated Types`
+4. `Methods with Generics`
+5. `Function with No Self Parameter`
+6. `Size and Trait Objects`
+7. `Partial Object Safety`
+8. `Operator Overloading`
+9. `Sealed Traits`
+
+### [第 18 章：Downcasting](./chapter18/README.md)
+
+1. `Downcasting Trait Objects`
+2. `Downcasting Example`
+3. `Downcasting for Conversion Between Trait Objects`
+4. `Checking type without Downcasting using TypeId`
+
+### [第 19 章：Dropcheck](./chapter19/README.md)
+
+1. `Drop Check`
+2. `Drop Check and Partial Move`
+3. `Drop Order (Part 1)`
+4. `Drop Order (Part 2)`
+5. `Drop Order and Self referencing`
+6. `Avoiding Drop`
+7. `Panic safety`
+
+### [第 20 章：Structing Projects](./chapter20/README.md)
+
+1. `consumer_of_lib`
+2. `math`
+
+### [第 21 章：Macros](./chapter21/README.md)
+
+1. `Macros Basics`
+2. `Capturing Types`
+3. `Repeating Patterns`
+4. `Question Mark Operator`
+
 ## 课程对齐路线
 
 - [基于课程大纲的学习路线](./course-outline.md)
@@ -142,4 +241,14 @@
 - 已新增：第 9 章 Typical Data Structures 5 个主题
 - 已新增：第 10 章 Useful Patterns for Structs 3 个主题
 - 已新增：第 11 章 Error Handling 9 个主题
+- 已新增：第 12 章 Understanding Size in Rust 9 个主题
+- 已新增：第 13 章 Coercion in Rust 9 个主题
+- 已新增：第 14 章 Concurrency 13 个主题
+- 已新增：第 15 章 Beyond Basic References 4 个主题
+- 已新增：第 16 章 Variance and Its Types 8 个主题
+- 已新增：第 17 章 Trait Objects Limitations 9 个主题
+- 已新增：第 18 章 Downcasting 4 个主题
+- 已新增：第 19 章 Dropcheck 7 个主题
+- 已新增：第 20 章 Structing Projects 2 个主题
+- 已新增：第 21 章 Macros 4 个主题
 - 后续方向：继续补更多实验输出、对比表、练习答案版和章节间交叉引用

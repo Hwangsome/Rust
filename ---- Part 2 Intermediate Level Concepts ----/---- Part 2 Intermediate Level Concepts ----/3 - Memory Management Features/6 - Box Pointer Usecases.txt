@@ -1,0 +1,61 @@
+// -------------------------------------------
+//         Box Smart Pointer (Part 2)
+// -------------------------------------------
+
+// Example 1
+/* 
+#[derive(Debug)]
+enum List {
+    Cons(i32, Option<Box<List>>),
+}
+
+fn main() {
+    let list = List::Cons(
+        1,
+        Some(Box::new(List::Cons(2, Some(Box::new(List::Cons(3, None)))))),
+    );
+
+    println!("{:?}", list);
+}
+*/
+
+// Example 2
+struct Huge_Data;
+struct Small_Data;
+
+trait Storage {}
+
+impl Storage for Huge_Data {}
+impl Storage for Small_Data {}
+
+fn main() {
+    let data_1 = Huge_Data;
+    let data_2 = Box::new(Huge_Data);
+
+    let data_3 = data_1;
+    let data_4 = data_2;
+
+    let data_5 = Box::new(Small_Data);
+
+    let data: Vec<Box<dyn Storage>> = vec![Box::new(data_3), data_4, data_5];
+}
+
+/* 
+--------------------------------------------------------------------------------------------------
+Concept / Topic                | Explanation
+-------------------------------|------------------------------------------------------------------
+Issue in List enum             |The enum List { Cons(i32, Box<List>), Nil} 
+                               | The terminating Nil variant caused unnecessary heap allocation.
+                               | Wrapping the Cons variant by an Option, avoids this. 
+
+Use Cases of Box           
+1. Avoiding Copying Large Data | Moving a large stack-allocated struct copies all of its data.
+                               | Moving a Box copies only the pointer stored on the stack.
+                               | The heap allocation itself is not duplicated.
+                               | This is beneficial for performance-sensitive code.
+
+2. Heterogeneous Collections   | Vectors require all elements to have the same concrete type.
+                               | Trait objects allow storing different types under a common trait.
+                               | Box<dyn Trait> enables heterogeneous collections in vectors.
+---------------------------------------------------------------------------------------------------
+*/

@@ -73,6 +73,21 @@ fn main() {
 index out of bounds: the len is 3 but the index is 10
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_04_compound_data_types.rs` 现在按 8 个子场景演示：元组基础 → 元组解构（含 `_` 忽略）→ 嵌套元组 → unit `()` → 数组基础 → `[value; N]` 填充 → `.iter()` / `enumerate` 遍历 → 数组切片 `&arr[..]`（为第 2 章借用打伏笔）。
+
+```text
+元组按位置访问: name = alice, age = 20, grade = A
+解构元组: r = 255, g = 128, b = 0
+nested tuple: coord = (3, 4), label = origin
+unit 类型 () = () —— 它是‘没有信息’的值
+array: [90, 85, 88, 92, 95]
+填充写法 [0; 5] = [0, 0, 0, 0, 0]
+idx = 0, fruit = apple
+head = [10, 20, 30], tail = [40, 50]
+```
+
 ## 定义
 
 Compound 数据类型表示“把多个值放到一个整体里”。当前最核心的两种：

@@ -6,6 +6,22 @@
 - Reference module: `chapters/chapter07/src/topic_07_iterating_through_option.rs`
 - Chapter lab: `chapters/chapter07/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_07_iterating_through_option.rs` 现在用 5 个子场景展示把 `Option` 当"0 或 1 个元素的集合"：
+- `extend(Some/None)`：Some 就 push，None 无操作
+- `chain(option.iter())`：把可选值拼进现有迭代器
+- `flatten`：去掉 `Iterator<Option<T>>` 里的 None
+- **`filter_map`**：一步做 map + 去 None，最常用于解析
+- `Option::map.filter.map` 的链式写法
+
+```text
+products = ["keyboard", "mouse", "monitor", "headphones"]
+flattened = ["rust", "iterator", "async"]
+filter_map 解析数字 = [1, 3, 5]
+链式 map/filter/map on Option = Some(22)
+```
+
 ## 定义
 
 `Option<T>` 可以被看作一个“长度为 0 或 1 的小集合”。因此它既能转换成迭代器，也能自然接到很多迭代器组合子后面。

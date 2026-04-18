@@ -1,0 +1,42 @@
+// -------------------------------------------
+//         - Combinators
+// -------------------------------------------
+
+fn main() {
+    let words = vec!["apple", "banana", "grape", "orange", "pear"];
+    // let mut result: Vec<String> = vec![];
+
+    // for word in words {
+    //     if word.starts_with("a") || word.starts_with("b") {
+    //         let uppercase_word = word.to_uppercase();
+    //         result.push(uppercase_word);
+    //     }
+    // }
+    // println!("Result: {:?}", result);
+
+    let result: Vec<String> = words
+        .into_iter()
+        .filter(|&word| word.starts_with("a") || word.starts_with("b"))
+        .map(|word| word.to_uppercase())
+        .collect::<Vec<String>>();
+
+    println!("Result: {:?}", result);
+}
+
+/* 
+--------------------------------------------------------------------------------------------------------
+Concept/Topic           | Explanation
+------------------------|-------------------------------------------------------------------------------
+Combinators             | They are methods which oeprate on Iterators for transforming/filtering data.
+                        | They can be chained to express complex logic concisely.
+
+Common Combinator       |filter: It removes items based on a predicate closure.
+                        | map: It transforms each item into another form.
+                         
+collect Combinator      | It consumes an iterator and builds a collection.
+                        | Requires type information to determine output container (using turbo fish).
+
+Lazy Evaluation         | Combinators do not perform any computation until a consuming method is called.
+                        | collect() or next() triggers execution.
+--------------------------------------------------------------------------------------------------------
+*/

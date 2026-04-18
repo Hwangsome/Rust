@@ -6,6 +6,17 @@
 - Reference module: `chapters/chapter11/src/topic_06_layered_outcomes_result_option_part2.rs`
 - Chapter lab: `chapters/chapter11/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_06_layered_outcomes_result_option_part2.rs` 文件头讲清楚 `Option<Result<T, E>>` 的含义是"**操作可能不发生**；发生了再看成/败"，并与 part 1 做对照：
+
+| 形状 | 含义 |
+|------|------|
+| `Result<Option<T>, E>` | 操作一定会执行，结果可能没数据 |
+| `Option<Result<T, E>>` | 操作可能不发生，发生了再分成/败 |
+
+典型场景：可选表单字段、条件解析。
+
 ## 定义
 
 `Option<Result<T, E>>` 表示：

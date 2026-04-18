@@ -6,6 +6,21 @@
 - Reference module: `chapters/chapter08/src/topic_09_refcell_example.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_09_refcell_example.rs` 现在把 `Rc<RefCell<T>>` 的关键价值展示得更完整：
+- 多个函数 / 多个 Rc 克隆共享同一份 `FileState`
+- 任何一个克隆做 `borrow_mut().opened_by.push(...)`，其他克隆立刻能读到新状态
+- 打印 `strong_count` 观察引用计数
+- 末尾提示：**多线程场景要换成 `Arc<Mutex<T>>` / `Arc<RwLock<T>>`**
+
+```text
+strong_count = 1
+notes.txt opened by ["Alice", "Bob"]
+view2 看到 opened_by = ["Alice", "Bob", "Charlie"]
+strong_count = 3
+```
+
 ## 定义
 
 这一节展示的是常见组合：`Rc<RefCell<T>>`。它不是新语法，而是把两种能力叠起来：

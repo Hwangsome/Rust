@@ -6,6 +6,17 @@
 - Reference module: `chapters/chapter08/src/topic_07_rc_smart_pointer.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_07_rc_smart_pointer.rs` 现在把 `strong_count` 在创建 / `clone` / `drop` 过程中的变化清晰打出来，并说明 **Rc 不跨线程**——多线程请换 `Arc`。
+
+```text
+创建后 strong_count = 1
+两次 clone 后 strong_count = 3
+内层作用域内 strong_count = 4
+drop temp 后 strong_count = 3
+```
+
 ## 定义
 
 `Rc<T>` 是单线程下的引用计数智能指针，用来表达多个 owner 共享同一个值。

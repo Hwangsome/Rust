@@ -23,6 +23,23 @@ point is on y-axis, y = 7
 coords from destructured param = (5, 6)
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_08_destructured_struct_parameters.rs` 把 struct 解构的 5 种典型写法都展示了：`match` 里字段具体值匹配 → `let Point { x, y } = p;` → `let User { name, age, .. } = &user;` 部分解构 + `..` 忽略 → 函数参数直接解构 `fn f(Point { x, y }: Point)` → `match` + 守卫 + 字段绑定混合。
+
+```text
+-- (1) match 里把字段绑定到变量 --
+在 y 轴上，y = 7
+
+-- (3) 部分解构 + .. 忽略其余 --
+只取 name = alice, age = 30 (其余字段用 .. 忽略)
+
+-- (5) match 结合守卫 + 字段绑定 --
+第一象限: (1, 1)
+其他位置: (-3, 2)
+其他位置: (0, -1)
+```
+
 ## 定义
 
 解构的 struct 参数，就是在函数参数列表中直接写 struct 模式：

@@ -6,6 +6,10 @@
 - Reference module: `chapters/chapter11/src/topic_01_rust_error_handling_approach.rs`
 - Chapter lab: `chapters/chapter11/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_01_rust_error_handling_approach.rs` 文件头给出 Rust 错误处理哲学的速记表：**不可恢复 → `panic!`；可恢复 → `Result<T, E>`**，并解释"没有异常、错误就是返回值"这一点为什么比 try/catch 更容易推理。
+
 ## 定义
 
 Rust 把错误处理显式放进类型和控制流里，而不是默认依赖异常机制。

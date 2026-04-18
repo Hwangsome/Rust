@@ -22,6 +22,26 @@
 value inside Some = Rust
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_04_option_type.rs` 覆盖 6 种 Option 使用方式：`match` 穷尽 → `if let` 简写 → `unwrap` / `expect` 及其边界 → 组合子 `map` / `and_then` / `unwrap_or` → 查找类返回 `Option<usize>` → **`?` 操作符**在 `Option` 返回链里的早退。
+
+```text
+-- (2) if let 只看 Some 分支 --
+if let 拿到: 42
+
+-- (4) 组合子: map / and_then / unwrap_or --
+map: Some(20), and_then: Some(9), unwrap_or(-1): -1
+
+-- (5) 查找函数：Option<usize> --
+find 20 in [10, 20, 30, 40] => Some(1)
+find 99 in [10, 20, 30, 40] => None
+
+-- (6) ? 操作符: 碰到 None 就早退 --
+first_half([10, 20, 30, 40], 30) = Some(1)
+first_half([10, 20, 30, 40], 99) = None
+```
+
 ## 定义
 
 `Option<T>` 是标准库里的一个 enum，本质上有两个分支：

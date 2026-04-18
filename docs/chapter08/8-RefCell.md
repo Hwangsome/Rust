@@ -6,6 +6,21 @@
 - Reference module: `chapters/chapter08/src/topic_08_refcell.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_08_refcell.rs` 现在用 4 个子场景 + 一个**真实场景 `LazyCache`** 演示"外部 `&self`、内部改状态"的惯用法：
+- 在不可变绑定下修改内部 Vec
+- 多个 `.borrow()` 可以并存
+- `.borrow()` 与 `.borrow_mut()` 重叠会**运行时 panic**（不是编译错误）
+- `LazyCache::get_or_compute(&self, ...)`：签名不变，内部仍然能缓存
+
+```text
+values = [1, 2, 3, 4]
+a = [1, 2, 3, 4], b = [1, 2, 3, 4]
+  [cache] 计算并缓存: 49
+  [cache] 命中: 49
+```
+
 ## 定义
 
 `RefCell<T>` 提供内部可变性。它允许在外部是不可变绑定时，仍然在内部执行可变借用。

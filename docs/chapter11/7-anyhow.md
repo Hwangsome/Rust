@@ -6,6 +6,10 @@
 - Reference module: `chapters/chapter11/src/topic_07_anyhow_example.rs`
 - Chapter lab: `chapters/chapter11/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_07_anyhow_example.rs` 文件头写出了 anyhow 的核心价值（`.context()` 堆错误链）和适用层次（**应用代码** / CLI / 脚本），并明确 anyhow 和 thiserror **可以在同一项目里共存**——库用 thiserror、顶层 main 用 anyhow 包装。
+
 ## 定义
 
 `anyhow` 是面向应用层的错误处理工具，核心思路是：统一错误类型，保留错误链，并方便补充上下文。

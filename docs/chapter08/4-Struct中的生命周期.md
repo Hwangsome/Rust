@@ -6,6 +6,16 @@
 - Reference module: `chapters/chapter08/src/topic_04_lifetimes_in_structs.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_04_lifetimes_in_structs.rs` 增加了 `Comparison<'a>` 演示多个引用字段共享同一个 `'a`，并解释 struct 实例不能活得比借用的数据久（若尝试则 E0597）。
+
+```text
+first slice sum   = 6
+updated slice sum = 15
+longer of two = world!
+```
+
 ## 定义
 
 当 struct 字段里存的是引用，而不是拥有值时，struct 本身就必须带生命周期参数。

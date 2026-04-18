@@ -22,6 +22,28 @@
 常见流程包括 cargo package、cargo publish --dry-run、cargo publish。
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_06_publishing_your_crate.rs` 列出了完整的发布清单：metadata 最小集（name / version / edition / description / license / repository）→ 发布命令链（`cargo login` → `cargo package` → `cargo publish --dry-run` → `cargo publish`）→ **SemVer 要点**（尤其注意 `0.x → 0.(x+1)` 也被当 breaking）→ 常见失败原因 → **yank 的单向性**。
+
+```text
+-- (1) Cargo.toml metadata 最小集 --
+  [package]
+  name        = "my-awesome-crate"
+  version     = "0.1.0"
+  edition     = "2021"
+  description = "A one-line description."
+  license     = "MIT OR Apache-2.0"
+
+-- (3) SemVer 要点 --
+  0.x → 0.(x+1)：被当作 breaking（初期阶段的约定）
+  1.y → 2.0    ：breaking，需要升级指南
+
+-- (5) yank 与撤回 --
+  cargo yank --vers 0.1.0
+  不能真正删除，只能 yank。发布前一定要仔细检查。
+```
+
 ## 定义
 
 发布 crate，是把你的包作为可复用产物交给其他 Rust 项目消费的过程。

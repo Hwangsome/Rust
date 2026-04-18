@@ -6,6 +6,19 @@
 - Reference module: `chapters/chapter11/src/topic_08_thiserror_example.rs`
 - Chapter lab: `chapters/chapter11/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_08_thiserror_example.rs` 文件头给出 thiserror vs anyhow 的选型表：
+
+| 维度 | thiserror | anyhow |
+|-----|-----------|--------|
+| 定位 | 精确 enum | 万能容器 |
+| 调用方按 variant match | ✅ | ❌ |
+| 层级 | library / 领域 | application / CLI |
+| 代码量 | 稍多 | 极少 |
+
+同时演示 `#[from]` 派生：让 `io::Error` 和 `ParseIntError` 通过 `?` 自动转换到 `AppError`。
+
 ## 定义
 
 `thiserror` 是用来定义结构化错误类型的派生工具。它帮你少写样板代码，但错误类型本身依然是你自己定义的 enum 或 struct。

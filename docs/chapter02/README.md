@@ -44,20 +44,22 @@
 
 ## 本章关键输出
 
-`cargo run -p chapter02` 的一组核心输出：
+`cargo run -p chapter02` 会依次打印 5 个主题，每个主题内部都按编号分段。下面摘三条代表性的输出，完整输出请看各主题笔记中的“关键输出”段落：
 
 ```text
-clone 后两个 String 都可用: s1 = world, s2 = world
-Copy 类型赋值后原值仍可用: x = 15, y = 15
+-- (2) String 的默认赋值是 move --
+move 后仍可用的是新所有者: s2 = hello
 ```
 
 ```text
-immutable refs => [4, 5, 6], [4, 5, 6]
-mutable ref after immutable refs end => [4, 5, 6, 7]
+-- (3) NLL: 借用只到最后一次使用为止 --
+two shared borrows last used here: [10, 20, 30], [10, 20, 30]
+mutable borrow became possible right after: [10, 20, 30, 40]
 ```
 
 ```text
-*reference 解引用后得到: 42
+-- (2) 通过 &mut 写回底层值 --
+counter after *r += 1; *r *= 2; => 22
 ```
 
 ## 本章最容易混淆的地方

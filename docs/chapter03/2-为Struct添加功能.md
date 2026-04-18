@@ -24,6 +24,24 @@ selling price = 5123
 Owner: ABC, Year: 2010, Fuel: 10.5, Price: 5000
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_02_adding_functionality_to_structs.rs` 把 `impl` 块里所有四类函数都走一遍：关联函数（`new` / `used` / `monthly_insurance`）→ `&self` 只读查询 → `&mut self` 就地修改 → `self` 按值消费。还演示了"同一个类型可以有多个 `impl` 块"。
+
+```text
+-- (1) 用关联函数 new 构造 --
+Owner: Alice, Year: 2010, Fuel: 0.0, Price: 5000
+
+-- (2) &mut self 方法修改字段 --
+Owner: Alice, Year: 2010, Fuel: 15.5, Price: 5000
+
+-- (3) 关联函数被 &self 方法调用 --
+selling_price = 5123
+
+-- (5) self 方法消费实例 --
+车辆 Alice 已售出，给新车主重新登记。
+```
+
 ## 定义
 
 `impl` 块是给类型增加方法和关联函数的地方。

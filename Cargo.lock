@@ -57,6 +57,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "chapter12"
+version = "0.1.0"
+
+[[package]]
+name = "chapter13"
+version = "0.1.0"
+
+[[package]]
+name = "chapter14"
+version = "0.1.0"
+
+[[package]]
+name = "chapter15"
+version = "0.1.0"
+
+[[package]]
+name = "chapter16"
+version = "0.1.0"
+
+[[package]]
+name = "chapter17"
+version = "0.1.0"
+
+[[package]]
+name = "chapter18"
+version = "0.1.0"
+
+[[package]]
+name = "chapter19"
+version = "0.1.0"
+
+[[package]]
+name = "chapter20"
+version = "0.1.0"
+
+[[package]]
+name = "chapter21"
+version = "0.1.0"
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"

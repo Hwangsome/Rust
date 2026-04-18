@@ -22,6 +22,20 @@
 parsed successfully = 42
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_05_result_type.rs` 把 `Result` 的完整使用链条都演示了：`match` 两路处理 → 组合子 `map` / `map_err` / `unwrap_or_else` → **自定义 `CalcError` enum + `?` 操作符**（把 `ParseIntError` 归一化为 `CalcError::ParseFailure`）→ `Result` 链式 `and_then`。
+
+```text
+-- (3) ? 操作符 + 自定义错误 --
+parse_and_halve("5") => Ok(20)
+parse_and_halve("0") => Err(DivideByZero)
+parse_and_halve("abc") => Err(ParseFailure(ParseIntError { kind: InvalidDigit }))
+
+-- (4) Result 链式 and_then --
+pipeline = Ok(60)
+```
+
 ## 定义
 
 `Result<T, E>` 也是一个 enum，最核心的两个分支：

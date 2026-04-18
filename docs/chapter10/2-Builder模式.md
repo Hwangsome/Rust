@@ -6,6 +6,14 @@
 - Reference module: `chapters/chapter10/src/topic_02_builder_pattern.rs`
 - Chapter lab: `chapters/chapter10/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_02_builder_pattern.rs` 文件头讲清了 builder 模式解决的痛点（一堆 `new_xxx` 重载）和完整结构：
+- 必填字段放 `CustomerBuilder::builder(name)` 起点
+- 可选字段做成链式 setter（返回 `Self`）
+- `build()` 做最终校验并产出 `Customer`
+- 可以改为返回 `Result<Self, E>` 让链全用 `?` 串起来
+
 ## 定义
 
 Builder pattern 是把对象创建拆成“逐步设置字段，最后 build()”的一种设计方式。

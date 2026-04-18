@@ -1,0 +1,46 @@
+// -------------------------------------------
+// 		RefCell Example
+// -------------------------------------------
+use std::{cell::RefCell, rc::Rc};
+
+#[derive(Debug)]
+struct File {
+    active_user: u32,
+}
+
+#[derive(Debug)]
+struct User {
+    file: Rc<RefCell<File>>,
+}
+
+fn main() {
+    let mut txt_file = Rc::new(RefCell::new((File { active_user: 0 })));
+
+    let mut user_1 = User {
+        file: Rc::clone(&txt_file),
+    };
+    user_1.file.borrow_mut().active_user += 1;
+    println!("Active users: {:?}", txt_file.borrow().active_user);
+
+    let mut user_2 = User {
+        file: Rc::clone(&txt_file),
+    };
+    user_2.file.borrow_mut().active_user += 1;
+    println!("Active users: {:?}", txt_file.borrow().active_user);
+}
+
+
+/* 
+-----------------------------------------------------------------------------------------------------
+Concept / Topic               | Explanation
+------------------------------|----------------------------------------------------------------------
+Immutability Limitation of Rc | Rc<T> only provides immutable access to shared data.
+
+Combining Rc with RefCell     | RefCell<T> enables interior mutability with runtime borrow checking.
+                              | Wrapping Refcell by an Rc allows mutation with shared owners.
+                                
+Shared State Visibility       | All Rc clones point to the same underlying heap allocation.
+                              | Updates through one owner are visible to all owners.
+                              | This pattern is common for shared resource management.
+---------------------------------------------------------------------------------------------------- 
+*/

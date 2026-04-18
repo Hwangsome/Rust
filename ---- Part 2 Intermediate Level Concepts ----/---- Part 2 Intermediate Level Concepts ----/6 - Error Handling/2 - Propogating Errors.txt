@@ -1,0 +1,46 @@
+// -------------------------------------------
+// 	        Propagating Errors
+// -------------------------------------------
+
+use std::num::ParseIntError;
+
+fn read_number(input: &str) -> Result<i32, ParseIntError> {
+    // match input.trim().parse::<i32>() {
+    //     Ok(num) => Ok(num),
+    //     Err(e) => Err(e),
+    // }
+
+    /*
+    let num = match input.trim().parse::<i32>() {
+        Ok(n) => n,
+        Err(e) => return Err(e),
+    };
+    */
+    let num = input.trim().parse::<i32>()?;
+    Ok(num)
+}
+
+fn extract_username(email: &str) -> Option<&str> {
+    let at_pos = email.find('@')?;
+    let username = email.get(0..at_pos)?;
+    Some(username)
+}
+fn main() {}
+
+/* 
+--------------------------------------------------------------------------------------------------------------
+Concept/Topic              | Explanation
+---------------------------|----------------------------------------------------------------------------------
+Error Propagation          | Passing an error from a lower-level function to its caller. 
+                           | This allows to avoid handling errors immediately at failure points.
+
+Question Mark Operator (?) | A shorthand for matching on a Result or Option. 
+                           | It returns early if an error (Err) or absence (None) occurs.  
+                           | Otherwise it unwraps the successful value and remaining code executes normally.
+
+? Simplifyies Code         | Replaces verbose match expressions, involving functions returning Result/Option.
+
+Multiple Uses of ?         | The ? operator can be used multiple times within a single function. 
+                           | This is useful when we want to check several fallible operations.
+-------------------------------------------------------------------------------------------------------------- 
+*/

@@ -1,76 +1,38 @@
-// 这一节讲两件事：
-// 1. 结合性：连续出现同一类运算符时，Rust 默认怎么分组。
-// 2. 运算符重载：为什么我们自己定义的类型也能写 `+`。
-//
-// 这一节面向初学者，所以先只抓最核心的观察点：
-// 1. `20 - 5 - 3` 和 `20 - (5 - 3)` 的结果不同。
-// 2. `p1 + p2` 能成立，是因为我们手动告诉了 Rust：
-//    “两个 Point 相加时，应该怎么加。”
-use std::ops::Add;
+//! 结合性与运算符重载。
+//!
+//! 这一节要同时讲两件事：
+//!
+//! 1. **结合性（associativity）**：当多个**同级**运算符连续出现时，按什么顺序分组。
+//!    - 大多数二元运算是**左结合**：`20 - 5 - 3` 相当于 `(20 - 5) - 3`
+//!    - 赋值、复合赋值是**右结合**：`a = b = 1` 相当于 `a = (b = 1)`（不过 Rust 的 `=` 是语句，不返回值）
+//!
+//! 2. **运算符重载（operator overloading）**：通过实现 `std::ops::*` 里的 trait，
+//!    让**自定义类型**也能使用 `+`、`-`、`*` 这些运算符。这本质上是在告诉 Rust
+//!    "当看到 `Point + Point` 时，该按哪种规则计算"。
+//!
+//! 运行后请重点对照：
+//! - `20 - 5 - 3` vs `20 - (5 - 3)`：证明减法是**左结合**
+//! - `p1 + p2` 能调用 `Point::add`：证明我们成功"重载"了 `+`
+//! - `-p`：只要实现 `Neg` 就能让自定义类型支持一元 `-`
 
-// 这是一个最简单的自定义类型。
-// 你可以把它理解成“平面上的一个点”，里面只有两个坐标：x 和 y。
-#[derive(Clone, Copy, Debug)]
+use std::ops::{Add, Mul, Neg};
+
+/// 一个最小的"平面坐标点"结构体。
+/// 用 `#[derive(...)]` 给它加上打印、复制、相等性比较的能力——详见第 10 节。
+#[derive(Clone, Copy, Debug, PartialEq)]
 struct Point {
     x: i32,
     y: i32,
 }
 
-// `impl Add for Point` 可以先用一句人话理解：
-// “给 Point 这个类型实现加法能力。”
-//
-// 这里的 `Add` 来自标准库。
-// 你现在可以先把它粗略理解成：
-// “谁实现了 Add，谁就可以定义自己的 `+` 应该怎么工作。”
-//
-// 所以这整段代码的目的不是写语法技巧，
-// 而是在告诉 Rust：
-// “如果以后看到 `Point + Point`，就按这里的规则来算。”
+/// 为 `Point` 实现 `Add`：让 `p1 + p2` 能用。
+///
+/// - `type Output = Self;` 表示加法结果仍然是 `Point`
+/// - `self` 是左操作数，`rhs` 是右操作数（right-hand side）
+/// - 实际相当于：`p1 + p2` ≡ `Add::add(p1, p2)` ≡ `p1.add(p2)`
 impl Add for Point {
-    // `type Output = ...` 的意思是：
-    // 这个加法做完以后，结果是什么类型。
-    //
-    // `Self` 表示“当前这个类型自己”。
-    // 当前这个类型就是 `Point`，
-    // 所以这一行其实等价于：
-    //
-    // type Output = Point;
-    //
-    // 也就是说：
-    // `Point + Point` 的结果，仍然是一个 `Point`。
     type Output = Self;
-
-    // `fn add(...)` 就是 `+` 背后真正会调用的函数。
-    //
-    // 这里的参数也要看懂：
-    // - `self`：`+` 左边的值
-    // - `rhs`：`+` 右边的值
-    //
-    // `rhs` 是 right-hand side 的缩写，
-    // 也就是“右边那个操作数”的意思。
-    //
-    // 所以如果你写：
-    //
-    // let sum = p1 + p2;
-    //
-    // 你可以先把它近似理解成：
-    //
-    // let sum = p1.add(p2);
-    //
-    // 这里只是帮助理解，先不用纠结更底层的细节。
     fn add(self, rhs: Self) -> Self::Output {
-        // 这里才是“Point 的加法规则”本体。
-        //
-        // 我们规定：
-        // - 新点的 x = 左边点的 x + 右边点的 x
-        // - 新点的 y = 左边点的 y + 右边点的 y
-        //
-        // 如果：
-        // p1 = Point { x: 1, y: 2 }
-        // p2 = Point { x: 3, y: 4 }
-        //
-        // 那结果就会是：
-        // Point { x: 4, y: 6 }
         Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
@@ -78,58 +40,68 @@ impl Add for Point {
     }
 }
 
-pub fn run() {
-    // 第一部分：看“结合性”。
-    //
-    // 这里先不要把“结合性”和“优先级”混在一起。
-    //
-    // 这一行里只有减号：
-    // 20 - 5 - 3
-    //
-    // 它们的优先级相同，所以这里讨论的不是“谁先算”，
-    // 而是“默认怎么分组”。
-    //
-    // 对减法来说，这里按左边开始分组：
-    // (20 - 5) - 3
-    //
-    // 所以结果是：
-    // 15 - 3 = 12
-    let without_parentheses = 20 - 5 - 3;
+/// 为 `Point` 实现 `Neg`：让 `-p` 能用（一元负号）。
+impl Neg for Point {
+    type Output = Self;
+    fn neg(self) -> Self::Output {
+        Self { x: -self.x, y: -self.y }
+    }
+}
 
-    // 这一行因为加了括号，所以分组方式变了：
-    // 20 - (5 - 3)
-    //
-    // Rust 会先算括号里的：
-    // 5 - 3 = 2
-    //
-    // 然后再算：
-    // 20 - 2 = 18
-    let with_parentheses = 20 - (5 - 3);
+/// 为 `Point` 实现"标量乘法"：`p * 2` 得到一个每个分量都乘 2 的新点。
+///
+/// 注意：`impl Mul<i32> for Point` 表示"右操作数是 `i32`"——这就允许我们重载 `Point * i32`。
+/// 要让 `i32 * Point` 也合法，还得再实现 `impl Mul<Point> for i32`（本节略）。
+impl Mul<i32> for Point {
+    type Output = Self;
+    fn mul(self, rhs: i32) -> Self::Output {
+        Self { x: self.x * rhs, y: self.y * rhs }
+    }
+}
 
-    // 这里要观察的是：
-    // 明明都是减法，只因为分组不同，结果就不同。
-    println!("20 - 5 - 3 = {without_parentheses}");
-    println!("20 - (5 - 3) = {with_parentheses}");
+/// 1) 结合性：减法 **左结合**，所以去掉括号默认从左往右分组。
+fn demonstrate_left_associativity() {
+    let default_grouping = 20 - 5 - 3; // 等价于 (20 - 5) - 3
+    let forced_grouping = 20 - (5 - 3);
+    println!("20 - 5 - 3      = {default_grouping} (默认按 (20-5)-3 计算)");
+    println!("20 - (5 - 3)    = {forced_grouping}");
+}
 
-    // 第二部分：看“运算符重载”。
-    //
-    // 对数字来说，`+` 本来就是语言内建支持的。
-    // 但对 `Point` 这种我们自己定义的类型，默认其实不能直接写 `+`。
-    //
-    // 之所以现在能写，是因为上面已经写了：
-    // `impl Add for Point`
-    //
-    // 也就是：我们已经把“Point 的加法规则”告诉 Rust 了。
+/// 2) 先乘除后加减：这其实是**优先级**问题，和"结合性"是两件事。
+///
+/// - 优先级（precedence）：**不同**运算符之间，谁先算
+/// - 结合性（associativity）：**相同**运算符连续出现时，怎么分组
+fn demonstrate_precedence_vs_associativity() {
+    let by_precedence = 2 + 3 * 4; // 3 * 4 先算 -> 2 + 12
+    let left_assoc_same_level = 20 - 5 - 3; // 同级，左结合
+    println!("2 + 3 * 4        = {by_precedence} (优先级: * 优于 +)");
+    println!("20 - 5 - 3       = {left_assoc_same_level} (结合性: 左结合)");
+}
+
+/// 3) 运算符重载：让自定义类型 `Point` 支持 `+`、`-`、`* i32`。
+fn demonstrate_operator_overloading() {
     let p1 = Point { x: 1, y: 2 };
     let p2 = Point { x: 3, y: 4 };
 
-    // 这一行的意思不是“编译器自动猜到怎么加结构体”，
-    // 而是“按我们刚才定义好的 add 规则来加”。
-    let sum = p1 + p2;
+    let sum = p1 + p2; // 调用 Add::add
+    let neg = -p1;     // 调用 Neg::neg
+    let scaled = p2 * 3; // 调用 Mul::mul
 
-    // 所以这里应该看到：
-    // x = 1 + 3 = 4
-    // y = 2 + 4 = 6
-    println!("operator overloading with Add trait => {:?}", sum);
+    println!("p1 + p2       = {sum:?}");
+    println!("-p1           = {neg:?}");
+    println!("p2 * 3        = {scaled:?}");
+}
+
+pub fn run() {
+    println!("-- (1) 结合性: 减法是左结合 --");
+    demonstrate_left_associativity();
+    println!();
+
+    println!("-- (2) 优先级 vs 结合性 --");
+    demonstrate_precedence_vs_associativity();
+    println!();
+
+    println!("-- (3) 运算符重载: impl Add/Neg/Mul for Point --");
+    demonstrate_operator_overloading();
     println!();
 }

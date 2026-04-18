@@ -6,6 +6,10 @@
 - Reference module: `chapters/chapter10/src/topic_01_initializing_struct_instances.rs`
 - Chapter lab: `chapters/chapter10/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_01_initializing_struct_instances.rs` 文件头注释系统对比 4 种构造方式：`#[derive(Default)]` → 自定义 `new(...) -> Result<Self, E>` 做校验 → 结构更新语法 `..Student::default()` → `unwrap_or_default()` 回退。核心观点："Rust 没有语言级构造函数——`new` 只是约定俗成的关联函数名，你可以写任意多个构造函数。"
+
 ## 定义
 
 Rust 没有语言级构造函数，但常见做法是通过关联函数 `new()`、`Default` 和结构更新语法来完成初始化。

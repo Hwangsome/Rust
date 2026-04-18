@@ -1,0 +1,61 @@
+// -------------------------------------------
+//         - Concrete Lifetimes
+// -------------------------------------------
+
+fn main() {
+    // Example 1:
+    let i = 5;
+    let j = i;
+    println!("{i}");
+
+    // Example 2:
+    let str_1 = String::from("abc");
+    let str_2 = str_1;
+    //println!("str_1: {str_1}");
+
+    // Example 3:
+    let str_1 = String::from("abc");
+    str_fn(str_1);
+    //let str_2 = str_1;
+
+    // Example 4:
+    let i;
+    {
+        let j = 5;
+        i = &j;
+        println!("i: {i}");
+    }
+
+    // Example 5:
+    let mut vec_1 = vec![6, 5, 8, 9];
+    let ref_1 = &vec_1;
+    println!("ref 1: {:?}", ref_1);
+    let ref_2 = &mut vec_1;
+    ref_2.push(3);
+    println!("ref 2: {:?}", ref_2);
+}
+
+fn str_fn(s: String) {
+    println!("s: {s}");
+}
+
+/*
+----------------------------------------------------------------------------------------------------------
+Concept / Topic       | Explanation
+----------------------|-----------------------------------------------------------------------------------
+Lifetimes             | They can classified as concrete and generic lifetimes.
+
+Concrete Lifetime     | It is the duration for which a value exists in memory.
+                      | It starts when a value is created and ends when it is dropped or moved.
+                      | Ownership transfer end a value’s lifetime in a given binding.
+                      | When a value is passed by ownership, the lifetime of binding ends at function call.
+
+Dangling References   | A dangling reference points to a value that has already been dropped.
+                      | Rust prevents this by ensuring references do not outlive their data.
+                      | The borrow checker enforces that borrowed values live long enough.
+
+Non-Lexical Lifetimes | They are determined by actual usage rather than scope.
+                      | A reference’s lifetime ends at its last use.
+                      | If &mut and & lifetimes do not overlap, borrowing rules are satisfied.
+------------------------------------------------------------------------------------------------------------
+*/

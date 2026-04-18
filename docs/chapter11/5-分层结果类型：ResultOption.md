@@ -6,6 +6,18 @@
 - Reference module: `chapters/chapter11/src/topic_05_layered_outcomes_result_option_part1.rs`
 - Chapter lab: `chapters/chapter11/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_05_layered_outcomes_result_option_part1.rs` 文件头用表格明确 `Result<Option<T>, E>` 的 3 种结局对应的语义：
+
+| 形状 | 语义 | 处理 |
+|-----|------|-----|
+| `Ok(Some(t))` | 查到 | 正常走业务 |
+| `Ok(None)` | 合法完成但没数据 | 产品未找到 / 缓存 miss |
+| `Err(e)` | 执行失败 | 记录、重试、向上抛 |
+
+核心提醒：**`Ok(None)` 不是错误**——不要把"找不到"当成 `Err`。
+
 ## 定义
 
 `Result<Option<T>, E>` 表示三种结果：

@@ -22,6 +22,25 @@
 当前状态: 通行
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_03_enums.rs` 现在包含三件事：
+1. 简单 enum（`TrafficLight`）+ `impl` 里写 `describe` / `next` 方法
+2. `match` 的**穷尽性检查**（漏一个分支 → E0004）
+3. 每个分支带不同数据的 `Message` enum —— Rust 真正的 ADT 建模能力
+
+```text
+-- (1) 简单 enum + match --
+当前是 Green: 通行
+下一个状态: Yellow: 准备
+
+-- (3) 每个分支携带不同数据 --
+[Quit] 退出
+[Move] 移动到 (10, 20)
+[Write] 写入文本: hello
+[ChangeColor] RGB(255, 128, 0)
+```
+
 ## 定义
 
 `enum` 是把多个可能分支组织到一个类型里的方式。

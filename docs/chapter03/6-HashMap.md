@@ -23,6 +23,22 @@ scores = {"rust": 100, "math": 95}
 rust score = Some(100)
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_06_hashmaps.rs` 覆盖 `HashMap` 6 类日常操作：`new` + `insert` vs `HashMap::from(...)` 构造 → `insert` 覆盖 vs `entry(...).or_insert(...)` 惯用法 → **词频统计经典写法**（`*counts.entry(w).or_insert(0) += 1`）→ `get` 返回 `Option<&V>` → 遍历与 `keys()` / `values()` → `remove` 取走旧值。
+
+```text
+-- (3) 基于当前值更新：entry + *value += 1 --
+word counts = {"fun": 1, "and": 1, "fast": 1, "rust": 2, "is": 2}
+
+-- (4) 查询: get 返回 Option<&V> --
+scores.get("rust")   = Some(100)
+scores.get("python") = None
+
+-- (6) 移除 --
+remove("math") 返回旧值 = Some(95)
+```
+
 ## 定义
 
 `HashMap<K, V>` 是标准库提供的键值对容器：

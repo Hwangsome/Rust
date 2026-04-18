@@ -6,6 +6,12 @@
 - Reference module: `chapters/chapter10/src/topic_03_simplifying_structures.rs`
 - Chapter lab: `chapters/chapter10/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_03_simplifying_structures.rs` 文件头强调 Rust 的借用检查器是**字段级**敏感的：把大 struct 拆成 `Meta` / `Stats` 两个子 struct，"读 title + 改 likes"完全合法；合在一起则会触发 E0502。拆分带来两重收益：
+1. 编译层面——借用冲突自然消失
+2. 建模层面——每个子 struct 有独立名字和职责
+
 ## 定义
 
 简化大型 struct 指的是把职责混杂、字段过多的结构拆成几个更小、更有边界的子结构。

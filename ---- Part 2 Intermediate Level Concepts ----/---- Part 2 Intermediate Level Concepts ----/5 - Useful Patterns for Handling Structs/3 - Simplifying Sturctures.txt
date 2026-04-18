@@ -1,0 +1,71 @@
+// -------------------------------------------
+//           	- Simplifying structures
+// -------------------------------------------
+
+// The problem
+// struct A {
+//     f1: u32,
+//     f2: u32,
+//     f3: u32,
+// }
+
+// fn fn1(a: &mut A) -> &u32 {
+//     &a.f2
+// }
+// fn fn2(a: &mut A) -> u32 {
+//     a.f1 + a.f3
+// }
+
+// fn fn3(a: &mut A) {
+//     let x = fn1(a);
+//     let y = fn2(a);
+//     println!("{}", x);
+// }
+// --------- Problem Ends ------
+
+// ---------- Solution --------
+struct A {
+    b: B,
+    c: C,
+}
+struct B {
+    f2: u32,
+}
+struct C {
+    f1: u32,
+    f3: u32,
+}
+
+fn fn1(b: &mut B) -> &u32 {
+    &b.f2
+}
+fn fn2(c: &mut C) -> u32 {
+    c.f1 + c.f3
+}
+
+fn fn3(a: &mut A) {
+    let x = fn1(&mut a.b);
+    let y = fn2(&mut a.c);
+    println!("{}", x);
+}
+
+fn main() {}
+
+/* 
+----------------------------------------------------------------------------------------------------
+Concept / Topic        | Explanation
+-----------------------|----------------------------------------------------------------------------
+Borrowing Whole Struct | Borrowing a struct field mutably, resulting in borrows the entire struct.
+                       | This prevents additional mutable borrows of the same struct.
+
+Struct Decomposition   | Splitting the struct into smaller sub-structures can solve this problem.
+                       | Each smaller struct can then be borrowed independently.
+
+Borrowing Flexibility  | After decomposition, functions can borrow only the required sub-structure.
+                       | The borrow checker can recognize that different fields are independent.
+                       | This allows simultaneous mutable borrows of different parts of the data.
+
+Design Benefit         | Decomposing large structures often improves program design.
+                       | Smaller structs are easier to understand and manage.
+-----------------------------------------------------------------------------------------------------
+*/

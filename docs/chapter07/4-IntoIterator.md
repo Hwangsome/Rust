@@ -6,6 +6,21 @@
 - Reference module: `chapters/chapter07/src/topic_04_into_iter.rs`
 - Chapter lab: `chapters/chapter07/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_04_into_iter.rs` 现在同时演示"按值消费"和"借用迭代"两种 `IntoIterator` 实现，讲清楚为什么 `Vec<T>` 能被 `for x in v` / `for x in &v` / `for x in &mut v` 三种方式遍历。
+
+```text
+-- (1) 按值消费 --
+  song (owned) => Borrow Checker Blues
+  song (owned) => Trait Bound Jam
+
+-- (2) 只读借用迭代 --
+  song (borrowed) => Song A
+  song (borrowed) => Song B
+迭代完之后 mixtape.songs.len() = 2
+```
+
 ## 定义
 
 `IntoIterator` 负责回答“一个值如何转换成迭代器”。`for value in collection` 背后，先发生的就是 `collection.into_iter()`。

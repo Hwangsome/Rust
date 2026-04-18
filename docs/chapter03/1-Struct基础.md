@@ -22,6 +22,28 @@ username = bill
 active = true
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_01_structs_basics.rs` 现在按 5 个子场景演示：具名字段 struct → 字段简写（field init shorthand）→ 更新语法（`..old`）→ 元组结构体（强类型别名思路）→ 单元结构体。
+
+```text
+-- (1) 具名字段 struct --
+username = alice
+整体打印: User { username: "alice", email: "alice@example.com", active: true, login_count: 0 }
+
+-- (2) 字段简写 --
+通过字段简写构造: User { username: "bob", email: "bob@example.com", active: true, login_count: 0 }
+
+-- (3) 更新语法 `..old` --
+通过更新语法构造 alice_v2: User { username: "alice", email: "alice_v2@example.com", active: true, login_count: 100 }
+
+-- (4) 元组结构体 --
+red = (255, 0, 0)
+
+-- (5) 单元结构体 --
+单元结构体的值只有一种形态: AlwaysEqual
+```
+
 ## 定义
 
 `struct` 是 Rust 里最基础的自定义类型之一。它允许你把多个字段组合成一个更有语义的值。

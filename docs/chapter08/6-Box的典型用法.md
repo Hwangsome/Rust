@@ -6,6 +6,20 @@
 - Reference module: `chapters/chapter08/src/topic_06_box_pointer_usecases.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_06_box_pointer_usecases.rs` 现在有 3 个实现者（`DiskStorage` / `CloudStorage` / `TapeStorage`）+ 工厂函数 `make_storage(kind) -> Box<dyn Storage>`，覆盖 4 个典型用途：大对象放堆、trait object 异构集合、工厂返回、`Box<dyn Error>` 错误处理提示。
+
+```text
+boxed array length = 1024
+  disk (512 GB) (cap = 512 GB)
+  cloud: S3 (cap = 0 GB)
+  tape (cap = 500 GB)
+  make_storage("disk") => disk (1024 GB)
+  make_storage("cloud") => cloud: S3
+  make_storage("other") => tape
+```
+
 ## 定义
 
 这一节不是重新定义 Box，而是总结它在工程里最常出现的几个使用点。

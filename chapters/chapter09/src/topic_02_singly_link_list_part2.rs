@@ -1,6 +1,15 @@
-// 这个文件在链表结构上补最小操作：头插和头删。
-// 运行时要观察：`take()` 会把 `self.head` 暂时替换成 `None`，从而安全地把旧头拿出来。
-// 这是链表实现里非常常见的所有权技巧。
+//! 单向链表（第 2 部分）：头插 `push_front` 与头删 `pop_front`。
+//!
+//! 实现链表时最容易踩的坑是**所有权转移**：改 `self.head` 时，老的 head 必须"先拿出来"再"放新值"。
+//! `Option::take()` 就是给这种"临时取出、替换为 None"场景准备的：
+//!
+//! ```text
+//! self.head.take() ≡ std::mem::replace(&mut self.head, None)
+//! ```
+//!
+//! 这让我们能够安全地从 `Option<Box<Node>>` 里夺走旧节点，放进新节点的 next 字段，再把新节点赋回 head。
+//! 这个模式在标准库 `VecDeque`、`BinaryHeap` 内部也反复使用。
+
 type Link = Option<Box<Node>>;
 
 #[derive(Debug, Default)]
@@ -47,6 +56,8 @@ impl LinkedList {
     }
 }
 
+// `run()` 是当前主题统一的演示入口。
+// `main.rs` 会按章节顺序调用它，所以这里的输出就是读者最先看到的现象。
 pub fn run() {
     println!("== Singly Linked List (Part 2) ==");
 
@@ -60,3 +71,109 @@ pub fn run() {
     println!("after pop_front => {:?}", list.values());
     println!();
 }
+#[allow(dead_code)]
+const ORIGINAL_COURSE_SOURCE: &str = r###"
+// -------------------------------------------
+// 		Link List (Part 2)
+// -------------------------------------------
+
+#[derive(Debug)]
+struct Linklist {
+    head: pointer,
+}
+
+#[derive(Debug)]
+struct Node {
+    element: i32,
+    next: pointer,
+}
+type pointer = Option<Box<Node>>;
+
+impl Linklist {
+    fn new() -> Linklist {
+        Linklist { head: None }
+    }
+
+    fn add(&mut self, element: i32) {
+        // match self.head {
+        //     None => {
+        //         let new_node = Some(Box::new(Node {
+        //             element: element,
+        //             next: None,
+        //         }));
+        //         self.head = new_node;
+        //     }
+        //     Some(previous_head) => {
+        //         let new_node = Some(Box::new(Node {
+        //             element: element,
+        //             next: Some(previous_head),
+        //         }));
+        //         self.head = new_node;
+        //     }
+        // }
+
+        // fn take<T>(dest: &mut T) -> T
+        let previous_head = self.head.take();
+        let new_head = Some(Box::new(Node {
+            element: element,
+            next: previous_head,
+        }));
+        self.head = new_head;
+    }
+
+    fn remove(&mut self) -> Option<i32> {
+        match self.head.take() {
+            Some(previous_head) => {
+                self.head = previous_head.next;
+                Some(previous_head.element)
+            }
+            None => None,
+        }
+    }
+
+    fn print(&self) {
+        let mut list_traversal = &self.head;
+        while !list_traversal.is_none() {
+            println!("{:?}", list_traversal.as_ref().unwrap().element);
+            list_traversal = &list_traversal.as_ref().unwrap().next;
+        }
+    }
+}
+fn main() {
+    let mut list = Linklist::new();
+    list.add(5);
+    list.add(7);
+    list.add(10);
+    list.add(15);
+    list.add(20);
+
+    //println!("List: {:?}", list);
+    list.print();
+    println!("{}", list.remove().unwrap());
+}
+
+
+/* 
+---------------------------------------------------------------------------------------------------------
+Concept / Topic         | Explanation
+------------------------|--------------------------------------------------------------------------------
+Constructor (new)       | A constructor method new() is defined to initialize an empty linked list.
+                        | It returns a LinkList instance with the head field set to None.
+
+Adding Elements (Push)  | This method will add a new node at the start of the list. 
+                        | The newly added node becomes the head and its next field points to previous head.
+
+Using take()            | Directly moving value out of self.head is not allowed with a mutable reference.
+                        | The take() method replaces the head with None and returns the previous value.
+                        | This temporarily removes the head while keeping the list structure valid.
+
+Removing Elements (Pop) | This method deletes the element at the beginning of the list.
+                        | The head is removed using take(), and the next of head becomes the new head.
+                        | The removed node’s element is returned.
+
+Printing the List       | A print method traverses the list starting from the head reference.
+                        | Iteration continues while the traversal pointer is not None.
+                        | The as_ref() method is used to access node contents without moving ownership.
+---------------------------------------------------------------------------------------------------------
+*/
+"###;

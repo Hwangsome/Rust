@@ -74,6 +74,30 @@ thread 'main' panicked
 attempt to add with overflow
 ```
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_03_primitive_data_types.rs` 现在按 7 个子场景演示：整数默认/后缀标注 → 浮点 → 整数边界 `MIN/MAX` → 溢出的 4 种显式处理（wrapping/checked/saturating/overflowing）→ `bool` 不是整数 → `char` 是 4 字节的 Unicode 标量 → `as` 显式转换。
+
+```text
+默认 i32: 32, i8: -8, i64: 9000000000, u8: 255, u16: 65535
+后缀写法: literal_i64 = 1000000, literal_u8 = 200
+
+default_float = 3.14 (f64), single = 3.14 (f32)
+整数除法 7 / 2 = 3，浮点除法 7.0 / 2.0 = 3.5
+
+i8  范围: [-128, 127]
+u8  范围: [0, 255]
+i32 范围: [-2147483648, 2147483647]
+u32 范围: [0, 4294967295]
+
+250 + 10 (u8): wrapping = 4, checked = None, saturating = 255
+
+char 都占 4 字节 —— ascii = A, chinese = 中, emoji = 🦀
+
+int -> float: -42 as f64 = -42
+float -> int 会截断: 3.7 as i32 = 3 (不是 4!)
+```
+
 ## 定义
 
 Primitive 数据类型表示**单个值**。在 Rust 入门语境里，可以先把它理解成四组：

@@ -6,6 +6,18 @@
 - Reference module: `chapters/chapter08/src/topic_05_box_smart_pointer.rs`
 - Chapter lab: `chapters/chapter08/src/lab.rs`
 
+## 扩展演示输出（当前代码已升级）
+
+`topic_05_box_smart_pointer.rs` 现在按 4 个子场景演示：堆上 i32 → **递归 enum 必须 Box**（否则编译器无法计算大小）→ Box 的独占所有权（move）→ 自动 drop。
+
+```text
+*heap_int = 5
+list = Cons(1, Cons(2, Cons(3, Nil)))
+len = 3, sum = 6
+b2 = 42
+临时的 1MB Box 已被释放
+```
+
 ## 定义
 
 `Box<T>` 是最基础的智能指针之一，表示“这个值在堆上，由当前 owner 独占拥有”。
