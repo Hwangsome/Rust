@@ -1,59 +1,158 @@
 # 4. Struct 中的生命周期
 
-- Cargo package: `chapter08`
-- Run chapter: `cargo run -p chapter08`
-- Chapter entry: `chapters/chapter08/src/main.rs`
-- Reference module: `chapters/chapter08/src/topic_04_lifetimes_in_structs.rs`
-- Chapter lab: `chapters/chapter08/src/lab.rs`
+> - **所属章节**：第 8 章 · Memory Management Features
+> - **Cargo package**：`chapter08`
+> - **运行方式**：`cargo run -p chapter08`
+> - **代码位置**：`chapters/chapter08/src/topic_04_lifetimes_in_structs.rs`
+> - **上一篇**：[3. 生命周期省略规则](./3-生命周期省略.md)
+> - **下一篇**：[5. Box 智能指针](./5-Box智能指针.md)
+> - **关键词**：struct lifetime、`struct Foo<'a>`、引用字段、借用的 struct
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_04_lifetimes_in_structs.rs` 增加了 `Comparison<'a>` 演示多个引用字段共享同一个 `'a`，并解释 struct 实例不能活得比借用的数据久（若尝试则 E0597）。
+## 这一节解决什么问题
 
-```text
-first slice sum   = 6
-updated slice sum = 15
-longer of two = world!
-```
-
-## 定义
-
-当 struct 字段里存的是引用，而不是拥有值时，struct 本身就必须带生命周期参数。
-
-## 作用
-
-- 把“这个 struct 借来的数据至少要活多久”写进类型定义
-- 避免 struct 持有悬垂引用
-- 让方法签名延续同一套生命周期关系
-
-## 原理
-
-`struct ArrayProcessor<'a> { data: &'a [i32] }` 的意思是：这个 struct 并不拥有 `data`，它只是借用一段切片，所以底层切片必须至少活过 `'a`。
-
-## 最小示例
+当 struct 的字段是引用时，编译器需要知道：这个 struct 实例的生命周期和它借用的数据之间是什么关系？
 
 ```rust
-struct ArrayProcessor<'a> {
-    data: &'a [i32],
+struct Excerpt {
+    part: &str,  // ❌ 编译错误！需要生命周期标注
 }
 ```
 
-## 注意点
+如果没有生命周期标注，编译器无法验证 `Excerpt` 实例是否比它借用的数据活得更长。
 
-- 带引用字段的 struct 往往不是“长期持有型”对象
-- 如果你发现生命周期很难写，可能说明该 struct 更适合直接拥有数据
-- `impl<'a>` 和 `struct<'a>` 通常要配套出现
+---
 
-## 常见错误
+## 一分钟结论
 
-- 想在 struct 里长期保存局部变量引用
-- 把生命周期问题误认为语法问题
-- 不判断是否真的该用引用字段
+- 包含引用字段的 struct 必须声明生命周期参数：`struct Foo<'a>`
+- 含义：`Foo<'a>` 的实例不能比 `'a` 活得更长
+- `impl<'a>` 块需要重复声明生命周期参数
+- 方法可以用 `'a` 或引入新的生命周期参数
+- 通常 struct 拥有自己的数据更简单（`String` 而不是 `&str`）；借用只在性能关键路径上使用
 
-## 我的理解
+---
 
-很多生命周期难题的源头其实是“我到底该借用还是拥有”。只要把这个问题想清楚，struct 的设计会简单很多。
+## 详细原理
+
+### 1. 基础语法
+
+```rust
+// struct 借用了 'a 生命周期的字符串数据
+#[derive(Debug)]
+struct Excerpt<'a> {
+    part: &'a str,
+}
+
+// impl 块也需要声明 'a
+impl<'a> Excerpt<'a> {
+    fn level(&self) -> i32 { 3 }
+
+    // 省略规则 3：返回值生命周期 = &self
+    fn announce(&self, announcement: &str) -> &str {
+        println!("Attention: {announcement}");
+        self.part
+    }
+}
+```
+
+### 2. 生命周期约束
+
+```rust
+let novel = String::from("Call me Ishmael. Some years ago...");
+let first_sentence;
+
+{
+    let i = novel.find('.').unwrap_or(novel.len());
+    first_sentence = &novel[..i];
+}
+
+let excerpt = Excerpt { part: first_sentence };
+println!("{:?}", excerpt);
+// ✅ excerpt.part 指向 novel，novel 仍然有效
+```
+
+### 3. 多个生命周期参数
+
+```rust
+struct MultiRef<'a, 'b> {
+    primary: &'a str,
+    secondary: &'b str,
+}
+
+impl<'a, 'b> MultiRef<'a, 'b> {
+    fn primary(&self) -> &'a str { self.primary }
+    fn secondary(&self) -> &'b str { self.secondary }
+}
+```
+
+---
+
+## 完整运行示例
+
+```rust
+#[derive(Debug)]
+struct TextAnalyzer<'a> {
+    text: &'a str,
+}
+
+impl<'a> TextAnalyzer<'a> {
+    fn new(text: &'a str) -> Self {
+        TextAnalyzer { text }
+    }
+
+    fn word_count(&self) -> usize {
+        self.text.split_whitespace().count()
+    }
+
+    fn first_word(&self) -> &'a str {
+        self.text.split_whitespace().next().unwrap_or("")
+    }
+
+    fn words_longer_than(&self, n: usize) -> Vec<&'a str> {
+        self.text.split_whitespace()
+            .filter(|w| w.len() > n)
+            .collect()
+    }
+}
+
+fn main() {
+    let text = String::from("the quick brown fox jumps over the lazy dog");
+    let analyzer = TextAnalyzer::new(&text);
+
+    println!("文章: '{}'", analyzer.text);
+    println!("单词数: {}", analyzer.word_count());
+    println!("第一个词: '{}'", analyzer.first_word());
+    println!("长于3字符: {:?}", analyzer.words_longer_than(3));
+
+    // analyzer 和 text 的生命周期绑定：text 必须活得不短于 analyzer
+    drop(analyzer); // analyzer 先 drop 也没问题
+    println!("text 仍然有效: '{text}'");
+}
+```
+
+---
+
+## 何时用 `&'a T` 字段 vs 拥有型字段
+
+```
+使用引用字段（&'a T）：
+  ✅ 避免克隆大型数据（性能关键路径）
+  ✅ 只需要临时借用，不需要拥有
+  ⚠️ 生命周期约束使代码更复杂
+
+使用拥有型字段（T，如 String）：
+  ✅ 没有生命周期约束
+  ✅ struct 可以独立存在，不依赖外部数据
+  ⚠️ 需要克隆数据（有复制成本）
+
+原则：优先使用拥有型，只在需要优化时考虑引用字段
+```
+
+---
 
 ## 下一步
 
-继续看 [Box 智能指针](./5-Box智能指针.md)，开始进入所有权工具箱。
+- 继续阅读：[5. Box 智能指针](./5-Box智能指针.md)
+- 回到目录：[第 8 章：内存管理特性](./README.md)

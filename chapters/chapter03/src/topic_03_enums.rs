@@ -65,6 +65,110 @@ impl Message {
     }
 }
 
+#[derive(Debug)]
+struct Credential {
+    user_name: String,
+    pass_word: String,
+}
+
+/// 演示 Enum 可以有值
+#[derive(Debug)]
+enum PaymentMethodType {
+    CreditCard(Credential),
+    DebitCard(Credential),
+    PayPal(Credential)
+}
+
+fn print_payment_enum(payment_method_type: PaymentMethodType) {
+    // 若只 `println!("{:?}", …)`：`derive(Debug)` 的读字段**不算**进 `dead_code` 分析，
+    // 元组变体里的负载仍可能被报未使用。这里用 `match` **真正用到**负载字段。
+    //
+    // `match &payment_method_type` 里的 **`&`**：对枚举做**不可变借用**，匹配的是 **`&PaymentMethodType`**。
+    // - 这样**不会**在分支里把变体里的 `Credential` **move** 出来；各分支里的 `s` 类型是 **`&Credential`**（透过引用解构）。
+    // - 若写成 `match payment_method_type` 且分支为 `CreditCard(s)` 且按值拿走 `s`，容易**部分 move**，
+    //   后面这行 `println!("{payment_method_type:?}")` 就可能无法再合法打印整颗枚举。
+    // - 小结：**`match &x` = 只读拆解；`match x` = 常配合按值拿走负载**（看你是否还要用 `x`）。
+    let detail = match &payment_method_type {
+        PaymentMethodType::CreditCard(s) => format!(
+            "信用卡尾号/标识: {} | 密码字段长度: {}",
+            s.user_name,
+            s.pass_word.len()
+        ),
+        PaymentMethodType::DebitCard(s) => format!(
+            "借记卡: {} | 密码字段长度: {}",
+            s.user_name,
+            s.pass_word.len()
+        ),
+        PaymentMethodType::PayPal(s) => format!(
+            "PayPal 账户: {} | 密码字段长度: {}",
+            s.user_name,
+            s.pass_word.len()
+        ),
+    };
+    println!("PaymentMethod: {payment_method_type:?} → {detail}");
+}
+
+/// 通过 **`&mut PaymentMethodType`** 原地改枚举：所有权仍在外层，只把**可变借用**交进来。
+///
+/// 写法要点：`match payment_method_type`（类型已是 `&mut …`）时，元组变体里的 `s` 会被推断为 **`&mut Credential`**，
+/// 可对 `user_name`、`pass_word` 等字段做 `push_str` 等，**不必**先 `move` 出整颗枚举。
+/// 若要把整颗枚举换成**另一种变体**（例如从卡切到 PayPal），可写：
+/// `*payment_method_type = PaymentMethodType::PayPal(Credential { user_name: "x@mail.com".into(), pass_word: "".into() });`
+fn update_payment_enum(payment_method_type: &mut PaymentMethodType) {
+    match payment_method_type {
+        PaymentMethodType::CreditCard(s) => {
+            s.user_name.push_str(" [卡面已更新]");
+            s.pass_word.push_str(" [密钥已轮换]");
+        }
+        PaymentMethodType::DebitCard(s) => {
+            s.user_name.push_str(" [卡面已更新]");
+            s.pass_word.push_str(" [密钥已轮换]");
+        }
+        PaymentMethodType::PayPal(s) => {
+            s.user_name.push_str(" [邮箱已验证]");
+            s.pass_word.push_str(" [令牌已刷新]");
+        }
+    }
+}
+
+// 肉
+#[derive(Debug)]
+enum Meat {
+    Beef,
+    Pork,
+    Chicken,
+}
+// 蔬菜
+#[derive(Debug)]
+enum Vegetable {
+    Tomato,
+    Lettuce,
+    Onion,
+}
+// 甜点
+#[derive(Debug)]
+enum Dessert {
+    IceCream,
+    Cake,
+}
+// 餐厅物品
+enum RestarantItem {
+    Burriot(Meat),
+    Salad(Vegetable),
+    Dessert(Dessert),   
+}
+
+impl RestarantItem {
+    fn describe(&self) -> String {
+        match self {
+            RestarantItem::Burriot(meat) => format!("肉: {meat:?}"),
+            RestarantItem::Salad(vegetable) => format!("蔬菜: {vegetable:?}"),
+            RestarantItem::Dessert(dessert) => format!("甜点: {dessert:?}"),
+        }
+    }
+}
+
+
 pub fn run() {
     println!("== Enums ==");
 
@@ -98,4 +202,45 @@ pub fn run() {
         msg.handle();
     }
     println!();
+
+    // 练习：按值打印（`print_payment_enum` 拿走所有权）
+    print_payment_enum(PaymentMethodType::CreditCard(Credential {
+        user_name: String::from("Yellow"),
+        pass_word: String::from("***"),
+    }));
+    print_payment_enum(PaymentMethodType::DebitCard(Credential {
+        user_name: String::from("Yellow"),
+        pass_word: String::from("***"),
+    }));
+    print_payment_enum(PaymentMethodType::PayPal(Credential {
+        user_name: String::from("Yellow"),
+        pass_word: String::from("***"),
+    }));
+
+    println!("-- (4) `&mut Enum`：原地改负载（`update_payment_enum`）--");
+    let mut wallet = PaymentMethodType::CreditCard(Credential {
+        user_name: String::from("4111****"),
+        pass_word: String::from("***"),
+    });
+    println!("  更新前: {wallet:?}");
+    update_payment_enum(&mut wallet);
+    println!("  更新后: {wallet:?}");
+
+    println!("-- (5) 餐厅物品（遍历子枚举全部变体）--");
+    for meat in [Meat::Beef, Meat::Pork, Meat::Chicken] {
+        println!("  {}", RestarantItem::Burriot(meat).describe());
+    }
+    for veg in [Vegetable::Tomato, Vegetable::Lettuce, Vegetable::Onion] {
+        println!("  {}", RestarantItem::Salad(veg).describe());
+    }
+    for d in [Dessert::IceCream, Dessert::Cake] {
+        println!("  {}", RestarantItem::Dessert(d).describe());
+    }
+
+    let lunch = RestarantItem::Burriot(Meat::Beef).describe();
+    println!("午餐: {lunch}");
+    let dinner = RestarantItem::Salad(Vegetable::Tomato).describe();
+    println!("晚餐: {dinner}");
+    let dessert = RestarantItem::Dessert(Dessert::IceCream).describe();
+    println!("甜点: {dessert}");
 }

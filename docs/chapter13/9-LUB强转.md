@@ -1,22 +1,49 @@
-# 9. Least Upper Bound (LUB) 强转
+# 9. LUB 强转：分支类型统一
 
-> 关键词：LUB、分支合流、never type、&dyn Trait
+> - **所属章节**：第 13 章 · Coercion in Rust
+> - **代码位置**：`chapters/chapter13/src/topic_09_least_upper_bound_coercion.rs`
+> - **上一篇**：[8. Coercion 传递性](./8-Coercion传递性.md)
+> - **下一篇**：本章最后一篇
 
-## 一分钟结论
+---
 
-当 `if`/`match` 的多个分支类型不同，编译器会尝试找一个两者都能 coerce 成的**共同类型**：
+## if/match 分支的类型统一（LUB）
 
-- 两支都返回 `&'static str` → 取 `&'static str`
-- 一支是 `!` → 取另一支类型（`!` 能变任何类型）
-- 两支分别是 `&A` / `&B` 且都实现 Trait → 需要**显式** `as &dyn Trait`，编译器不会自动引入 trait object
-- 找不到 → E0308
+当 `if` 或 `match` 的多个分支类型不同时，编译器会寻找"最小上界类型"（Least Upper Bound）：
 
-## 对应代码
+```rust
+// Never 类型 → 取另一分支的类型
+let x: i32 = if true { 42 } else { panic!("never") };
+// panic! 类型是 !（底类型），可以"变成" i32
 
-- [topic_09_least_upper_bound_coercion.rs](../../chapters/chapter13/src/topic_09_least_upper_bound_coercion.rs)
+// &str 分支统一
+let s: &str = if true { "hello" } else { "world" };
+// 两个 &str 分支，统一为 &str
 
-## 实战提示
+// 不同具体类型 → 需要显式：
+// let val = if cond { 42i32 } else { "str" }; // ❌
+// 改用 dyn Display：
+use std::fmt::Display;
+let val: &dyn Display = if true { &42i32 } else { &"str" };
+println!("{val}");
+```
 
-遇到分支类型不同时：
-1. 先想想是不是应该都 return 同一种类型
-2. 如果确实要异构，显式 `as &dyn Trait` 或 `Box<dyn Trait>`
+---
+
+## 注意
+
+`!`（never type）可以参与任何类型的 LUB，因为它是所有类型的子类型。
+
+---
+
+## 第 13 章完成
+
+第 13 章（Coercion）的核心在于理解：
+
+1. 哪些地方会自动发生 coercion
+2. Deref 链式 coercion 的工作方式
+3. 泛型参数不会触发 coercion
+4. `!` 参与分支统一
+
+- 回到目录：[第 13 章：Coercion in Rust](./README.md)
+- 下一章：[第 14 章：并发](../chapter14/README.md)

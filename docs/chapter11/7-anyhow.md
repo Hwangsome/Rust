@@ -1,52 +1,91 @@
-# 7. anyhow
+# 7. `anyhow`：应用层的万能错误类型
 
-- Cargo package: `chapter11`
-- Run chapter: `cargo run -p chapter11`
-- Chapter entry: `chapters/chapter11/src/main.rs`
-- Reference module: `chapters/chapter11/src/topic_07_anyhow_example.rs`
-- Chapter lab: `chapters/chapter11/src/lab.rs`
+> - **所属章节**：第 11 章 · Error Handling
+> - **Cargo package**：`chapter11`
+> - **运行方式**：`cargo run -p chapter11`
+> - **代码位置**：`chapters/chapter11/src/topic_07_anyhow_example.rs`
+> - **上一篇**：[6. 分层结果 Option<Result>](./6-分层结果类型：OptionResult.md)
+> - **下一篇**：[8. thiserror](./8-thiserror.md)
+> - **关键词**：`anyhow`、`anyhow::Error`、`.context()`、应用层错误
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_07_anyhow_example.rs` 文件头写出了 anyhow 的核心价值（`.context()` 堆错误链）和适用层次（**应用代码** / CLI / 脚本），并明确 anyhow 和 thiserror **可以在同一项目里共存**——库用 thiserror、顶层 main 用 anyhow 包装。
+## 这一节解决什么问题
 
-## 定义
+在应用层代码里，你不关心错误的精确类型，只关心：
+1. 操作成功了吗？
+2. 失败了的话，错误信息是什么？
 
-`anyhow` 是面向应用层的错误处理工具，核心思路是：统一错误类型，保留错误链，并方便补充上下文。
+每次都定义 `enum AppError { ... }` 太繁琐。`anyhow` crate 提供了 `anyhow::Error`，可以装下任何实现了 `std::error::Error` 的错误，并支持添加上下文。
 
-## 作用
+---
 
-- 减少自定义错误枚举样板代码
-- 让应用层更容易向上传递错误
-- 给错误增加上下文信息
+## 一分钟结论
 
-## 原理
+- `anyhow::Error` 可以容纳任意错误类型（不需要 `From` 实现）
+- `.context("...")` / `.with_context(|| ...)` 给错误添加上下文信息
+- `bail!("...")` 相当于 `return Err(anyhow!("..."))`
+- `ensure!(condition, "...")` 相当于 `if !condition { bail!(...) }`
+- 适合应用层；库代码推荐用 `thiserror` + 精确类型
 
-`anyhow::Result<T>` 本质上是 `Result<T, anyhow::Error>`。它适合“我更关心把错误顺着调用链传上去，并在高层集中处理”这种需求。
+---
 
-## 最小示例
+## 完整运行示例
 
 ```rust
-let contents = fs::read_to_string(file_path)
-    .with_context(|| format!("failed to read file: {}", file_path.display()))?;
+use anyhow::{anyhow, bail, ensure, Context, Result};
+
+fn read_and_parse(s: &str) -> Result<i32> {
+    ensure!(!s.is_empty(), "输入不能为空");
+
+    s.trim()
+        .parse::<i32>()
+        .with_context(|| format!("无法将 '{s}' 解析为整数"))
+}
+
+fn process(s: &str) -> Result<String> {
+    let n = read_and_parse(s)
+        .context("处理输入时失败")?;
+
+    if n < 0 {
+        bail!("不支持负数: {n}");
+    }
+
+    Ok(format!("处理结果: {}", n * 2))
+}
+
+fn main() {
+    let test_cases = ["42", "", "abc", "-5", "100"];
+
+    for input in test_cases {
+        match process(input) {
+            Ok(msg) => println!("✅ {:?} → {msg}", input),
+            Err(e) => {
+                println!("❌ {:?} → {e}", input);
+                // 打印完整错误链
+                for cause in e.chain().skip(1) {
+                    println!("   原因: {cause}");
+                }
+            }
+        }
+    }
+}
 ```
 
-## 注意点
+---
 
-- anyhow 更偏应用层，不太适合公开库 API
-- 它适合快速统一多种错误来源
-- `context` / `with_context` 是很高价值的功能
+## anyhow vs thiserror 选型
 
-## 常见错误
+| 场景 | 推荐 |
+|-----|-----|
+| 应用层（main.rs, CLI, API handler）| `anyhow` |
+| 库代码（pub API）| `thiserror` + 自定义错误类型 |
+| 调用方需要按错误类型分支处理 | `thiserror` |
+| 只需要打印/记录错误 | `anyhow` |
 
-- 在库层盲目使用 anyhow，导致调用者失去结构化错误信息
-- 只图省事，不补任何上下文
-- 以为用了 anyhow 就不用设计错误边界
-
-## 我的理解
-
-anyhow 像一个“应用层错误容器”。当我只想把错误带着上下文往上抛，它非常顺手。
+---
 
 ## 下一步
 
-继续看 [thiserror](./8-thiserror.md)，对比“统一错误容器”和“结构化错误定义”的差异。
+- 继续阅读：[8. thiserror](./8-thiserror.md)
+- 回到目录：[第 11 章：错误处理](./README.md)

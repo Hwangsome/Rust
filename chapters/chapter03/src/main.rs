@@ -17,6 +17,7 @@ mod topic_07_pattern_matching_contexts;
 mod topic_08_destructured_struct_parameters;
 mod topic_09_casting_and_assignment_of_references;
 mod topic_10_method_chaining_constraints;
+mod topic_11_self_explained;
 
 fn main() {
     println!("Chapter 03: Custom and Library Provided");
@@ -33,5 +34,6 @@ fn main() {
     topic_08_destructured_struct_parameters::run();
     topic_09_casting_and_assignment_of_references::run();
     topic_10_method_chaining_constraints::run();
+    topic_11_self_explained::run();
     lab::run();
 }

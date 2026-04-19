@@ -22,11 +22,11 @@
 
 ## 一分钟结论
 
-- **`cargo run -p chapter01` = 构建 debug 版本并运行**
-- **`cargo build -p chapter01 --release` = 只构建 release，不会自动运行**
-- **`cargo check -p chapter01` = 更轻量的语义检查**
-- **`rustc` 更适合理解单文件编译过程，`cargo` 更适合真实项目**
-- 在当前仓库里，生成的二进制默认名是 **`chapter01`**，因为 package 名就是 `chapter01`
+- `**cargo run -p chapter01` = 构建 debug 版本并运行**
+- `**cargo build -p chapter01 --release` = 只构建 release，不会自动运行**
+- `**cargo check -p chapter01` = 更轻量的语义检查**
+- `**rustc` 更适合理解单文件编译过程，`cargo` 更适合真实项目**
+- 在当前仓库里，生成的二进制默认名是 `**chapter01`**，因为 package 名就是 `chapter01`
 
 ## 学习目标
 
@@ -72,13 +72,15 @@ pub fn run() {
 
 ## 定义
 
-| 术语 / 命令 | 在当前仓库里代表什么 |
-| --- | --- |
-| **compiling** | 把 `chapter01` 的 Rust 源码构建成二进制产物 |
-| **running** | 启动已经生成的二进制，让 `main` 真正执行 |
-| `rustc` | 单文件层面的编译器 |
-| `cargo` | 项目层面的构建、检查和运行入口 |
-| workspace | 用一个根 `Cargo.toml` 管理多个 chapter package |
+
+| 术语 / 命令       | 在当前仓库里代表什么                             |
+| ------------- | -------------------------------------- |
+| **compiling** | 把 `chapter01` 的 Rust 源码构建成二进制产物        |
+| **running**   | 启动已经生成的二进制，让 `main` 真正执行               |
+| `rustc`       | 单文件层面的编译器                              |
+| `cargo`       | 项目层面的构建、检查和运行入口                        |
+| workspace     | 用一个根 `Cargo.toml` 管理多个 chapter package |
+
 
 ## 作用
 
@@ -128,12 +130,14 @@ chapters/chapter01/src/main.rs
 
 ## 你最应该记住的四个命令
 
-| 命令 | 它做什么 | 什么时候用 |
-| --- | --- | --- |
-| `cargo run -p chapter01` | 构建 debug 并运行 `chapter01` | 改完代码想立刻看结果 |
-| `cargo build -p chapter01` | 构建 debug，不运行 | 只想拿到产物或确认能编过 |
-| `cargo build -p chapter01 --release` | 构建 release，不运行 | 想看优化后的产物 |
-| `cargo check -p chapter01` | 做语义检查，不真正运行程序 | 高频、快速检查 |
+
+| 命令                                   | 它做什么                     | 什么时候用        |
+| ------------------------------------ | ------------------------ | ------------ |
+| `cargo run -p chapter01`             | 构建 debug 并运行 `chapter01` | 改完代码想立刻看结果   |
+| `cargo build -p chapter01`           | 构建 debug，不运行             | 只想拿到产物或确认能编过 |
+| `cargo build -p chapter01 --release` | 构建 release，不运行           | 想看优化后的产物     |
+| `cargo check -p chapter01`           | 做语义检查，不真正运行程序            | 高频、快速检查      |
+
 
 如果你想对整个仓库做一次结构级检查，可以再用：
 
@@ -198,13 +202,15 @@ cargo check -p chapter01
 
 ## `cargo` vs `rustc`
 
-| 对比项 | `rustc` | `cargo` |
-| --- | --- | --- |
-| 关注对象 | 一个源文件怎么编译 | 一个项目或一个 package 怎么构建和运行 |
-| 适合场景 | 学编译过程、最小示例 | 日常开发、真实项目 |
-| 管理依赖 | 否 | 是 |
-| 管理 profile | 否 | 是 |
-| 管理 workspace | 否 | 是 |
+
+| 对比项          | `rustc`    | `cargo`                 |
+| ------------ | ---------- | ----------------------- |
+| 关注对象         | 一个源文件怎么编译  | 一个项目或一个 package 怎么构建和运行 |
+| 适合场景         | 学编译过程、最小示例 | 日常开发、真实项目               |
+| 管理依赖         | 否          | 是                       |
+| 管理 profile   | 否          | 是                       |
+| 管理 workspace | 否          | 是                       |
+
 
 ## debug 和 release 的区别
 
@@ -275,3 +281,4 @@ target/release/chapter01
 
 - 回到目录：[第 1 章：环境与第一个程序](./README.md)
 - 继续进入第 2 章变量与数据类型，开始写真正的基础语法示例
+

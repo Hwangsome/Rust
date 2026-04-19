@@ -11,9 +11,9 @@
 
 ## 一分钟结论
 
-- 默认方案直接选：**`rustup + stable`**
-- 不要把 **`rustup` / `cargo` / `rustc`** 当成一回事
-- 验收不要只看版本号，至少再跑一次 **`cargo run`**
+- 默认方案直接选：`**rustup + stable`**
+- 不要把 `**rustup` / `cargo` / `rustc**` 当成一回事
+- 验收不要只看版本号，至少再跑一次 `**cargo run**`
 - 交叉编译不是 “加个 target 就完了”，链接器和系统库经常才是真问题
 - **安装方式** 和 **开发环境放在哪里** 是两个不同维度，不要混着讨论
 
@@ -28,9 +28,9 @@
 
 ### 官方资料
 
-- Rust 官方安装页：<https://www.rust-lang.org/tools/install>
-- Rust Forge 其他安装方式：<https://forge.rust-lang.org/infra/other-installation-methods.html>
-- rustup book：<https://rust-lang.github.io/rustup/>
+- Rust 官方安装页：[https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
+- Rust Forge 其他安装方式：[https://forge.rust-lang.org/infra/other-installation-methods.html](https://forge.rust-lang.org/infra/other-installation-methods.html)
+- rustup book：[https://rust-lang.github.io/rustup/](https://rust-lang.github.io/rustup/)
 
 ### 当前机器的实际结果
 
@@ -71,17 +71,19 @@ rustfmt-aarch64-apple-darwin
 
 Rust 开发环境最容易混的三个名字：
 
-| 名称 | 它是什么 | 它负责什么 | 不负责什么 |
-| --- | --- | --- | --- |
-| `rustc` | 编译器 | 把 Rust 源码编译成二进制 | 管理项目依赖、工具链版本 |
-| `cargo` | 项目工作流工具 | 构建、运行、测试、依赖管理 | 安装/切换整套工具链 |
-| `rustup` | 工具链管理器 | 安装、升级、切换 `stable/beta/nightly`，补组件和 targets | 直接替代 `cargo` 做项目管理 |
+
+| 名称       | 它是什么    | 它负责什么                                       | 不负责什么              |
+| -------- | ------- | ------------------------------------------- | ------------------ |
+| `rustc`  | 编译器     | 把 Rust 源码编译成二进制                             | 管理项目依赖、工具链版本       |
+| `cargo`  | 项目工作流工具 | 构建、运行、测试、依赖管理                               | 安装/切换整套工具链         |
+| `rustup` | 工具链管理器  | 安装、升级、切换 `stable/beta/nightly`，补组件和 targets | 直接替代 `cargo` 做项目管理 |
+
 
 一句话记忆：
 
-- **`rustc` 负责编译**
-- **`cargo` 负责项目工作流**
-- **`rustup` 负责工具链生命周期**
+- `**rustc` 负责编译**
+- `**cargo` 负责项目工作流**
+- `**rustup` 负责工具链生命周期**
 
 ### 作用
 
@@ -124,10 +126,12 @@ rustc
 
 很多资料把这两类东西写在一起，但它们其实不是一个问题。
 
-| 你在决定什么 | 常见选项 | 结论 |
-| --- | --- | --- |
-| **如何获取 Rust** | `rustup`、系统包管理器、官方离线包、源码构建 | 默认首选 `rustup` |
+
+| 你在决定什么            | 常见选项                        | 结论            |
+| ----------------- | --------------------------- | ------------- |
+| **如何获取 Rust**     | `rustup`、系统包管理器、官方离线包、源码构建  | 默认首选 `rustup` |
 | **把 Rust 装在哪里开发** | 本机原生、WSL、Dev Container、远程机器 | 这是环境形态，不是安装方式 |
+
 
 组合示例：
 
@@ -142,12 +146,14 @@ rustc
 
 ### 推荐表
 
-| 场景 | 推荐方案 | 原因 | 不建议 |
-| --- | --- | --- | --- |
-| 个人学习 / 日常开发 | `rustup + stable` | 资料最多，升级和补组件最顺手 | 直接源码构建 |
-| 团队统一运维 | 系统包管理器或内部镜像 + 明确版本策略 | 方便审计和统一部署 | 每人自己切换混乱的全局配置 |
-| 内网 / 离线环境 | 官方离线包或企业镜像 | 便于分发和校验 | 临时找不明来源镜像 |
-| 研究编译器 / 参与 Rust 本身 | 源码构建 | 控制力最强 | 把它当普通业务开发默认方案 |
+
+| 场景                 | 推荐方案                 | 原因             | 不建议           |
+| ------------------ | -------------------- | -------------- | ------------- |
+| 个人学习 / 日常开发        | `rustup + stable`    | 资料最多，升级和补组件最顺手 | 直接源码构建        |
+| 团队统一运维             | 系统包管理器或内部镜像 + 明确版本策略 | 方便审计和统一部署      | 每人自己切换混乱的全局配置 |
+| 内网 / 离线环境          | 官方离线包或企业镜像           | 便于分发和校验        | 临时找不明来源镜像     |
+| 研究编译器 / 参与 Rust 本身 | 源码构建                 | 控制力最强          | 把它当普通业务开发默认方案 |
+
 
 ### 默认推荐为什么仍然是 `rustup`
 
@@ -295,3 +301,4 @@ rustup component list --installed
 
 - 继续阅读：[2. 运行并编译你的第一个 Rust 程序](./2-运行并编译你的第一个Rust程序.md)
 - 回到目录：[第 1 章：环境与第一个程序](./README.md)
+

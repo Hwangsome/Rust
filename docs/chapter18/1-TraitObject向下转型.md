@@ -1,11 +1,41 @@
-# 1. Trait Object 向下转型：`dyn Any`
+# 1. Trait Object 向下转型
 
-`std::any::Any` 让运行时"类型判断 + 转回具体类型"成为可能：
+> - **所属章节**：第 18 章 · Downcasting
+> - **Cargo package**：`chapter18`
+> - **代码位置**：`chapters/chapter18/src/topic_01_downcasting_trait_objects.rs`
 
-- `downcast_ref::<T>() -> Option<&T>`
-- `downcast_mut::<T>() -> Option<&mut T>`
-- `Box<dyn Any>::downcast::<T>() -> Result<Box<T>, Box<dyn Any>>`
+---
 
-## 对应代码
+## 为什么需要向下转型
 
-- [topic_01_downcasting_trait_objects.rs](../../chapters/chapter18/src/topic_01_downcasting_trait_objects.rs)
+`dyn Trait` 擦除了具体类型。有时你需要从"抽象"恢复到"具体"：
+
+```rust
+use std::any::Any;
+
+let boxed: Box<dyn Any> = Box::new(42_i32);
+
+// downcast_ref：不消耗，返回 Option<&T>
+if let Some(n) = boxed.downcast_ref::<i32>() {
+    println!("找到 i32: {n}");
+}
+
+// downcast：消耗，返回 Result<Box<T>, Box<dyn Any>>
+let boxed: Box<dyn Any> = Box::new(String::from("hello"));
+match boxed.downcast::<String>() {
+    Ok(s) => println!("是 String: {s}"),
+    Err(other) => println!("不是 String"),
+}
+```
+
+---
+
+## 条件：类型必须是 `'static`
+
+`Any` trait 要求类型实现 `'static`（不含非 'static 引用）。
+
+---
+
+## 下一步
+
+- 继续阅读：[2. Downcasting 完整示例](./2-Downcasting完整示例.md)

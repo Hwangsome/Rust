@@ -11,9 +11,23 @@
 - `new()` 只是常见命名，不是关键字
 - `&self` / `&mut self` / `self` 三种接收方式分别表达不同的所有权语义
 
+## 接收者速查：`self` / `mut self` / `&self` / `&mut self`
+
+下面四条与常见英文笔记同义（**`mut self` 别和 `&mut self` 混**）：
+
+| 接收者 | 所有权 | 一句话（中文） | One line (English) |
+|--------|--------|----------------|----------------------|
+| **`self`** | 按值 **move** 给方法 | 调用后外层实例通常**不可用**；形参 `self` 默认**不是** `mut`，**改字段**往往改用 `mut self` | Immutable by-value: receiver **takes ownership**. |
+| **`mut self`** | 仍是按值 **move** | 与 `self` 一样会消费调用方实例；区别是 **`self` 这个绑定是 `mut`**，可在返回前改字段再 `return self` | Mutable by-value: **takes ownership**, `self` binding is **mutable** inside the method. |
+| **`&self`** | **不** move | 不可变借用，只读；可多次调用 | Immutable reference: **no ownership moved**, shared read. |
+| **`&mut self`** | **不** move | 可变借用、独占写；外层需 `let mut x` | Mutable reference: **no ownership moved**, exclusive write. |
+
+**代码对照**：`chapters/chapter03/src/lab.rs` 里 `TaylorSwiftSong` 的「**单曲发行流水线**」故事，`run()` 开头按固定顺序调用：`hand_over_demo_for_pressing`（`self`）→ `add_bonus_hidden_track`（`mut self`）→ `press_kit_quote`（`&self`）→ `engineer_snip_tail_silence`（`&mut self`）。
+
 ## 证据来源
 
 - 对应模块：[topic_02_adding_functionality_to_structs.rs](../../chapters/chapter03/src/topic_02_adding_functionality_to_structs.rs)
+- 四种接收者对照演示：[lab.rs](../../chapters/chapter03/src/lab.rs)（`TaylorSwiftSong`「单曲发行流水线」+ `run()` 开头故事段）
 - 运行章节：`cargo run -p chapter03`
 
 关键输出：

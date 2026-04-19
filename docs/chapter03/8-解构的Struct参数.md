@@ -1,126 +1,166 @@
-# 8. 解构的 Struct 参数
+# 8. 解构 Struct 参数
 
-> 类型：**Study note**
-> 关键词：struct pattern、destructure、function parameter
-> 上一篇：[7. 模式匹配上下文](./7-模式匹配上下文.md)
-> 下一篇：[9. 引用的转换与赋值](./9-引用的转换与赋值.md)
+> - **所属章节**：第 3 章 · Custom and Library Provided Types
+> - **Cargo package**：`chapter03`
+> - **运行方式**：`cargo run -p chapter03`
+> - **代码位置**：`chapters/chapter03/src/topic_08_destructured_struct_parameters.rs`
+> - **上一篇**：[7. 模式匹配上下文](./7-模式匹配上下文.md)
+> - **下一篇**：[9. 引用的转换与赋值](./9-引用的转换与赋值.md)
+> - **关键词**：struct 解构、函数参数解构、`..` 忽略字段、match struct
 
-## 一分钟结论
+---
 
-- 函数参数位置本身就是模式位置
-- 所以 struct 也可以在参数里直接解构
-- 这样做能减少样板，但也会让“函数拿到的到底是什么”更值得留意
+## 这一节解决什么问题
 
-## 证据来源
-
-- 对应模块：[topic_08_destructured_struct_parameters.rs](../../chapters/chapter03/src/topic_08_destructured_struct_parameters.rs)
-- 运行章节：`cargo run -p chapter03`
-
-关键输出：
-
-```text
-point is on y-axis, y = 7
-coords from destructured param = (5, 6)
-```
-
-## 扩展演示输出（当前代码已升级）
-
-`topic_08_destructured_struct_parameters.rs` 把 struct 解构的 5 种典型写法都展示了：`match` 里字段具体值匹配 → `let Point { x, y } = p;` → `let User { name, age, .. } = &user;` 部分解构 + `..` 忽略 → 函数参数直接解构 `fn f(Point { x, y }: Point)` → `match` + 守卫 + 字段绑定混合。
-
-```text
--- (1) match 里把字段绑定到变量 --
-在 y 轴上，y = 7
-
--- (3) 部分解构 + .. 忽略其余 --
-只取 name = alice, age = 30 (其余字段用 .. 忽略)
-
--- (5) match 结合守卫 + 字段绑定 --
-第一象限: (1, 1)
-其他位置: (-3, 2)
-其他位置: (0, -1)
-```
-
-## 定义
-
-解构的 struct 参数，就是在函数参数列表中直接写 struct 模式：
+函数参数是 struct 时，有时候你只关心某几个字段，可以直接在参数位置解构，不需要在函数体里再 `.field`：
 
 ```rust
-fn print_coord(Point { x, y }: Point) { ... }
-```
+// 传统写法
+fn area(rect: &Rectangle) -> f64 {
+    rect.width * rect.height
+}
 
-## 作用
-
-- 直接把需要的字段绑定出来
-- 少写一层 `point.x` / `point.y`
-- 强调“我只关心这几个字段”
-
-## 原理
-
-参数位置本质上不是“只能放变量名”，而是可以放模式。
-
-所以这两种写法在语义上有联系：
-
-```rust
-fn f(point: Point) {
-    let Point { x, y } = point;
+// 解构写法（直接在参数里拆出 width 和 height）
+fn area(Rectangle { width, height, .. }: &Rectangle) -> f64 {
+    width * height
 }
 ```
 
-```rust
-fn f(Point { x, y }: Point) { ... }
-```
+---
 
-当前代码把第二种直接用了出来。
+## 详细原理
 
-## 最小示例
+### 1. 函数参数解构
 
 ```rust
-struct Point {
-    x: i32,
-    y: i32,
+#[derive(Debug)]
+struct Point { x: f64, y: f64 }
+#[derive(Debug)]
+struct Rectangle { width: f64, height: f64, color: String }
+
+// 直接在参数里解构
+fn distance(Point { x: x1, y: y1 }: Point, Point { x: x2, y: y2 }: Point) -> f64 {
+    ((x2 - x1).powi(2) + (y2 - y1).powi(2)).sqrt()
 }
 
-fn print_coord(Point { x, y }: Point) {
-    println!("({}, {})", x, y);
+// 使用 .. 忽略不关心的字段
+fn area(Rectangle { width, height, .. }: &Rectangle) -> f64 {
+    width * height
 }
 ```
+
+### 2. `match` 中解构 struct
+
+```rust
+let r = Rectangle { width: 10.0, height: 5.0, color: "red".into() };
+
+match &r {
+    Rectangle { width, height, .. } if width == height => {
+        println!("正方形! 边长={width}")
+    }
+    Rectangle { width, height, color } => {
+        println!("{color} 矩形: {width}×{height}")
+    }
+}
+```
+
+### 3. `let` 解构
+
+```rust
+let Point { x, y } = Point { x: 3.0, y: 4.0 };
+println!("x={x}, y={y}");
+
+// 重命名字段
+let Point { x: px, y: py } = Point { x: 1.0, y: 2.0 };
+println!("px={px}, py={py}");
+```
+
+---
+
+## 完整运行示例
+
+```rust
+#[derive(Debug, Clone)]
+struct Config {
+    host: String,
+    port: u16,
+    max_connections: u32,
+    timeout_ms: u64,
+    debug: bool,
+}
+
+impl Config {
+    fn default() -> Self {
+        Config {
+            host: "localhost".into(),
+            port: 8080,
+            max_connections: 100,
+            timeout_ms: 5000,
+            debug: false,
+        }
+    }
+}
+
+// 只关心 host 和 port
+fn format_address(Config { host, port, .. }: &Config) -> String {
+    format!("{host}:{port}")
+}
+
+// 只关心连接相关配置
+fn describe_limits(Config { max_connections, timeout_ms, .. }: &Config) -> String {
+    format!("最大连接数: {max_connections}，超时: {timeout_ms}ms")
+}
+
+fn main() {
+    let cfg = Config::default();
+
+    println!("=== 函数参数解构 ===");
+    println!("地址: {}", format_address(&cfg));
+    println!("限制: {}", describe_limits(&cfg));
+    println!();
+
+    println!("=== match 解构 ===");
+    let configs = vec![
+        Config::default(),
+        Config { port: 443, debug: true, ..Config::default() },
+        Config { max_connections: 1000, ..Config::default() },
+    ];
+
+    for config in &configs {
+        match config {
+            Config { debug: true, host, port, .. } =>
+                println!("  调试模式: {host}:{port}"),
+            Config { port: 443, .. } =>
+                println!("  HTTPS 配置"),
+            Config { max_connections, .. } if *max_connections > 500 =>
+                println!("  高负载: {max_connections} 连接"),
+            Config { host, port, .. } =>
+                println!("  标准: {host}:{port}"),
+        }
+    }
+    println!();
+
+    println!("=== let 解构 ===");
+    let Config { host, port, debug, .. } = cfg;
+    println!("解构出: host={host}, port={port}, debug={debug}");
+}
+```
+
+---
 
 ## 注意点
 
-### 1. 参数位置的解构不是魔法
+### 必须用 `..` 忽略未列出的字段
 
-它只是把解构提前到了函数签名里。
+```rust
+let Point { x, y } = point;  // Point 只有 x 和 y，OK
+let Config { host, port } = cfg; // ❌ Config 还有其他字段，必须用 ..
+let Config { host, port, .. } = cfg; // ✅
+```
 
-### 2. 解构的语义仍然受所有权影响
-
-如果字段类型不是 `Copy`，就要特别关注它是否被移动。
-
-### 3. 不是所有场景都适合直接解构
-
-如果函数体很复杂，先收一个命名明确的参数，有时更好读。
-
-## 常见错误
-
-### ❌ 错误 1：把参数解构当成“只是更酷的写法”
-
-它其实在改变你读取和绑定字段的方式。
-
-### ❌ 错误 2：忘了参数本身也遵守所有权规则
-
-解构发生在参数列表，不代表 move / borrow 规则失效。
-
-### ❌ 错误 3：为了简洁牺牲可读性
-
-如果解构模式太复杂，拆回函数体里反而更清楚。
-
-## 我的理解
-
-- 这一节真正想表达的是：模式匹配已经深入到 Rust 的很多语法位置
-- 参数解构只是其中一个非常直观的例子
+---
 
 ## 下一步
 
-下一篇回到引用本身，看 reborrow 和引用赋值这些容易混淆的点。
-
 - 继续阅读：[9. 引用的转换与赋值](./9-引用的转换与赋值.md)
-- 回到目录：[第 3 章：Custom and Library Provided](./README.md)
+- 回到目录：[第 3 章：自定义类型](./README.md)

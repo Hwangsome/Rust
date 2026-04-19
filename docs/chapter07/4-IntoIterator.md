@@ -1,69 +1,254 @@
-# 4. IntoIterator
+# 4. IntoIterator：`for` 循环背后的机制
 
-- Cargo package: `chapter07`
-- Run chapter: `cargo run -p chapter07`
-- Chapter entry: `chapters/chapter07/src/main.rs`
-- Reference module: `chapters/chapter07/src/topic_04_into_iter.rs`
-- Chapter lab: `chapters/chapter07/src/lab.rs`
+> - **所属章节**：第 7 章 · Functional Programming Aspects
+> - **Cargo package**：`chapter07`
+> - **运行方式**：`cargo run -p chapter07`
+> - **代码位置**：`chapters/chapter07/src/topic_04_into_iter.rs`
+> - **上一篇**：[3. 迭代器](./3-迭代器.md)
+> - **下一篇**：[5. 遍历集合](./5-遍历集合.md)
+> - **关键词**：`IntoIterator`、`into_iter()`、`for` 循环脱糖、所有权转移
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_04_into_iter.rs` 现在同时演示"按值消费"和"借用迭代"两种 `IntoIterator` 实现，讲清楚为什么 `Vec<T>` 能被 `for x in v` / `for x in &v` / `for x in &mut v` 三种方式遍历。
+## 这一节解决什么问题
 
-```text
--- (1) 按值消费 --
-  song (owned) => Borrow Checker Blues
-  song (owned) => Trait Bound Jam
+`for x in collection` 为什么能工作？`collection` 不是迭代器，但 `for` 循环能用它——这背后是 `IntoIterator` trait 在做转换。
 
--- (2) 只读借用迭代 --
-  song (borrowed) => Song A
-  song (borrowed) => Song B
-迭代完之后 mixtape.songs.len() = 2
-```
+`IntoIterator` 回答了"如何把这个类型变成迭代器"的问题，而 `Iterator` 回答"如何从迭代器里取下一个元素"。
 
-## 定义
+---
 
-`IntoIterator` 负责回答“一个值如何转换成迭代器”。`for value in collection` 背后，先发生的就是 `collection.into_iter()`。
+## 一分钟结论
 
-## 作用
+- `for x in collection` 等价于 `for x in IntoIterator::into_iter(collection)`
+- `Vec<T>` 实现了三种 `IntoIterator`：`Vec<T>`（消耗）、`&Vec<T>`（只读借用）、`&mut Vec<T>`（可变借用）
+- `for x in v`：消耗 `v`，x 是 `T`
+- `for x in &v`：借用 `v`，x 是 `&T`
+- `for x in &mut v`：可变借用 `v`，x 是 `&mut T`
+- 自定义类型实现 `IntoIterator` 可以让它支持 `for` 循环
 
-- 让自定义类型支持 `for` 循环
-- 把“容器”和“迭代器”两层角色分开
-- 为拥有值、借用值、可变借用值的不同遍历方式留出空间
+---
 
-## 原理
+## 与其他语言对比
 
-`IntoIterator` 定义了两件事：元素类型 `Item`，以及真正返回的迭代器类型 `IntoIter`。这让一个“可遍历类型”可以把具体遍历逻辑交给专门的迭代器实现。
+| 语言 | `for` 循环背后的机制 |
+|-----|-----------------|
+| Java | `Iterable<T>` 接口的 `iterator()` 方法 |
+| Python | `__iter__` 和 `__next__` 协议 |
+| Go | 内置 `range`，无自定义扩展 |
+| C++ | `begin()` / `end()` 方法 |
+| Rust | `IntoIterator` trait 的 `into_iter()` 方法 |
 
-## 最小示例
+---
+
+## 详细原理
+
+### for 循环的脱糖过程
 
 ```rust
-impl IntoIterator for Playlist {
-    type Item = String;
-    type IntoIter = std::vec::IntoIter<String>;
+let v = vec![1, 2, 3];
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.songs.into_iter()
+// 你写的
+for x in &v {
+    println!("{x}");
+}
+
+// 编译器理解为（脱糖后）
+{
+    let mut iter = (&v).into_iter();  // &Vec<i32> → 调用 into_iter()
+    loop {
+        match iter.next() {
+            Some(x) => {
+                println!("{x}");
+            }
+            None => break,
+        }
     }
 }
 ```
 
-## 注意点
+### 三种 for 写法的语义
 
-- `IntoIterator` 不是 `Iterator`
-- `into_iter(self)` 常常意味着会消费原值
-- 标准库集合同时会为拥有值、`&T`、`&mut T` 提供不同版本实现
+```rust
+let v = vec![String::from("a"), String::from("b")];
 
-## 常见错误
+// 消耗：for x in v
+for x in v {  // v 被 move 进 into_iter()
+    // x: String（拥有所有权）
+}
+// println!("{v:?}"); // ❌ v 已被消耗
 
-- 只记得 `Iterator`，忽略 `IntoIterator`
-- 没意识到 `for` 循环可能拿走所有权
-- 给自定义类型实现了 `Iterator` 却不明白为什么 `for` 还不够自然
+let v = vec![String::from("a"), String::from("b")];
 
-## 我的理解
+// 只读借用：for x in &v
+for x in &v {  // (&v).into_iter()
+    // x: &String（只读引用）
+}
+println!("{v:?}"); // ✅ v 仍然有效
 
-如果说 `Iterator` 是“怎么一个个给值”，那 `IntoIterator` 就是“怎么进入这套给值流程”。
+// 可变借用：for x in &mut v
+let mut v = vec![1, 2, 3];
+for x in &mut v {  // (&mut v).into_iter()
+    // x: &mut i32
+    *x *= 2;  // 可以修改
+}
+println!("{v:?}"); // [2, 4, 6]，v 仍然有效
+```
+
+### 自定义 IntoIterator
+
+```rust
+struct NumberRange {
+    start: i32,
+    end: i32,
+}
+
+struct NumberRangeIter {
+    current: i32,
+    end: i32,
+}
+
+impl Iterator for NumberRangeIter {
+    type Item = i32;
+    fn next(&mut self) -> Option<i32> {
+        if self.current < self.end {
+            let val = self.current;
+            self.current += 1;
+            Some(val)
+        } else {
+            None
+        }
+    }
+}
+
+impl IntoIterator for NumberRange {
+    type Item = i32;
+    type IntoIter = NumberRangeIter;  // 关联类型：迭代器的具体类型
+
+    fn into_iter(self) -> NumberRangeIter {
+        NumberRangeIter { current: self.start, end: self.end }
+    }
+}
+
+// 现在 NumberRange 支持 for 循环
+for n in NumberRange { start: 1, end: 6 } {
+    print!("{n} ");  // 1 2 3 4 5
+}
+```
+
+---
+
+## 完整运行示例
+
+```rust
+// 自定义集合
+struct Grid {
+    data: Vec<Vec<i32>>,
+}
+
+struct GridIter {
+    data: Vec<Vec<i32>>,
+    row: usize,
+    col: usize,
+}
+
+impl Iterator for GridIter {
+    type Item = i32;
+    fn next(&mut self) -> Option<i32> {
+        while self.row < self.data.len() {
+            if self.col < self.data[self.row].len() {
+                let val = self.data[self.row][self.col];
+                self.col += 1;
+                return Some(val);
+            } else {
+                self.row += 1;
+                self.col = 0;
+            }
+        }
+        None
+    }
+}
+
+impl IntoIterator for Grid {
+    type Item = i32;
+    type IntoIter = GridIter;
+    fn into_iter(self) -> GridIter {
+        GridIter { data: self.data, row: 0, col: 0 }
+    }
+}
+
+fn main() {
+    println!("=== for 循环三种写法 ===");
+    let data = vec![10, 20, 30];
+
+    // 1. 消耗
+    let data_move = data.clone();
+    for x in data_move {
+        print!("{x}(owned) ");
+    }
+    println!();
+
+    // 2. 只读借用
+    for x in &data {
+        print!("{x}(&) ");
+    }
+    println!();
+    println!("data 仍然有效: {data:?}");
+
+    // 3. 可变借用
+    let mut data_mut = data.clone();
+    for x in &mut data_mut {
+        *x += 100;
+    }
+    println!("修改后: {data_mut:?}");
+    println!();
+
+    println!("=== 自定义 IntoIterator ===");
+    let grid = Grid {
+        data: vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]],
+    };
+
+    print!("所有元素: ");
+    for x in grid {
+        print!("{x} ");
+    }
+    println!();
+
+    // 配合迭代器方法
+    let grid2 = Grid {
+        data: vec![vec![1, 2, 3], vec![4, 5, 6]],
+    };
+    let sum: i32 = grid2.into_iter().filter(|x| x % 2 == 0).sum();
+    println!("偶数之和: {sum}");
+}
+```
+
+---
+
+## 注意点与陷阱
+
+### 陷阱：数组的 `into_iter()` 和 `iter()` 行为不同
+
+```rust
+let arr = [1, 2, 3];
+
+// Rust 2021 之前：arr.into_iter() 产出 &i32（和 arr.iter() 一样）
+// Rust 2021 之后：arr.into_iter() 产出 i32（按值，消耗数组）
+for x in arr.into_iter() {
+    // x 是 i32（Rust 2021 后，数组实现了真正的 IntoIterator）
+    println!("{x}");
+}
+
+// 要明确借用遍历：
+for x in arr.iter() {  // 或者 for x in &arr
+    // x 是 &i32
+    println!("{x}");
+}
+```
+
+---
 
 ## 下一步
 
-继续看 [遍历集合](./5-遍历集合.md)，把 `iter`、`iter_mut`、`into_iter` 的区别摆到一起。
+- 继续阅读：[5. 遍历集合](./5-遍历集合.md)
+- 回到目录：[第 7 章：函数式编程](./README.md)

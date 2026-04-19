@@ -1,65 +1,119 @@
-# 6. 分层结果类型：Option<Result<T, E>>
+# 6. 分层结果：`Option<Result<T, E>>`
 
-- Cargo package: `chapter11`
-- Run chapter: `cargo run -p chapter11`
-- Chapter entry: `chapters/chapter11/src/main.rs`
-- Reference module: `chapters/chapter11/src/topic_06_layered_outcomes_result_option_part2.rs`
-- Chapter lab: `chapters/chapter11/src/lab.rs`
+> - **所属章节**：第 11 章 · Error Handling
+> - **Cargo package**：`chapter11`
+> - **运行方式**：`cargo run -p chapter11`
+> - **代码位置**：`chapters/chapter11/src/topic_06_layered_outcomes_result_option_part2.rs`
+> - **上一篇**：[5. 分层结果 Result<Option>](./5-分层结果类型：ResultOption.md)
+> - **下一篇**：[7. anyhow](./7-anyhow.md)
+> - **关键词**：`Option<Result<T, E>>`、可选操作、条件执行、`filter_map`
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_06_layered_outcomes_result_option_part2.rs` 文件头讲清楚 `Option<Result<T, E>>` 的含义是"**操作可能不发生**；发生了再看成/败"，并与 part 1 做对照：
+## 这一节解决什么问题
 
-| 形状 | 含义 |
-|------|------|
-| `Result<Option<T>, E>` | 操作一定会执行，结果可能没数据 |
-| `Option<Result<T, E>>` | 操作可能不发生，发生了再分成/败 |
+与上一篇相反——有时候**操作本身是可选的**：
 
-典型场景：可选表单字段、条件解析。
-
-## 定义
+- 表单字段是可选的：用户可以不填
+- 某个配置项不存在时跳过处理
+- 批量操作中某些元素不需要处理
 
 `Option<Result<T, E>>` 表示：
+- `None`：根本不需要执行这个操作
+- `Some(Ok(v))`：执行了，成功了
+- `Some(Err(e))`：执行了，失败了
 
-- `None`：这次操作根本没有发生
-- `Some(Ok(T))`：发生了，而且成功
-- `Some(Err(E))`：发生了，但失败
+---
 
-## 作用
-
-- 表达“操作是否尝试过”本身也是一层信息
-- 适合可选表单字段、按条件执行的解析逻辑
-- 把“没执行”和“执行失败”分开
-
-## 原理
-
-外层 `Option` 先回答“有没有尝试”，内层 `Result` 再回答“尝试后成没成功”。这和上一节的三态模型完全不是一回事。
-
-## 最小示例
+## 详细原理
 
 ```rust
-fn handle_user_registration(
-    name: &str,
-    age_input: Option<&str>,
-) -> Option<Result<u32, ParseIntError>>
+fn maybe_parse(input: Option<&str>) -> Option<Result<i32, String>> {
+    input.map(|s| {
+        s.trim().parse::<i32>()
+            .map_err(|e| format!("解析失败: {e}"))
+    })
+}
+
+// None → 什么都不做
+// Some("42") → Some(Ok(42))
+// Some("abc") → Some(Err("解析失败: ..."))
+for input in [None, Some("42"), Some("bad")] {
+    match maybe_parse(input) {
+        None          => println!("  跳过（没有输入）"),
+        Some(Ok(n))   => println!("  成功: {n}"),
+        Some(Err(e))  => println!("  失败: {e}"),
+    }
+}
 ```
 
-## 注意点
+---
 
-- 它适合“可选操作”，不适合“必执行查询”
-- 设计时要先判断外层该放 `Option` 还是 `Result`
-- 两层含义不要写反
+## `transpose()` 方向
 
-## 常见错误
+```rust
+// Option<Result<T, E>> → Result<Option<T>, E>
+let opt_res: Option<Result<i32, &str>> = Some(Ok(5));
+let transposed: Result<Option<i32>, &str> = opt_res.transpose();
+// Ok(Some(5)) → 便于在 ? 链里使用
+```
 
-- 看到两层包装就以为只是写法差异
-- 不分“没有执行”与“执行失败”
-- 用错层级顺序，导致调用端语义很别扭
+---
 
-## 我的理解
+## 完整运行示例
 
-这一节很能训练语义判断力。包装顺序一换，整个 API 的含义就变了。
+```rust
+fn main() {
+    // 模拟表单处理：某些字段是可选的
+    let forms = vec![
+        // (name, optional_age)
+        ("Alice", Some("25")),
+        ("Bob", None),        // 没有填年龄
+        ("Carol", Some("abc")), // 填了但格式错误
+    ];
+
+    for (name, age_input) in &forms {
+        let age_result: Option<Result<u32, _>> = age_input.map(|s| {
+            s.trim().parse::<u32>()
+                .map_err(|_| format!("'{s}' 不是有效年龄"))
+        });
+
+        match age_result {
+            None             => println!("{name}: 年龄未填写"),
+            Some(Ok(age))    => println!("{name}: 年龄 {age}"),
+            Some(Err(e))     => println!("{name}: 年龄格式错误 - {e}"),
+        }
+    }
+    println!();
+
+    // 使用 filter_map 只收集成功的可选值
+    let optional_values: Vec<Option<&str>> = vec![
+        Some("1"), None, Some("bad"), Some("3"), None, Some("5")
+    ];
+
+    let valid_numbers: Vec<i32> = optional_values.iter()
+        .filter_map(|opt| {
+            opt.and_then(|s| s.parse().ok())
+        })
+        .collect();
+
+    println!("有效数字（跳过 None 和解析失败）: {valid_numbers:?}");
+}
+```
+
+---
+
+## Result<Option> vs Option<Result> 对比
+
+| | `Result<Option<T>, E>` | `Option<Result<T, E>>` |
+|-|----------------------|----------------------|
+| **操作是否执行** | 一定执行 | 可能不执行 |
+| **None 含义** | 查询成功但无结果 | 操作根本不触发 |
+| **典型场景** | 数据库查询、搜索 | 可选表单字段、条件处理 |
+
+---
 
 ## 下一步
 
-继续看 [anyhow](./7-anyhow.md)，开始进入实际工程里常见的错误处理工具。
+- 继续阅读：[7. anyhow](./7-anyhow.md)
+- 回到目录：[第 11 章：错误处理](./README.md)

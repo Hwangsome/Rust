@@ -1,68 +1,156 @@
-# 9. RefCell 示例
+# 9. Rc<RefCell<T>>：共享可变状态的标准模式
 
-- Cargo package: `chapter08`
-- Run chapter: `cargo run -p chapter08`
-- Chapter entry: `chapters/chapter08/src/main.rs`
-- Reference module: `chapters/chapter08/src/topic_09_refcell_example.rs`
-- Chapter lab: `chapters/chapter08/src/lab.rs`
+> - **所属章节**：第 8 章 · Memory Management Features
+> - **Cargo package**：`chapter08`
+> - **运行方式**：`cargo run -p chapter08`
+> - **代码位置**：`chapters/chapter08/src/topic_09_refcell_example.rs`
+> - **上一篇**：[8. RefCell 内部可变性](./8-RefCell.md)
+> - **下一篇**：本章最后一篇
+> - **关键词**：`Rc<RefCell<T>>`、共享可变状态、多所有者+可变、GUI 模式
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_09_refcell_example.rs` 现在把 `Rc<RefCell<T>>` 的关键价值展示得更完整：
-- 多个函数 / 多个 Rc 克隆共享同一份 `FileState`
-- 任何一个克隆做 `borrow_mut().opened_by.push(...)`，其他克隆立刻能读到新状态
-- 打印 `strong_count` 观察引用计数
-- 末尾提示：**多线程场景要换成 `Arc<Mutex<T>>` / `Arc<RwLock<T>>`**
+## 这一节解决什么问题
 
-```text
-strong_count = 1
-notes.txt opened by ["Alice", "Bob"]
-view2 看到 opened_by = ["Alice", "Bob", "Charlie"]
-strong_count = 3
-```
+两个独立的问题：
 
-## 定义
+1. `Rc<T>`：多个所有者，但只读
+2. `RefCell<T>`：单个所有者，但可以通过 `&T` 修改内部
 
-这一节展示的是常见组合：`Rc<RefCell<T>>`。它不是新语法，而是把两种能力叠起来：
+组合在一起 `Rc<RefCell<T>>`：**多个所有者，且每个都可以修改内部数据**。
 
-- `Rc`：共享所有权
-- `RefCell`：运行时可变性
+这是单线程环境下"共享可变状态"的标准 Rust 解法。
 
-## 作用
+---
 
-- 让多个持有者共同访问并修改同一份状态
-- 支持图、树、GUI 状态等共享结构
-- 作为教学示例，帮助看清多个内存工具之间的分工
+## 一分钟结论
 
-## 原理
+- `Rc<RefCell<T>>` = 多所有者（Rc）+ 内部可变性（RefCell）
+- 每个 clone 的 Rc 都能通过 `.borrow_mut()` 修改内部
+- 修改立刻对所有持有者可见（共享同一块内存）
+- 注意循环引用！用 `Weak<T>` 打破
+- 多线程场景换成 `Arc<Mutex<T>>`
 
-外层 `Rc` 解决“谁拥有”，内层 `RefCell` 解决“怎么改”。因此两个调用者都能拿着同一个句柄，对同一底层值做修改。
+---
 
-## 最小示例
+## 完整运行示例
 
 ```rust
-let shared_file = Rc::new(RefCell::new(FileState {
-    name: "notes.txt".to_string(),
-    opened_by: Vec::new(),
-}));
+use std::cell::RefCell;
+use std::rc::Rc;
+
+// 多个组件共享同一份应用状态
+#[derive(Debug)]
+struct AppState {
+    user: Option<String>,
+    messages: Vec<String>,
+    notification_count: u32,
+}
+
+impl AppState {
+    fn new() -> Rc<RefCell<Self>> {
+        Rc::new(RefCell::new(AppState {
+            user: None,
+            messages: Vec::new(),
+            notification_count: 0,
+        }))
+    }
+}
+
+struct LoginComponent {
+    state: Rc<RefCell<AppState>>,
+}
+
+impl LoginComponent {
+    fn login(&self, username: &str) {
+        let mut state = self.state.borrow_mut();
+        state.user = Some(username.to_string());
+        state.messages.push(format!("{username} 登录了"));
+        state.notification_count += 1;
+        println!("[Login] {} 已登录", username);
+    }
+}
+
+struct NotificationComponent {
+    state: Rc<RefCell<AppState>>,
+}
+
+impl NotificationComponent {
+    fn show_notifications(&self) {
+        let state = self.state.borrow();
+        println!("[通知] 未读 {} 条", state.notification_count);
+        for msg in &state.messages {
+            println!("  - {msg}");
+        }
+    }
+
+    fn clear_notifications(&self) {
+        let mut state = self.state.borrow_mut();
+        state.notification_count = 0;
+        println!("[通知] 已清空");
+    }
+}
+
+fn main() {
+    let state = AppState::new();
+
+    // 多个组件共享同一份状态
+    let login = LoginComponent { state: Rc::clone(&state) };
+    let notifications = NotificationComponent { state: Rc::clone(&state) };
+
+    // 引用计数：3（state + login.state + notifications.state）
+    println!("强引用数: {}", Rc::strong_count(&state));
+
+    // 组件之间通过共享状态通信
+    notifications.show_notifications();
+    login.login("Alice");
+    login.login("Bob");
+    notifications.show_notifications();
+    notifications.clear_notifications();
+    notifications.show_notifications();
+    println!();
+
+    println!("=== 对比：多线程用 Arc<Mutex<T>> ===");
+    use std::sync::{Arc, Mutex};
+
+    let shared = Arc::new(Mutex::new(vec![1, 2, 3]));
+
+    let handles: Vec<_> = (0..3).map(|i| {
+        let data = Arc::clone(&shared);
+        std::thread::spawn(move || {
+            let mut guard = data.lock().unwrap();
+            guard.push(i * 10);
+        })
+    }).collect();
+
+    for h in handles { h.join().ok(); }
+    println!("Arc<Mutex<_>> 最终: {:?}", shared.lock().unwrap());
+}
 ```
 
-## 注意点
+---
 
-- 组合工具越多，越要明确每一层到底在解决什么
-- `Rc<RefCell<T>>` 很方便，但也容易把状态边界搞得太松
-- 读写时仍要注意借用作用域尽量短
+## 选型指南
 
-## 常见错误
+```
+单线程共享可变状态：
+  Rc<RefCell<T>>         → 最通用
+  Rc<Cell<T>>            → T: Copy 时，更轻量
+  Rc<T>（只读共享）
 
-- 只记住“共享可变状态”四个字，不理解两层含义
-- 什么共享场景都先上 `Rc<RefCell<T>>`
-- 忽视后续可能出现的引用环问题
+多线程共享可变状态：
+  Arc<Mutex<T>>          → 独占写，通用
+  Arc<RwLock<T>>         → 读多写少
+  Arc<Atomic*>           → 简单计数/标志
+```
 
-## 我的理解
-
-这一节像是把前面所有内容拼到一张图里：生命周期、所有权、共享、可变性，最终都会回到“这个值到底怎么被管理”。
+---
 
 ## 下一步
 
-回到 [第 8 章目录](./README.md)，然后进入 [第 9 章：Implementing Typical Data Structures](../chapter09/README.md)。
+第 8 章完成！你已经掌握了：
+- 生命周期（具体、泛型、省略规则、struct 中的）
+- 三种智能指针（Box、Rc、RefCell）及其组合
+
+- 回到目录：[第 8 章：内存管理特性](./README.md)
+- 下一章：[第 9 章：实现典型数据结构](../chapter09/README.md)

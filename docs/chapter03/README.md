@@ -16,7 +16,7 @@
 
 ## 推荐阅读顺序
 
-1. [Struct 基础](./1-Struct基础.md)
+1. [Struct 基础](./1-Struct基础.md)（含 **`#[derive(Debug)]`** 专节：是什么 / 为什么 / 怎么样）
 2. [为 Struct 添加功能](./2-为Struct添加功能.md)
 3. [Enum](./3-Enum.md)
 4. [Option](./4-Option.md)
@@ -26,6 +26,7 @@
 8. [解构的 Struct 参数](./8-解构的Struct参数.md)
 9. [引用的转换与赋值](./9-引用的转换与赋值.md)
 10. [方法链的约束](./10-方法链的约束.md)
+11. [`self` 与 `Self`（是什么 / 为什么 / 怎么样）](./11-self与Self.md)
 
 ## 对应代码与运行方式
 
@@ -51,6 +52,16 @@ rust score = Some(100)
 
 ```text
 once a method returns Result, chaining shape changes => Ok(TextBuilder { value: "Rust Language" })
+```
+
+`topic_11_self_explained`（文档第 11 篇对照）：
+
+```text
+== self and Self (doc 11) ==
+peek (等价于 Counter::peek(&c)): 0
+after bump: 1
+into_inner -> 1
+reorder 消费原 Acc，返回新 Acc: Acc { n: 15 }
 ```
 
 ## 本章常见误区

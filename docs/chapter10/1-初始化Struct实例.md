@@ -1,56 +1,131 @@
-# 1. 初始化 Struct 实例
+# 1. 初始化 Struct 实例的各种方式
 
-- Cargo package: `chapter10`
-- Run chapter: `cargo run -p chapter10`
-- Chapter entry: `chapters/chapter10/src/main.rs`
-- Reference module: `chapters/chapter10/src/topic_01_initializing_struct_instances.rs`
-- Chapter lab: `chapters/chapter10/src/lab.rs`
+> - **所属章节**：第 10 章 · Structuring Projects
+> - **Cargo package**：`chapter10`
+> - **运行方式**：`cargo run -p chapter10`
+> - **代码位置**：`chapters/chapter10/src/topic_01_initializing_struct_instances.rs`
+> - **上一篇**：本章第一篇
+> - **下一篇**：[2. Builder 模式](./2-Builder模式.md)
+> - **关键词**：`new()`、`Default`、`#[derive(Default)]`、字段简写、更新语法、校验构造
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_01_initializing_struct_instances.rs` 文件头注释系统对比 4 种构造方式：`#[derive(Default)]` → 自定义 `new(...) -> Result<Self, E>` 做校验 → 结构更新语法 `..Student::default()` → `unwrap_or_default()` 回退。核心观点："Rust 没有语言级构造函数——`new` 只是约定俗成的关联函数名，你可以写任意多个构造函数。"
+## 一分钟结论
 
-## 定义
+Rust 的 struct 初始化有四种常见方式：
 
-Rust 没有语言级构造函数，但常见做法是通过关联函数 `new()`、`Default` 和结构更新语法来完成初始化。
+1. **直接字面量**：`MyStruct { field1: v1, field2: v2 }`
+2. **关联函数 `new()`**：约定俗成的构造函数，可以带校验
+3. **`#[derive(Default)]` + `T::default()`**：所有字段用类型默认值
+4. **更新语法 `..base`**：基于已有实例，只覆盖部分字段
 
-## 作用
+---
 
-- 给初始化流程加校验
-- 提供默认值
-- 让“只改少数字段”的创建方式更简洁
+## 何时用哪种
 
-## 原理
+```
+字段少且所有字段值都已知 → 字面量
+需要校验或有复杂初始化逻辑 → new() → Result<Self, E>
+字段多，大部分用默认值 → Default + 更新语法
+字段很多且可选 → Builder 模式（下一篇）
+```
 
-`new()` 负责表达定制逻辑，`Default` 负责提供基线状态，`..Default::default()` 负责在已有基线之上只覆盖个别字段。
+---
 
-## 最小示例
+## 详细原理
+
+### `new()` 带校验
+
+```rust
+#[derive(Debug)]
+struct Email(String);
+
+impl Email {
+    fn new(s: &str) -> Result<Self, String> {
+        if !s.contains('@') || s.len() < 5 {
+            return Err(format!("无效邮箱: {s}"));
+        }
+        Ok(Email(s.to_string()))
+    }
+}
+
+let email = Email::new("user@example.com").expect("邮箱格式错误");
+```
+
+### `Default` + 更新语法
 
 ```rust
 #[derive(Debug, Default)]
-struct Student {
-    id: u8,
-    age: u8,
-    name: String,
+struct ServerConfig {
+    host: String,         // Default: ""
+    port: u16,            // Default: 0
+    max_conns: u32,       // Default: 0
+    debug: bool,          // Default: false
+    timeout_ms: u64,      // Default: 0
+}
+
+// 只改 host 和 port，其余用默认值
+let config = ServerConfig {
+    host: "localhost".into(),
+    port: 8080,
+    ..ServerConfig::default()
+};
+```
+
+### 手动实现 Default
+
+```rust
+#[derive(Debug)]
+struct DatabaseConfig {
+    host: String,
+    port: u16,
+    pool_size: u32,
+}
+
+impl Default for DatabaseConfig {
+    fn default() -> Self {
+        Self {
+            host: "127.0.0.1".into(),
+            port: 5432,  // PostgreSQL 默认端口
+            pool_size: 10,
+        }
+    }
 }
 ```
 
-## 注意点
+---
 
-- `new()` 不一定返回 `Self`，也可以返回 `Result<Self, E>`
-- `Default` 适合存在合理默认值的类型
-- 私有字段也可以在 `impl` 里被安全初始化
+## 完整运行示例
 
-## 常见错误
+```rust
+pub fn run() {
+    // 1. 字面量
+    let point = Point { x: 1.0, y: 2.0 };
+    println!("字面量: {:?}", point);
 
-- 把所有初始化都硬塞进一个巨大构造函数
-- 没有默认值也强行实现 Default
-- 为了省事跳过校验逻辑
+    // 2. new() 带校验
+    match User::new("alice", "alice@example.com") {
+        Ok(u) => println!("用户: {:?}", u),
+        Err(e) => println!("错误: {e}"),
+    }
 
-## 我的理解
+    // 3. Default
+    let default_config = ServerConfig::default();
+    println!("默认配置: {:?}", default_config);
 
-初始化方式选得好，类型的使用体验会立刻提升。很多“这个类型好不好用”的感受，其实从构造阶段就决定了。
+    // 4. 更新语法
+    let custom_config = ServerConfig {
+        host: "production.example.com".into(),
+        port: 443,
+        ..ServerConfig::default()
+    };
+    println!("自定义配置: {:?}", custom_config);
+}
+```
+
+---
 
 ## 下一步
 
-继续看 [Builder 模式](./2-Builder模式.md)，处理字段开始变多的情况。
+- 继续阅读：[2. Builder 模式](./2-Builder模式.md)
+- 回到目录：[第 10 章：结构化项目](./README.md)

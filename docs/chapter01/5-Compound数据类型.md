@@ -1,175 +1,229 @@
 # 5. Compound 数据类型：元组与数组
 
-> 类型：**Study note**
-> 关键词：tuple、array、index、out of bounds
-> 上一篇：[4. Primitive 数据类型：整数、浮点、布尔、字符](./4-Primitive数据类型.md)
-> 下一篇：[6. 函数与代码块](./6-函数与代码块.md)
+> - **所属章节**：第 1 章 · Quick Startup
+> - **Cargo package**：`chapter01`
+> - **运行方式**：`cargo run -p chapter01`
+> - **代码位置**：`chapters/chapter01/src/topic_04_compound_data_types.rs`
+> - **上一篇**：[4. Primitive 数据类型](./4-Primitive数据类型.md)
+> - **下一篇**：[6. 函数与代码块](./6-函数与代码块.md)
+> - **关键词**：tuple、array、切片、解构、`[T; N]`、`&[T]`
+
+---
+
+## 这一节解决什么问题
+
+有时你需要把几个值组合在一起，但又不想定义一个 struct。Rust 提供了两种内置的"打包"方式：
+
+- **元组（tuple）**：固定数量、不同类型的值组合
+- **数组（array）**：固定数量、相同类型的值序列
+
+这两种都是**栈上分配的固定大小**类型——和 `Vec`（堆上动态数组）不同。
+
+---
 
 ## 一分钟结论
 
-- Compound 数据类型用来把**多个值组合在一起**
-- 这一章最重要的两个是：**tuple（元组）** 和 **array（数组）**
-- **元组**可以混合类型，适合一组固定位置的值
-- **数组**要求元素类型一致、长度固定
-- 数组越界不是“小问题”，运行时会直接 panic
+- **元组**：`(T1, T2, T3)` — 不同类型，按位置 `.0`/`.1`/`.2` 访问，支持解构
+- **数组**：`[T; N]` — 相同类型，固定长度（N 是类型的一部分！），按下标 `[i]` 访问
+- `[T; 3]` 和 `[T; 4]` 是**不同类型**（长度不同）
+- `&[T]`（切片）是数组或 Vec 的视图，长度运行时才知道（DST）
+- 数组越界访问在 debug 模式会 panic（不是静默的未定义行为）
 
-## 对应代码
+---
 
-- Cargo package: `chapter01`
-- Run chapter: `cargo run -p chapter01`
-- Chapter entry: [chapters/chapter01/src/main.rs](../../chapters/chapter01/src/main.rs)
-- Reference module: [chapters/chapter01/src/topic_04_compound_data_types.rs](../../chapters/chapter01/src/topic_04_compound_data_types.rs)
-- Chapter lab: [chapters/chapter01/src/lab.rs](../../chapters/chapter01/src/lab.rs)
+## 与其他语言对比
 
-当前仓库采用“每章一个 Cargo package”的结构，所以本节不是独立 binary，而是 `chapter01` 中的一个主题模块。
+| 特性 | Python | Java | Rust tuple | Rust array |
+|-----|--------|------|-----------|-----------|
+| 固定长度 | 否（list 可变）| 否（ArrayList 可变）| 是 | 是 |
+| 不同类型 | 是（list 可混）| 否（同类型）| **是** | 否（同类型）|
+| 栈/堆 | 堆 | 堆 | **栈** | **栈** |
+| 越界 | 运行时异常 | 运行时异常 | - | **Debug: panic; Release: UB** |
 
-## 证据来源
+---
 
-### 本次实验
+## 详细原理
 
-元组访问：
+### 1. 元组
+
+```rust
+// 创建
+let point = (1.0_f64, 2.0_f64);           // (f64, f64)
+let person = ("Alice", 30, true);          // (&str, i32, bool)
+
+// 访问：按位置
+println!("{} 今年 {} 岁", person.0, person.1);
+
+// 解构
+let (name, age, active) = person;
+println!("{name}: {age}, active={active}");
+
+// 忽略某些字段
+let (x, _, z) = (1, 2, 3);  // _ 忽略第二个
+
+// 元组作为函数返回值（多返回值）
+fn min_max(nums: &[i32]) -> (i32, i32) {
+    let min = *nums.iter().min().unwrap();
+    let max = *nums.iter().max().unwrap();
+    (min, max)
+}
+
+let nums = [3, 1, 4, 1, 5, 9, 2, 6];
+let (min, max) = min_max(&nums);
+println!("最小: {min}, 最大: {max}");
+
+// Unit 类型（空元组）
+let nothing: () = ();  // "没有有意义信息的值"
+```
+
+### 2. 数组
+
+```rust
+// 创建
+let scores = [85, 92, 78, 95];        // [i32; 4]
+let zeros = [0; 10];                   // 10 个 0，等同 [0, 0, ..., 0]
+
+// 类型中的 N 是常量：
+let a: [i32; 4] = [1, 2, 3, 4];
+let b: [i32; 5] = [1, 2, 3, 4, 5];
+// a 和 b 是不同类型！[i32; 4] ≠ [i32; 5]
+
+// 访问
+println!("第一个: {}", scores[0]);
+println!("最后一个: {}", scores[scores.len() - 1]);
+println!("长度: {}", scores.len());
+
+// 越界：debug 模式 panic
+// scores[100]; // thread 'main' panicked at 'index out of bounds: the len is 4 but the index is 100'
+// 安全访问：
+let safe = scores.get(100);  // Option<&i32>，不会 panic
+println!("安全访问 [100]: {safe:?}");  // None
+```
+
+### 3. 切片（slice）
+
+```rust
+let arr = [1, 2, 3, 4, 5];
+
+// 切片是对数组（或 Vec）的视图
+let all: &[i32] = &arr;          // 全部
+let first_three: &[i32] = &arr[..3];  // [1, 2, 3]
+let last_two: &[i32] = &arr[3..];     // [4, 5]
+let middle: &[i32] = &arr[1..4];      // [2, 3, 4]
+
+// 切片不拥有数据（借用），可以有多个
+println!("{all:?}");
+println!("{first_three:?}");
+
+// 函数接受切片（比接受 &Vec<T> 更通用）
+fn sum(s: &[i32]) -> i32 { s.iter().sum() }
+
+let v = vec![1, 2, 3];
+println!("sum of array: {}", sum(&arr));   // 数组自动转切片
+println!("sum of vec:   {}", sum(&v));     // Vec 也可以
+```
+
+---
+
+## 完整运行示例
 
 ```rust
 fn main() {
-    let tup: (i32, f64, char) = (500, 6.4, 'z');
-    println!("{} {} {}", tup.0, tup.1, tup.2);
+    println!("=== 元组 ===");
+    let color = (255_u8, 128_u8, 0_u8);  // RGB
+    let (r, g, b) = color;
+    println!("RGB({r}, {g}, {b}) → #{:02X}{:02X}{:02X}", r, g, b);
+
+    // 嵌套元组
+    let point3d = ((1.0_f64, 2.0), 3.0);
+    println!("3D 点: x={}, y={}, z={}", point3d.0.0, point3d.0.1, point3d.1);
+    println!();
+
+    println!("=== 数组 ===");
+    let temperatures: [f64; 7] = [22.5, 23.0, 19.8, 24.1, 21.5, 20.0, 22.0];
+    println!("一周温度: {temperatures:?}");
+    println!("平均气温: {:.1}°C", temperatures.iter().sum::<f64>() / temperatures.len() as f64);
+    println!("最高温: {:.1}°C", temperatures.iter().cloned().fold(f64::NEG_INFINITY, f64::max));
+    println!();
+
+    println!("=== 切片与通用函数 ===");
+    fn statistics(data: &[f64]) -> (f64, f64, f64) {
+        let sum: f64 = data.iter().sum();
+        let mean = sum / data.len() as f64;
+        let min = data.iter().cloned().fold(f64::INFINITY, f64::min);
+        let max = data.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+        (mean, min, max)
+    }
+
+    let (mean, min, max) = statistics(&temperatures);
+    println!("均值={mean:.1}, 最小={min:.1}, 最大={max:.1}");
+
+    // 同一函数处理 Vec
+    let more = vec![25.0, 26.5, 23.0];
+    let (m2, n2, x2) = statistics(&more);
+    println!("vec 统计: 均值={m2:.1}, 最小={n2:.1}, 最大={x2:.1}");
+    println!();
+
+    println!("=== 数组安全访问 ===");
+    let data = [10, 20, 30, 40, 50];
+
+    // 越界 → None（不 panic）
+    match data.get(2) {
+        Some(v) => println!("  data[2] = {v}"),
+        None => println!("  索引越界"),
+    }
+
+    match data.get(99) {
+        Some(v) => println!("  data[99] = {v}"),
+        None => println!("  data[99] 越界 → None"),
+    }
+    println!();
+
+    println!("=== 解构模式 ===");
+    let [first, second, rest @ ..] = [1, 2, 3, 4, 5];
+    println!("first={first}, second={second}, rest={rest:?}");
+
+    // 元组解构
+    let pairs = [(1, "one"), (2, "two"), (3, "three")];
+    for (num, name) in &pairs {
+        println!("  {num} = {name}");
+    }
 }
 ```
 
-运行结果：
+---
 
-```text
-500 6.4 z
-```
+## 注意点与陷阱
 
-数组访问：
+### 陷阱 1：数组长度是类型的一部分
 
 ```rust
-fn main() {
-    let a = [1, 2, 3, 4, 5];
-    println!("{}", a[0]);
-}
+fn sum_three(a: [i32; 3]) -> i32 { a.iter().sum() }
+
+let arr3 = [1, 2, 3];
+let arr4 = [1, 2, 3, 4];
+
+sum_three(arr3); // ✅
+// sum_three(arr4); // ❌ [i32; 4] 不是 [i32; 3]！
+
+// 解决：使用切片
+fn sum(a: &[i32]) -> i32 { a.iter().sum() }
+sum(&arr3); // ✅
+sum(&arr4); // ✅
 ```
 
-运行结果：
-
-```text
-1
-```
-
-数组越界：
+### 陷阱 2：release 模式整数溢出回绕
 
 ```rust
-fn main() {
-    let a = [1, 2, 3];
-    let idx: usize = std::env::args().nth(1).unwrap().parse().unwrap();
-    println!("{}", a[idx]);
-}
+// debug 模式：溢出 panic
+// release 模式：溢出回绕（256 → 0）
+let x: u8 = 255;
+// x += 1; // debug: panic; release: 0
 ```
 
-运行结果节选：
-
-```text
-index out of bounds: the len is 3 but the index is 10
-```
-
-## 扩展演示输出（当前代码已升级）
-
-`topic_04_compound_data_types.rs` 现在按 8 个子场景演示：元组基础 → 元组解构（含 `_` 忽略）→ 嵌套元组 → unit `()` → 数组基础 → `[value; N]` 填充 → `.iter()` / `enumerate` 遍历 → 数组切片 `&arr[..]`（为第 2 章借用打伏笔）。
-
-```text
-元组按位置访问: name = alice, age = 20, grade = A
-解构元组: r = 255, g = 128, b = 0
-nested tuple: coord = (3, 4), label = origin
-unit 类型 () = () —— 它是‘没有信息’的值
-array: [90, 85, 88, 92, 95]
-填充写法 [0; 5] = [0, 0, 0, 0, 0]
-idx = 0, fruit = apple
-head = [10, 20, 30], tail = [40, 50]
-```
-
-## 定义
-
-Compound 数据类型表示“把多个值放到一个整体里”。当前最核心的两种：
-
-| 类型 | 能否混合元素类型 | 长度是否固定 | 常见访问方式 |
-| --- | --- | --- | --- |
-| 元组 `tuple` | 可以 | 固定 | `.0`, `.1` 或解构 |
-| 数组 `array` | 不可以 | 固定 | `[index]` |
-
-## 作用
-
-这一节解决的是“当一个值不够用时，怎样把多个值组织到一起”。
-
-- 元组适合放一组位置固定、类型可能不同的数据
-- 数组适合放一组类型相同、长度固定的数据
-
-## 原理
-
-### 元组
-
-元组的特点是：
-
-- 长度固定
-- 每个位置的类型可以不同
-- 常用在“临时打包几个值”的场景
-
-例如：
-
-```rust
-let user_profile: (&str, i32, char) = ("alice", 20, 'A');
-```
-
-### 数组
-
-数组的特点是：
-
-- 元素类型必须一致
-- 长度固定
-- 通过索引访问
-
-例如：
-
-```rust
-let scores: [i32; 5] = [90, 85, 88, 92, 95];
-```
-
-## 最小示例
-
-```rust
-fn main() {
-    let user_profile: (&str, i32, char) = ("alice", 20, 'A');
-    println!("{}", user_profile.0);
-
-    let scores: [i32; 5] = [90, 85, 88, 92, 95];
-    println!("{}", scores[0]);
-}
-```
-
-## 常见坑
-
-### ❌ 把数组当成可随意增长的容器
-
-当前这章里的数组长度是固定的。  
-如果你想要可变长集合，后面会进入 `Vec<T>`。
-
-### ❌ 数组越界
-
-```rust
-let a = [1, 2, 3];
-println!("{}", a[10]);
-```
-
-这会在运行时直接报错并 panic。
-
-## 我的理解
-
-这一节的重点不是“会写 tuple 和 array”，而是开始形成组合值的意识：
-
-- 单个值不够表达信息时，就要考虑更高一层的数据组织
-- Rust 会要求你在“类型是否一致、长度是否固定”这些事情上更明确
+---
 
 ## 下一步
 
+- 继续阅读：[6. 函数与代码块](./6-函数与代码块.md)
 - 回到目录：[第 1 章：Quick Startup](./README.md)
-- 后续再进入函数、控制流和更复杂的类型组织方式

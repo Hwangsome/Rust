@@ -1,151 +1,280 @@
-# 3. Enum
+# 3. Enum：枚举与代数数据类型
 
-> 类型：**Study note**
-> 关键词：enum、variant、state、`match`
-> 上一篇：[2. 为 Struct 添加功能](./2-为Struct添加功能.md)
-> 下一篇：[4. Option](./4-Option.md)
+> - **所属章节**：第 3 章 · Custom and Library Provided Types
+> - **Cargo package**：`chapter03`
+> - **运行方式**：`cargo run -p chapter03`
+> - **代码位置**：`chapters/chapter03/src/topic_03_enums.rs`
+> - **上一篇**：[2. 为 Struct 添加功能](./2-为Struct添加功能.md)
+> - **下一篇**：[4. Option](./4-Option.md)
+> - **关键词**：`enum`、variant、携带数据的 enum、`match`、穷尽性、ADT
+
+---
+
+## 这一节解决什么问题
+
+Java/Python 的枚举是"常量的集合"：`enum Direction { NORTH, SOUTH, EAST, WEST }`，每个变体只是一个名字。
+
+Rust 的 enum 强大得多——**每个变体可以携带不同类型和数量的数据**：
+
+```rust
+enum Message {
+    Quit,                       // 无数据
+    Move { x: i32, y: i32 },   // 具名字段（像 struct）
+    Write(String),              // 一个 String
+    ChangeColor(i32, i32, i32), // 三个 i32
+}
+```
+
+这叫做**代数数据类型（ADT）**，是 Rust 类型系统最强大的特性之一。
+
+---
 
 ## 一分钟结论
 
-- `enum` 用来表达“一个值只能是多种状态中的一种”
-- 它特别适合建模互斥状态
-- 和 `match` 搭配时最自然
+- Rust enum 的每个 variant 可以携带任意数据（无数据 / 元组形式 / struct 形式）
+- `match` 是处理 enum 的主要工具，并且会**穷尽检查**（漏写分支会编译错误）
+- `Option<T>` 和 `Result<T, E>` 本质上都是 enum
+- 可以给 enum 实现方法（`impl MyEnum { ... }`）
+- 不同 variant 之间类型不同，不能直接比较（除非 `#[derive(PartialEq)]`）
 
-## 证据来源
+---
 
-- 对应模块：[topic_03_enums.rs](../../chapters/chapter03/src/topic_03_enums.rs)
-- 运行章节：`cargo run -p chapter03`
+## 与其他语言对比
 
-关键输出：
 
-```text
-当前状态: 通行
-```
+| 特性          | Java enum       | C enum     | Rust enum     |
+| ----------- | --------------- | ---------- | ------------- |
+| variant 有数据 | ❌（只有常量）         | ❌（只是整数）    | **✅**（任意类型）   |
+| 穷尽检查        | ❌（switch 可以不完整） | ❌          | **✅**（编译强制）   |
+| 模式匹配        | 有限（switch）      | 有限         | **完整**（match） |
+| 等价概念        | 联合类型需要多个类       | 多个 #define | 一个 enum       |
 
-## 扩展演示输出（当前代码已升级）
 
-`topic_03_enums.rs` 现在包含三件事：
-1. 简单 enum（`TrafficLight`）+ `impl` 里写 `describe` / `next` 方法
-2. `match` 的**穷尽性检查**（漏一个分支 → E0004）
-3. 每个分支带不同数据的 `Message` enum —— Rust 真正的 ADT 建模能力
+---
 
-```text
--- (1) 简单 enum + match --
-当前是 Green: 通行
-下一个状态: Yellow: 准备
+## 详细原理
 
--- (3) 每个分支携带不同数据 --
-[Quit] 退出
-[Move] 移动到 (10, 20)
-[Write] 写入文本: hello
-[ChangeColor] RGB(255, 128, 0)
-```
-
-## 定义
-
-`enum` 是把多个可能分支组织到一个类型里的方式。
-
-例如：
+### 1. 基础 enum
 
 ```rust
-enum TrafficLight {
-    Red,
-    Yellow,
-    Green,
+#[derive(Debug, PartialEq)]
+enum Direction {
+    North,
+    South,
+    East,
+    West,
+}
+
+let dir = Direction::North;
+
+match dir {
+    Direction::North => println!("向北"),
+    Direction::South => println!("向南"),
+    Direction::East  => println!("向东"),
+    Direction::West  => println!("向西"),
+    // 如果漏掉任何一个分支，编译会报错！
 }
 ```
 
-## 作用
-
-- 表达互斥状态
-- 让状态空间更明确
-- 逼迫使用者处理不同分支
-
-## 原理
-
-当你写：
+### 2. 携带数据的 enum
 
 ```rust
-let light = TrafficLight::Green;
-```
-
-表示的是：
-
-- 当前值属于 `TrafficLight`
-- 但具体处于 `Green` 这个 variant
-
-和 `match` 搭配：
-
-```rust
-match light {
-    TrafficLight::Red => ...,
-    TrafficLight::Yellow => ...,
-    TrafficLight::Green => ...,
-}
-```
-
-这让状态处理逻辑变得显式。
-
-## 最小示例
-
-```rust
-enum TrafficLight {
-    Red,
-    Yellow,
-    Green,
+#[derive(Debug)]
+enum Shape {
+    Circle(f64),                    // 半径
+    Rectangle(f64, f64),            // 宽、高
+    Triangle { base: f64, height: f64 }, // 底、高（具名字段）
 }
 
-fn main() {
-    let light = TrafficLight::Green;
+impl Shape {
+    fn area(&self) -> f64 {
+        match self {
+            Shape::Circle(r) => std::f64::consts::PI * r * r,
+            Shape::Rectangle(w, h) => w * h,
+            Shape::Triangle { base, height } => base * height / 2.0,
+        }
+    }
 
-    match light {
-        TrafficLight::Red => println!("停止"),
-        TrafficLight::Yellow => println!("准备"),
-        TrafficLight::Green => println!("通行"),
+    fn name(&self) -> &str {
+        match self {
+            Shape::Circle(_) => "圆形",
+            Shape::Rectangle(_, _) => "矩形",
+            Shape::Triangle { .. } => "三角形",
+        }
     }
 }
 ```
 
-## 注意点
+### 3. `_` 通配符和 `..`
 
-### 1. `enum` 不是“几个常量”
+```rust
+enum Status {
+    Active,
+    Inactive,
+    Banned(String),
+    Suspended { reason: String, duration_days: u32 },
+}
 
-它代表的是一种类型及其分支集合。
+fn handle(s: Status) {
+    match s {
+        Status::Active => println!("活跃"),
+        Status::Banned(reason) => println!("封禁原因: {reason}"),
+        // `..` 忽略 struct 变体的部分字段
+        Status::Suspended { reason, .. } => println!("暂停: {reason}"),
+        // `_` 匹配剩余所有变体
+        _ => println!("其他状态"),
+    }
+}
+```
 
-### 2. `match` 的价值不只是语法美观
+---
 
-它让你把每个分支的处理逻辑显式写出来。
+## 完整运行示例
 
-### 3. 后续很多核心类型本质上也是 enum
+```rust
+#[derive(Debug)]
+enum Command {
+    // 简单变体
+    Quit,
+    Help,
+    // 携带数据
+    Move { x: i32, y: i32 },
+    Write(String),
+    SetColor(u8, u8, u8),
+}
 
-例如后面马上会学到：
+impl Command {
+    fn execute(&self) {
+        match self {
+            Command::Quit => println!("退出程序"),
+            Command::Help => println!("帮助信息：..."),
+            Command::Move { x, y } => println!("移动到 ({x}, {y})"),
+            Command::Write(msg) => println!("写入: {msg}"),
+            Command::SetColor(r, g, b) => println!("设置颜色: RGB({r}, {g}, {b})"),
+        }
+    }
 
-- `Option`
-- `Result`
+    fn is_quit(&self) -> bool {
+        matches!(self, Command::Quit) // matches! 宏的简洁写法
+    }
+}
 
-## 常见错误
+fn main() {
+    let commands = vec![
+        Command::Move { x: 10, y: 20 },
+        Command::Write("Hello, Rust!".into()),
+        Command::SetColor(255, 128, 0),
+        Command::Help,
+        Command::Quit,
+    ];
 
-### ❌ 错误 1：把 enum 只当作标签
+    for cmd in &commands {
+        cmd.execute();
+    }
 
-它通常是在建模状态机，而不只是“多几个名字”。
+    println!();
+    println!("最后一条是 Quit: {}", commands.last().unwrap().is_quit());
+    println!();
 
-### ❌ 错误 2：遗漏分支处理
+    // enum 的大小
+    println!("Command 大小: {} bytes", std::mem::size_of::<Command>());
+    // enum 的大小 = 最大 variant 的大小 + 判别字节
+}
+```
 
-Rust 借 `match` 的穷尽性检查帮你尽早发现这种问题。
+---
 
-### ❌ 错误 3：该用 enum 表达状态，结果拆成多个 bool
+## 编译器错误分析
 
-那样很容易出现非法组合状态。
+### ❌ E0004：match 不穷尽
 
-## 我的理解
+```rust
+enum Color { Red, Green, Blue }
+let c = Color::Red;
 
-- `struct` 擅长表达“一个东西有哪些字段”
-- `enum` 擅长表达“一个东西当前处于哪种状态”
-- 这两者合起来，已经能覆盖大量业务建模场景
+match c {
+    Color::Red => println!("红"),
+    Color::Green => println!("绿"),
+    // 忘写 Blue！
+}
+```
+
+```text
+error[E0004]: non-exhaustive patterns: `Color::Blue` not covered
+  |
+  | match c {
+  |       ^ pattern `Color::Blue` not covered
+  |
+  = help: ensure that all possible cases are being handled
+```
+
+**修复**：补上遗漏的分支，或用 `_` 通配
+
+---
+
+## 实际工程场景
+
+### 1. HTTP 响应状态
+
+```rust
+#[derive(Debug)]
+enum HttpStatus {
+    Ok(String),            // 200 + 响应体
+    NotFound,              // 404
+    Error { code: u16, message: String }, // 5xx
+    Redirect(String),      // 301/302 + 新 URL
+}
+
+fn handle_response(status: HttpStatus) -> String {
+    match status {
+        HttpStatus::Ok(body) => format!("成功: {}", body.len()),
+        HttpStatus::NotFound => "404 Not Found".into(),
+        HttpStatus::Error { code, message } => format!("{code}: {message}"),
+        HttpStatus::Redirect(url) => format!("跳转到: {url}"),
+    }
+}
+```
+
+### 2. AST（抽象语法树）
+
+```rust
+#[derive(Debug)]
+enum Expr {
+    Number(f64),
+    Add(Box<Expr>, Box<Expr>),   // 加法节点
+    Mul(Box<Expr>, Box<Expr>),   // 乘法节点
+    Neg(Box<Expr>),              // 取负
+}
+
+fn eval(expr: &Expr) -> f64 {
+    match expr {
+        Expr::Number(n) => *n,
+        Expr::Add(a, b) => eval(a) + eval(b),
+        Expr::Mul(a, b) => eval(a) * eval(b),
+        Expr::Neg(e) => -eval(e),
+    }
+}
+```
+
+---
+
+## 我的理解与记忆方法
+
+**Rust enum 的精髓**：
+
+> 每个变体不只是一个名字，而是一种"状态 + 这个状态特有的数据"的组合。用 match 强制你处理每种状态——不会遗漏任何情况。
+
+**和 Java switch 的关键区别**：
+
+```
+Java: switch 不强制处理所有 case → 遗漏导致运行时 bug
+Rust: match 强制穷尽 → 遗漏直接编译失败
+```
+
+---
 
 ## 下一步
 
-下一篇看 `Option<T>`。它是最经典的“标准库里的 enum”。
-
 - 继续阅读：[4. Option](./4-Option.md)
-- 回到目录：[第 3 章：Custom and Library Provided](./README.md)
+- 回到目录：[第 3 章：自定义类型](./README.md)
+

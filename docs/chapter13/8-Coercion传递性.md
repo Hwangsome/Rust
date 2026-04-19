@@ -1,22 +1,38 @@
-# 8. Coercion 传递性
+# 8. Coercion 的传递性
 
-> 关键词：chain coercion、multi-step
+> - **所属章节**：第 13 章 · Coercion in Rust
+> - **代码位置**：`chapters/chapter13/src/topic_08_transitivity_in_coercion.rs`
+> - **上一篇**：[7. 泛型与 Coercion](./7-泛型与Coercion.md)
+> - **下一篇**：[9. LUB 强转](./9-LUB强转.md)
 
-## 一分钟结论
+---
 
-只要每一步都是合法 coercion，它们能自动**链式**发生。例如：
+## Coercion 可以链式发生
 
-```text
-Box<String>  →  String        (deref)
-&String      →  &str          (deref)
-合起来: &Box<String> → &str
+```rust
+fn accepts_str(s: &str) { println!("{s}"); }
+
+let boxed = Box::new(String::from("hello"));
+// Box<String> → String（Deref）→ str（Deref）
+// &Box<String> → &String → &str（三层，全自动！）
+accepts_str(&boxed);
+
+let v = vec![1, 2, 3];
+let boxed_vec = Box::new(v);
+fn sum(s: &[i32]) -> i32 { s.iter().sum() }
+// Box<Vec<i32>> → Vec<i32> → [i32]
+sum(&boxed_vec); // ✅
 ```
 
-## 对应代码
+---
 
-- [topic_08_transitivity_in_coercion.rs](../../chapters/chapter13/src/topic_08_transitivity_in_coercion.rs)
+## 规律
 
-## 设计哲学
+链式 coercion 的规则：**每一步都必须是合法的单步 coercion**。  
+不能跨越两层"壳"同时转换。
 
-Rust 的 deref chain 允许你写 API 时**不用关心调用方传进来的具体包装层数**——
-只要最终能 deref 到目标类型就行。`&String` / `&Box<String>` / `&Rc<String>` 给 `fn f(&str)` 都一样能工作。
+---
+
+## 下一步
+
+- 继续阅读：[9. LUB 强转](./9-LUB强转.md)

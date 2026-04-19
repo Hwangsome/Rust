@@ -1,64 +1,124 @@
-# 5. 分层结果类型：Result<Option<T>, E>
+# 5. 分层结果：`Result<Option<T>, E>`
 
-- Cargo package: `chapter11`
-- Run chapter: `cargo run -p chapter11`
-- Chapter entry: `chapters/chapter11/src/main.rs`
-- Reference module: `chapters/chapter11/src/topic_05_layered_outcomes_result_option_part1.rs`
-- Chapter lab: `chapters/chapter11/src/lab.rs`
+> - **所属章节**：第 11 章 · Error Handling
+> - **Cargo package**：`chapter11`
+> - **运行方式**：`cargo run -p chapter11`
+> - **代码位置**：`chapters/chapter11/src/topic_05_layered_outcomes_result_option_part1.rs`
+> - **上一篇**：[4. 链式调用中的 ? 运算符](./4-链式调用中的问号运算符.md)
+> - **下一篇**：[6. 分层结果 Option<Result>](./6-分层结果类型：OptionResult.md)
+> - **关键词**：`Result<Option<T>>`, 三态结果, 数据库查询, transpose
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_05_layered_outcomes_result_option_part1.rs` 文件头用表格明确 `Result<Option<T>, E>` 的 3 种结局对应的语义：
+## 这一节解决什么问题
 
-| 形状 | 语义 | 处理 |
-|-----|------|-----|
-| `Ok(Some(t))` | 查到 | 正常走业务 |
-| `Ok(None)` | 合法完成但没数据 | 产品未找到 / 缓存 miss |
-| `Err(e)` | 执行失败 | 记录、重试、向上抛 |
+查询数据库时有三种结果：
 
-核心提醒：**`Ok(None)` 不是错误**——不要把"找不到"当成 `Err`。
+1. **操作成功，找到了数据** → `Ok(Some(data))`
+2. **操作成功，但没有数据** → `Ok(None)`
+3. **操作失败**（网络错误、SQL 错误）→ `Err(e)`
 
-## 定义
+这是 `Result<Option<T>, E>` 的典型场景——**操作一定会执行，但结果可能"找不到"**。
 
-`Result<Option<T>, E>` 表示三种结果：
+关键区分：`Ok(None)` 不是错误，只是"正常地没有结果"。不要把它当 `Err` 处理。
 
-- `Err(E)`：操作失败
-- `Ok(Some(T))`：操作成功且有值
-- `Ok(None)`：操作成功但没有值
+---
 
-## 作用
-
-- 表达“缺值不是错误”的查询类场景
-- 保持错误和缺失语义分离
-- 提升数据库、缓存、查找类 API 的可读性
-
-## 原理
-
-外层 `Result` 回答“操作本身有没有失败”，内层 `Option` 回答“如果操作成功，值存在不存在”。
-
-## 最小示例
+## 详细原理
 
 ```rust
-fn find_product(id: u32, connection_available: bool)
-    -> Result<Option<Product>, DbError>
+fn find_user_by_id(id: u32) -> Result<Option<String>, String> {
+    if id == 0 {
+        return Err("ID 不能为 0".to_string());  // 真正的错误
+    }
+    match id {
+        1 => Ok(Some("Alice".to_string())),
+        2 => Ok(Some("Bob".to_string())),
+        _ => Ok(None),  // 正常查询，但没有结果
+    }
+}
+
+// 三种情况的处理
+for id in [0, 1, 2, 99] {
+    match find_user_by_id(id) {
+        Ok(Some(user)) => println!("  [{}] 找到用户: {}", id, user),
+        Ok(None)       => println!("  [{}] 用户不存在", id),
+        Err(e)         => println!("  [{}] 查询失败: {}", id, e),
+    }
+}
 ```
 
-## 注意点
+---
 
-- `None` 不是“查找出错”
-- 这类返回值很适合查库、查缓存、查配置
-- 不要为了简化签名把 `None` 和 `Err` 混在一起
+## `transpose()` 转换
 
-## 常见错误
+```rust
+// Option<Result<T, E>> → Result<Option<T>, E>
+let opt_result: Option<Result<i32, &str>> = Some(Ok(42));
+let result_opt: Result<Option<i32>, &str> = opt_result.transpose();
+println!("{result_opt:?}"); // Ok(Some(42))
 
-- 用 `Result<T, E>` 强行表达“可能查不到”
-- 把 `Ok(None)` 也按错误分支处理
-- 把“没数据”和“系统故障”写进同一层语义
+let opt_err: Option<Result<i32, &str>> = Some(Err("failed"));
+let result_err: Result<Option<i32>, &str> = opt_err.transpose();
+println!("{result_err:?}"); // Err("failed")
 
-## 我的理解
+let opt_none: Option<Result<i32, &str>> = None;
+let result_none: Result<Option<i32>, &str> = opt_none.transpose();
+println!("{result_none:?}"); // Ok(None)
+```
 
-这个模式很像真实系统里的查询行为：没找到很常见，但连接失败显然不是一回事。
+---
+
+## 完整运行示例
+
+```rust
+use std::collections::HashMap;
+
+// 模拟数据库
+fn query_db(key: &str) -> Result<Option<i32>, String> {
+    let db: HashMap<&str, i32> = [("a", 1), ("b", 2), ("c", 3)].into_iter().collect();
+
+    if key.contains('#') {
+        return Err(format!("无效键: {key}"));
+    }
+
+    Ok(db.get(key).copied()) // Some(value) 或 None
+}
+
+fn process_query(key: &str) -> Result<String, String> {
+    match query_db(key)? {  // ? 传播 Err
+        Some(value) => Ok(format!("找到: {key} = {value}")),
+        None => Ok(format!("未找到: {key}")),
+    }
+}
+
+fn main() {
+    println!("=== Result<Option<T>> 三态处理 ===");
+    for key in ["a", "b", "z", "x#y"] {
+        match process_query(key) {
+            Ok(msg) => println!("  ✅ {msg}"),
+            Err(e) => println!("  ❌ {e}"),
+        }
+    }
+    println!();
+
+    println!("=== transpose: Option<Result> ↔ Result<Option> ===");
+    let cases: Vec<Option<Result<i32, &str>>> = vec![
+        Some(Ok(42)),
+        None,
+        Some(Err("bad")),
+    ];
+
+    for c in cases {
+        let transposed: Result<Option<i32>, &str> = c.transpose();
+        println!("  → {transposed:?}");
+    }
+}
+```
+
+---
 
 ## 下一步
 
-继续看 [分层结果类型：Option<Result<T, E>>](./6-分层结果类型：OptionResult.md)，比较另一种完全不同的语义。
+- 继续阅读：[6. 分层结果 Option<Result>](./6-分层结果类型：OptionResult.md)
+- 回到目录：[第 11 章：错误处理](./README.md)

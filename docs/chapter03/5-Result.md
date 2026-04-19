@@ -1,127 +1,201 @@
-# 5. Result
+# 5. Result<T, E>：显式的错误处理
 
-> 类型：**Study note**
-> 关键词：`Result<T, E>`、`Ok`、`Err`
-> 上一篇：[4. Option](./4-Option.md)
-> 下一篇：[6. HashMap](./6-HashMap.md)
+> - **所属章节**：第 3 章 · Custom and Library Provided Types
+> - **Cargo package**：`chapter03`
+> - **运行方式**：`cargo run -p chapter03`
+> - **代码位置**：`chapters/chapter03/src/topic_05_result_type.rs`
+> - **上一篇**：[4. Option](./4-Option.md)
+> - **下一篇**：[6. HashMap](./6-HashMap.md)
+> - **关键词**：`Result<T, E>`、`Ok`、`Err`、`?`、`map_err`、`unwrap`、错误传播
+
+---
+
+## 这一节解决什么问题
+
+在 Java 里，方法可能抛出异常——但你看函数签名根本看不出来！你必须查文档或试错。
+
+Rust 的 `Result<T, E>` 把"可能失败"写进类型签名：
+
+```rust
+fn read_file(path: &str) -> Result<String, io::Error>
+//                          ^^^^^^^^^^^^^^^^^^^^^^^^
+//                          一眼看出：成功时是 String，失败时是 io::Error
+```
+
+调用方**必须**处理错误，否则编译器给出 `unused Result` 警告（`#[must_use]`）。
+
+---
 
 ## 一分钟结论
 
-- `Result<T, E>` 表示“成功得到 `T`，失败得到 `E`”
-- 它是 Rust 错误处理的核心类型之一
-- 和 `Option<T>` 相比，它多了“失败原因”
+- `Result<T, E>` 是内置 enum：`Ok(T)` 或 `Err(E)`
+- `?` 操作符：在函数里传播错误（遇到 `Err` 立刻返回）
+- 组合子：`map`、`map_err`、`and_then`、`or_else`、`unwrap_or`...
+- `?` 要求函数返回 `Result` 或 `Option`
+- 与 `Option` 的关系：`result.ok()` → `Option`；`option.ok_or(err)` → `Result`
 
-## 证据来源
+---
 
-- 对应模块：[topic_05_result_type.rs](../../chapters/chapter03/src/topic_05_result_type.rs)
-- 运行章节：`cargo run -p chapter03`
-
-关键输出：
-
-```text
-parsed successfully = 42
-```
-
-## 扩展演示输出（当前代码已升级）
-
-`topic_05_result_type.rs` 把 `Result` 的完整使用链条都演示了：`match` 两路处理 → 组合子 `map` / `map_err` / `unwrap_or_else` → **自定义 `CalcError` enum + `?` 操作符**（把 `ParseIntError` 归一化为 `CalcError::ParseFailure`）→ `Result` 链式 `and_then`。
-
-```text
--- (3) ? 操作符 + 自定义错误 --
-parse_and_halve("5") => Ok(20)
-parse_and_halve("0") => Err(DivideByZero)
-parse_and_halve("abc") => Err(ParseFailure(ParseIntError { kind: InvalidDigit }))
-
--- (4) Result 链式 and_then --
-pipeline = Ok(60)
-```
-
-## 定义
-
-`Result<T, E>` 也是一个 enum，最核心的两个分支：
-
-- `Ok(T)`
-- `Err(E)`
-
-## 作用
-
-- 显式表达操作成功或失败
-- 把失败原因保留下来
-- 让调用方必须决定如何处理错误
-
-## 原理
-
-当前示例：
+## Result 的定义
 
 ```rust
-let parsed: Result<i32, _> = "42".parse();
-```
-
-含义：
-
-- 如果解析成功，拿到整数
-- 如果失败，拿到错误值
-
-处理方式：
-
-```rust
-match parsed {
-    Ok(value) => println!("{value}"),
-    Err(error) => println!("{error}"),
+enum Result<T, E> {
+    Ok(T),   // 成功，携带值
+    Err(E),  // 失败，携带错误
 }
 ```
 
-## 最小示例
+---
+
+## 详细原理
+
+### 1. 返回 Result
 
 ```rust
-fn main() {
-    let parsed: Result<i32, _> = "42".parse();
+use std::num::ParseIntError;
 
-    match parsed {
-        Ok(value) => println!("ok = {}", value),
-        Err(error) => println!("err = {}", error),
+fn parse_age(s: &str) -> Result<u8, ParseIntError> {
+    s.trim().parse::<u8>()
+}
+
+// 处理
+match parse_age("30") {
+    Ok(age) => println!("年龄: {age}"),
+    Err(e)  => println!("解析错误: {e}"),
+}
+```
+
+### 2. `?` 操作符（最重要！）
+
+```rust
+fn load_and_double(s: &str) -> Result<i32, ParseIntError> {
+    let n: i32 = s.trim().parse()?; // 失败时提前返回 Err
+    Ok(n * 2)
+}
+```
+
+`?` 等价于：
+
+```rust
+let n: i32 = match s.trim().parse() {
+    Ok(v) => v,
+    Err(e) => return Err(From::from(e)),
+};
+```
+
+### 3. 链式处理
+
+```rust
+let result = "42"
+    .parse::<i32>()           // Result<i32, ParseIntError>
+    .map(|n| n * 2)            // Ok(84) 或传播 Err
+    .map_err(|e| e.to_string()); // 把错误类型转换成 String
+
+println!("{result:?}"); // Ok(84)
+```
+
+---
+
+## 完整运行示例
+
+```rust
+use std::num::ParseIntError;
+
+#[derive(Debug)]
+enum AppError {
+    ParseError(ParseIntError),
+    TooLarge(i32),
+    TooSmall(i32),
+}
+
+impl From<ParseIntError> for AppError {
+    fn from(e: ParseIntError) -> Self { AppError::ParseError(e) }
+}
+
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AppError::ParseError(e) => write!(f, "解析失败: {e}"),
+            AppError::TooLarge(n) => write!(f, "{n} 太大（最大 100）"),
+            AppError::TooSmall(n) => write!(f, "{n} 太小（最小 0）"),
+        }
+    }
+}
+
+fn parse_score(s: &str) -> Result<i32, AppError> {
+    let n: i32 = s.trim().parse()?;  // ParseIntError → AppError 通过 From
+    if n > 100 { return Err(AppError::TooLarge(n)); }
+    if n < 0   { return Err(AppError::TooSmall(n)); }
+    Ok(n)
+}
+
+fn main() {
+    println!("=== Result 基础 ===");
+    let inputs = ["85", "abc", "120", "-5", "100"];
+
+    for input in inputs {
+        match parse_score(input) {
+            Ok(score) => println!("  ✅ {:?} → 成绩: {score}", input),
+            Err(e) => println!("  ❌ {:?} → {e}", input),
+        }
+    }
+    println!();
+
+    println!("=== Result 组合子 ===");
+    let double_score = parse_score("40")
+        .map(|n| n * 2)
+        .unwrap_or(0);
+    println!("40 分 × 2 = {double_score}");
+
+    // and_then：只有成功时才继续
+    let result = parse_score("75")
+        .and_then(|n| {
+            if n >= 60 { Ok("及格") } else { Err(AppError::TooSmall(n)) }
+        });
+    println!("75 分是否及格: {:?}", result);
+    println!();
+
+    println!("=== ? 操作符 ===");
+    fn process(input: &str) -> Result<String, AppError> {
+        let score = parse_score(input)?;  // 失败立刻返回
+        let grade = match score {
+            90..=100 => "A",
+            80..=89  => "B",
+            70..=79  => "C",
+            60..=69  => "D",
+            _        => "F",
+        };
+        Ok(format!("分数 {score} → 等级 {grade}"))
+    }
+
+    for input in ["95", "abc", "55"] {
+        match process(input) {
+            Ok(msg) => println!("  ✅ {msg}"),
+            Err(e) => println!("  ❌ {e}"),
+        }
     }
 }
 ```
 
-## 注意点
+---
 
-### 1. `Result` 和 `Option` 的核心区别是“有没有错误信息”
+## Option vs Result 的选择
 
-- `Option`：有 / 没有
-- `Result`：成功 / 失败，且失败有原因
 
-### 2. `Err` 不是程序崩溃
+| 场景            | 用 Option                      | 用 Result                    |
+| ------------- | ----------------------------- | --------------------------- |
+| 值可能不存在（查找、索引） | ✅                             |                             |
+| 操作可能失败（IO、解析） |                               | ✅                           |
+| 转换：ok()       | `Option<T>` → `Result<T, ()>` |                             |
+| 转换：ok_or(err) | `Option<T>` → `Result<T, E>`  |                             |
+| 转换：err()      |                               | `Result<T,E>` → `Option<E>` |
+| 转换：ok()       |                               | `Result<T,E>` → `Option<T>` |
 
-它只是一个普通值分支，是否 panic 是调用方后续的选择。
 
-### 3. 解析、IO、网络、文件系统等场景都大量依赖 `Result`
-
-这是 Rust 工程代码里出镜率最高的类型之一。
-
-## 常见错误
-
-### ❌ 错误 1：把 `Err` 当成异常抛出式思维
-
-在 Rust 里，它首先是类型系统中的一个分支。
-
-### ❌ 错误 2：把 `Option` 和 `Result` 混着用
-
-要先想清楚：这里缺的是“值”，还是“操作成功信息”。
-
-### ❌ 错误 3：只关心成功路径
-
-工程代码真正稳不稳，往往取决于失败路径写得怎么样。
-
-## 我的理解
-
-- `Option` 把“没值”显式化
-- `Result` 把“失败”显式化
-- 这两者组合起来，已经覆盖了大量控制流与错误处理场景
+---
 
 ## 下一步
 
-下一篇看标准库提供的常见集合：`HashMap`。
-
 - 继续阅读：[6. HashMap](./6-HashMap.md)
-- 回到目录：[第 3 章：Custom and Library Provided](./README.md)
+- 回到目录：[第 3 章：自定义类型](./README.md)
+

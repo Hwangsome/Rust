@@ -1,58 +1,127 @@
 # 2. Builder 模式
 
-- Cargo package: `chapter10`
-- Run chapter: `cargo run -p chapter10`
-- Chapter entry: `chapters/chapter10/src/main.rs`
-- Reference module: `chapters/chapter10/src/topic_02_builder_pattern.rs`
-- Chapter lab: `chapters/chapter10/src/lab.rs`
+> - **所属章节**：第 10 章 · Structuring Projects
+> - **Cargo package**：`chapter10`
+> - **运行方式**：`cargo run -p chapter10`
+> - **代码位置**：`chapters/chapter10/src/topic_02_builder_pattern.rs`
+> - **上一篇**：[1. 初始化 Struct 实例](./1-初始化Struct实例.md)
+> - **下一篇**：[3. 简化大型 Struct](./3-简化大型Struct.md)
+> - **关键词**：Builder 模式、`-> Self`、链式调用、可选字段、分阶段构造
 
-## 扩展演示输出（当前代码已升级）
+---
 
-`topic_02_builder_pattern.rs` 文件头讲清了 builder 模式解决的痛点（一堆 `new_xxx` 重载）和完整结构：
-- 必填字段放 `CustomerBuilder::builder(name)` 起点
-- 可选字段做成链式 setter（返回 `Self`）
-- `build()` 做最终校验并产出 `Customer`
-- 可以改为返回 `Result<Self, E>` 让链全用 `?` 串起来
+## 这一节解决什么问题
 
-## 定义
+当 struct 有很多字段（比如 10+ 个），大部分是可选的，但某些组合必须同时存在——这时构造函数参数太多，顺序容易搞错，也不清晰。
 
-Builder pattern 是把对象创建拆成“逐步设置字段，最后 build()”的一种设计方式。
+Builder 模式解决：用链式方法调用逐步设置字段，最后调用 `build()` 构造最终结果。
 
-## 作用
+---
 
-- 避免构造函数参数列表过长
-- 区分必填字段和可选字段
-- 让调用端更接近“声明式配置”
+## Builder 的两种设计风格
 
-## 原理
-
-Builder 往往先保存一个“半成品状态”，每个 setter 方法返回 builder 自身，最后由 `build()` 统一产出最终对象。
-
-## 最小示例
+### 风格 A：消耗型（返回 Self）
 
 ```rust
-let casual_user = Customer::builder("Joseph".to_string())
-    .username("joe123")
-    .membership(MembershipType::Casual)
-    .build();
+builder.host("localhost")
+       .port(8080)
+       .build()
 ```
 
-## 注意点
+优点：链式调用自然。
+缺点：每步都消耗 builder，不能复用中间状态。
 
-- builder 不是为了链式语法本身，而是为了初始化边界清晰
-- 要明确哪些字段必须填，哪些字段可以缺省
-- `build()` 里可以做最终校验
+### 风格 B：借用型（返回 &mut Self）
 
-## 常见错误
+```rust
+let mut b = Builder::new();
+b.host("localhost").port(8080);
+let result = b.build();
+```
 
-- 其实字段很少，却为了“模式完整”硬上 builder
-- builder 里没有任何约束，最后和直接公开字段差不多
-- 设计得太复杂，让使用者还不如直接写 struct literal
+优点：可以多次调用或有条件设置字段。
+缺点：需要 `let mut`，不那么流畅。
 
-## 我的理解
+---
 
-builder 模式解决的是“构造函数扩张”问题。尤其在配置对象和参数较多的领域模型里，它很实用。
+## 完整运行示例
+
+```rust
+#[derive(Debug)]
+struct HttpRequest {
+    url: String,
+    method: String,
+    headers: std::collections::HashMap<String, String>,
+    body: Option<String>,
+    timeout_ms: u64,
+}
+
+#[derive(Default)]
+struct HttpRequestBuilder {
+    url: Option<String>,
+    method: String,
+    headers: std::collections::HashMap<String, String>,
+    body: Option<String>,
+    timeout_ms: u64,
+}
+
+impl HttpRequestBuilder {
+    fn new() -> Self {
+        Self {
+            method: "GET".into(),
+            timeout_ms: 5000,
+            ..Default::default()
+        }
+    }
+
+    fn url(mut self, url: &str) -> Self {
+        self.url = Some(url.into()); self
+    }
+
+    fn method(mut self, method: &str) -> Self {
+        self.method = method.into(); self
+    }
+
+    fn header(mut self, key: &str, val: &str) -> Self {
+        self.headers.insert(key.into(), val.into()); self
+    }
+
+    fn body(mut self, body: &str) -> Self {
+        self.body = Some(body.into()); self
+    }
+
+    fn timeout(mut self, ms: u64) -> Self {
+        self.timeout_ms = ms; self
+    }
+
+    fn build(self) -> Result<HttpRequest, String> {
+        let url = self.url.ok_or("URL 是必填项")?;
+        Ok(HttpRequest {
+            url, method: self.method,
+            headers: self.headers, body: self.body,
+            timeout_ms: self.timeout_ms,
+        })
+    }
+}
+
+pub fn run() {
+    let request = HttpRequestBuilder::new()
+        .url("https://api.example.com/users")
+        .method("POST")
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer token123")
+        .body(r#"{"name": "Alice"}"#)
+        .timeout(10_000)
+        .build()
+        .expect("构建请求失败");
+
+    println!("{:#?}", request);
+}
+```
+
+---
 
 ## 下一步
 
-继续看 [简化大型 Struct](./3-简化大型Struct.md)，理解除了 builder 之外，结构设计本身还能怎么改。
+- 继续阅读：[3. 简化大型 Struct](./3-简化大型Struct.md)
+- 回到目录：[第 10 章：结构化项目](./README.md)

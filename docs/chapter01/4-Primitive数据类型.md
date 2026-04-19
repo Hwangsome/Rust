@@ -1,197 +1,269 @@
-# 4. Primitive 数据类型：整数、浮点、布尔、字符
+# 4. Primitive 数据类型
 
-> 类型：**Study note**
-> 关键词：integer、float、bool、char、overflow
-> 上一篇：[3. 变量：不可变、`mut`、遮蔽](./3-变量.md)
-> 下一篇：[5. Compound 数据类型：元组与数组](./5-Compound数据类型.md)
+> - **所属章节**：第 1 章 · Quick Startup
+> - **Cargo package**：`chapter01`
+> - **运行方式**：`cargo run -p chapter01`
+> - **代码位置**：`chapters/chapter01/src/topic_03_primitive_data_types.rs`
+> - **上一篇**：[3. 变量](./3-变量.md)
+> - **下一篇**：[5. Compound 数据类型](./5-Compound数据类型.md)
+> - **关键词**：`i32`、`u8`、`f64`、`bool`、`char`、类型推断、溢出、`as` 转换
+
+---
+
+## 这一节解决什么问题
+
+Rust 是**静态强类型**语言——每个值都有一个在编译期已知的类型，不同类型之间不会隐式转换。
+
+从 Python/JavaScript 来的开发者会发现：
+
+```rust
+let x: i32 = 5;
+let y: i64 = 10;
+// let z = x + y; // ❌ 不能直接相加！类型不同
+let z = x as i64 + y;  // ✅ 显式转换
+```
+
+这节讲清楚 Rust 的基础标量类型：整数、浮点、布尔、字符。
+
+---
 
 ## 一分钟结论
 
-- 这一章说的 Primitive 数据类型，Rust 官方更常叫 **scalar types**
-- 它们一次只表示**一个值**
-- 最基础的四类是：**整数、浮点、布尔、字符**
-- `char` 不是 1 字节 ASCII，它表示 **Unicode scalar value**
-- 整数溢出在 debug 下会直接 panic，这个坑非常值得早记住
+- **整数**：`i8/16/32/64/128`（有符号）、`u8/16/32/64/128`（无符号）、`isize/usize`（平台相关）
+- **浮点**：`f32`（单精度）、`f64`（双精度，默认）
+- **布尔**：`bool`，只有 `true`/`false`（不是 0/1！）
+- **字符**：`char`，Unicode 标量值，4 字节（不是 ASCII 的 1 字节）
+- 整数**默认**是 `i32`；浮点**默认**是 `f64`
+- 类型不匹配不会隐式转换，必须用 `as` 显式转换
+- Debug 模式下整数溢出会 panic；Release 模式下回绕
 
-## 对应代码
+---
 
-- Cargo package: `chapter01`
-- Run chapter: `cargo run -p chapter01`
-- Chapter entry: [chapters/chapter01/src/main.rs](../../chapters/chapter01/src/main.rs)
-- Reference module: [chapters/chapter01/src/topic_03_primitive_data_types.rs](../../chapters/chapter01/src/topic_03_primitive_data_types.rs)
-- Chapter lab: [chapters/chapter01/src/lab.rs](../../chapters/chapter01/src/lab.rs)
+## 与其他语言对比
 
-当前仓库采用“每章一个 Cargo package”的结构，所以本节不是独立 binary，而是 `chapter01` 中的一个主题模块。
+| 类型 | Java | Python | C++ | Rust |
+|-----|------|--------|-----|------|
+| 整数溢出 | 静默回绕 | 不溢出（大整数）| 未定义行为 | Debug panic / Release 回绕 |
+| 隐式类型转换 | 有（int→long）| 有 | 有（危险）| **无**（必须显式 `as`）|
+| char | 2字节（UTF-16）| 1字节 Unicode 代码点 | 1字节（ASCII）| **4字节**（Unicode 标量）|
+| 整数类型 | `int`（32位）等 | 动态大小 | `int`（平台相关）| **明确指定位数** |
 
-## 证据来源
+---
 
-### 本次实验
+## 详细原理
 
-`u8` 正常取值：
+### 1. 整数类型
+
+```
+有符号（i）：可以是负数
+  i8:    -128 ~ 127
+  i16:   -32768 ~ 32767
+  i32:   -2^31 ~ 2^31-1  ← 最常用，整数默认
+  i64:   -2^63 ~ 2^63-1
+  i128:  -2^127 ~ 2^127-1
+  isize: 平台相关（32位系统=i32，64位=i64）
+
+无符号（u）：只有非负数
+  u8:    0 ~ 255      ← 常用于字节操作
+  u16:   0 ~ 65535
+  u32:   0 ~ 2^32-1
+  u64:   0 ~ 2^64-1
+  usize: 平台相关，常用于数组下标和长度
+```
 
 ```rust
+let a: i8 = 127;         // i8 最大值
+let b: u8 = 255;         // u8 最大值
+let c: i32 = -2_147_483_648; // i32 最小值（下划线只是可读性）
+let d: u64 = 18_446_744_073_709_551_615; // u64 最大值
+
+// 字面量后缀
+let e = 42i32;   // 明确指定类型
+let f = 0xFF_u8; // 十六进制 255，类型 u8
+let g = 0b1111_0000_u8; // 二进制，类型 u8
+```
+
+### 2. 浮点类型
+
+```rust
+let x = 3.14;        // 默认 f64
+let y: f32 = 3.14;  // 单精度，精度较低
+let z: f64 = 3.14;  // 双精度，推荐
+
+// 特殊值
+let inf = f64::INFINITY;
+let neg_inf = f64::NEG_INFINITY;
+let nan = f64::NAN;
+
+println!("{}", nan == nan);  // false（NaN 不等于自身！）
+println!("{}", nan.is_nan()); // true
+```
+
+### 3. `bool`：严格的真假
+
+```rust
+let t: bool = true;
+let f: bool = false;
+
+// ⚠️ 不能把整数当 bool 用
+// if 1 { } // ❌ 必须是 bool
+
+// 比较运算返回 bool
+let x = 5;
+let is_big = x > 3;    // bool
+let is_ten = x == 10;  // bool
+
+println!("{t} && {f} = {}", t && f);  // false
+println!("{t} || {f} = {}", t || f);  // true
+println!("!{t} = {}", !t);            // false
+```
+
+### 4. `char`：Unicode 标量值（4字节！）
+
+```rust
+let a = 'a';       // ASCII，但存为 Unicode
+let emoji = '🦀';  // 完全合法！Rust char 支持 Unicode
+let chinese = '中'; // 汉字
+let newline = '\n'; // 转义字符
+
+println!("size of char: {}", std::mem::size_of::<char>());  // 4
+
+// char 不等于 u8（ASCII 字节）！
+let byte: u8 = b'a';   // b'a' 是字节字面量，97
+let ch: char = 'a';    // char 'a'，也是 97，但是 4 字节存储
+```
+
+### 5. 类型转换（必须显式）
+
+```rust
+let x: i32 = 42;
+let y: f64 = x as f64;  // i32 → f64
+let z: i32 = 3.99_f64 as i32;  // f64 → i32：截断（不是四舍五入！）
+
+println!("3.99 as i32 = {z}");  // 3，不是 4！
+
+// 窄化转换会截断
+let big: i32 = 256;
+let small: u8 = big as u8;  // 256 mod 256 = 0（溢出截断）
+println!("256 as u8 = {small}");  // 0
+```
+
+### 6. 整数溢出
+
+```rust
+// u8 的范围是 0-255
+let max: u8 = u8::MAX;  // 255
+
+// Debug 模式（cargo build 或 cargo run）：溢出会 panic
+// let overflow = max + 1; // thread 'main' panicked: arithmetic operation overflowed
+
+// 显式处理溢出的方法
+let wrapping = max.wrapping_add(1);   // 256 → 0（回绕）
+let checked = max.checked_add(1);     // None（溢出）
+let saturated = max.saturating_add(1); // 255（饱和，不超过最大值）
+let overflowing = max.overflowing_add(1); // (0, true)（返回结果和是否溢出）
+
+println!("wrapping_add(1) = {wrapping}");    // 0
+println!("checked_add(1) = {checked:?}");    // None
+println!("saturating_add(1) = {saturated}"); // 255
+println!("overflowing_add(1) = {overflowing:?}"); // (0, true)
+```
+
+---
+
+## 完整运行示例
+
+```rust
+use std::mem::size_of;
+
 fn main() {
-    let guess: u8 = 255;
-    println!("{}", guess);
+    println!("=== 整数类型大小 ===");
+    println!("i8:    {} bytes, 范围 [{}, {}]", size_of::<i8>(), i8::MIN, i8::MAX);
+    println!("u8:    {} bytes, 范围 [{}, {}]", size_of::<u8>(), u8::MIN, u8::MAX);
+    println!("i32:   {} bytes, 范围 [{}, {}]", size_of::<i32>(), i32::MIN, i32::MAX);
+    println!("u64:   {} bytes, 范围 [0, {}]", size_of::<u64>(), u64::MAX);
+    println!("usize: {} bytes (平台相关)", size_of::<usize>());
+    println!();
+
+    println!("=== 浮点 ===");
+    let pi_f32: f32 = std::f32::consts::PI;
+    let pi_f64: f64 = std::f64::consts::PI;
+    println!("f32 π = {pi_f32:.10}");  // 精度较低
+    println!("f64 π = {pi_f64:.10}");  // 精度更高
+    println!();
+
+    println!("=== bool ===");
+    let nums = [1, 2, 3, 4, 5];
+    let all_positive = nums.iter().all(|&n| n > 0);
+    let has_five = nums.iter().any(|&n| n == 5);
+    println!("全部正数: {all_positive}");
+    println!("包含5: {has_five}");
+    println!();
+
+    println!("=== char（Unicode）===");
+    let chars = ['A', '中', '🦀', '\u{1F600}'];  // U+1F600 = 😀
+    for c in chars {
+        println!("  '{}' (U+{:04X}, {} bytes)", c, c as u32, c.len_utf8());
+    }
+    println!();
+
+    println!("=== 类型转换 ===");
+    let i: i32 = 300;
+    let f: f64 = i as f64;
+    let u: u8 = i as u8;  // 截断！300 % 256 = 44
+    println!("i32 {} as f64 = {f}", i);
+    println!("i32 {} as u8 = {} (截断)", i, u);
+
+    let pi = 3.99_f64;
+    let truncated = pi as i32;
+    println!("f64 {pi} as i32 = {truncated} (截断，不是四舍五入)");
+    println!();
+
+    println!("=== 溢出处理 ===");
+    let max: u8 = 250;
+    println!("saturating_add(10) = {}", max.saturating_add(10)); // 255（不超255）
+    println!("wrapping_add(10) = {}", max.wrapping_add(10));      // 4（回绕）
+    println!("checked_add(10) = {:?}", max.checked_add(10));      // None
 }
 ```
 
-运行结果：
+---
 
-```text
-255
+## 实际工程场景
+
+### 何时选择哪种整数类型
+
+```
+u8：字节操作、颜色值(0-255)、ASCII码
+u16：端口号(0-65535)、某些协议字段
+i32：通用整数（默认）、小到中等计数
+u64/i64：大数计数、文件大小、时间戳（毫秒）
+usize：数组下标、Vec 长度、内存偏移
 ```
 
-`char` 可以保存 Unicode 字符：
+---
+
+## 注意点与陷阱
+
+### 陷阱 1：`as` 截断不是四舍五入
 
 ```rust
-fn main() {
-    let c = '中';
-    println!("{}", c);
-}
+let x = 3.9_f64;
+let y = x as i32;  // 3（截断），不是 4（四舍五入）
+let rounded = x.round() as i32;  // 4（先四舍五入再转）
 ```
 
-运行结果：
-
-```text
-中
-```
-
-`u8` 溢出：
+### 陷阱 2：`char` 长度与 `str.len()` 的区别
 
 ```rust
-fn main() {
-    let mut x: u8 = 255;
-    x += 1;
-    println!("{}", x);
-}
+let s = "hello中文";
+println!("s.len() = {}", s.len());            // 11（字节数）
+println!("chars = {}", s.chars().count());   // 7（字符数）
 ```
 
-运行结果节选：
-
-```text
-thread 'main' panicked
-attempt to add with overflow
-```
-
-## 扩展演示输出（当前代码已升级）
-
-`topic_03_primitive_data_types.rs` 现在按 7 个子场景演示：整数默认/后缀标注 → 浮点 → 整数边界 `MIN/MAX` → 溢出的 4 种显式处理（wrapping/checked/saturating/overflowing）→ `bool` 不是整数 → `char` 是 4 字节的 Unicode 标量 → `as` 显式转换。
-
-```text
-默认 i32: 32, i8: -8, i64: 9000000000, u8: 255, u16: 65535
-后缀写法: literal_i64 = 1000000, literal_u8 = 200
-
-default_float = 3.14 (f64), single = 3.14 (f32)
-整数除法 7 / 2 = 3，浮点除法 7.0 / 2.0 = 3.5
-
-i8  范围: [-128, 127]
-u8  范围: [0, 255]
-i32 范围: [-2147483648, 2147483647]
-u32 范围: [0, 4294967295]
-
-250 + 10 (u8): wrapping = 4, checked = None, saturating = 255
-
-char 都占 4 字节 —— ascii = A, chinese = 中, emoji = 🦀
-
-int -> float: -42 as f64 = -42
-float -> int 会截断: 3.7 as i32 = 3 (不是 4!)
-```
-
-## 定义
-
-Primitive 数据类型表示**单个值**。在 Rust 入门语境里，可以先把它理解成四组：
-
-| 类别 | 示例 | 用途 |
-| --- | --- | --- |
-| 整数 | `i32`、`u8` | 计数、索引、数值计算 |
-| 浮点 | `f32`、`f64` | 带小数的数值 |
-| 布尔 | `bool` | 条件判断 |
-| 字符 | `char` | 单个 Unicode 字符 |
-
-## 作用
-
-这一节不是让你死记所有类型名，而是先建立三个判断：
-
-- 当前值是不是“单个值”
-- 这个值有没有明确范围或符号要求
-- 这个值会不会在边界上出问题，比如溢出
-
-## 原理
-
-### 整数
-
-整数类型分两类：
-
-- `i` 开头：有符号整数，例如 `i32`
-- `u` 开头：无符号整数，例如 `u8`
-
-数字表示位宽，例如 `u8` 表示 8 位无符号整数，范围是 `0..=255`。
-
-### 浮点
-
-浮点数最常见的是：
-
-- `f32`
-- `f64`
-
-入门阶段通常直接优先使用 `f64`。
-
-### 布尔
-
-`bool` 只有两个值：
-
-- `true`
-- `false`
-
-它经常出现在 `if`、`while` 之类的条件判断里。
-
-### 字符
-
-`char` 表示一个 Unicode scalar value，不等于“单字节字符”。
-
-所以：
-
-- `'a'` 是 `char`
-- `'中'` 也是 `char`
-
-## 最小示例
-
-```rust
-fn main() {
-    let integer_value: i32 = -42;
-    let unsigned_value: u8 = 255;
-    let float_value: f64 = 3.1415;
-    let is_rust_fun: bool = true;
-    let chinese_char: char = '中';
-
-    println!("{integer_value}");
-    println!("{unsigned_value}");
-    println!("{float_value}");
-    println!("{is_rust_fun}");
-    println!("{chinese_char}");
-}
-```
-
-## 常见坑
-
-### ❌ 以为 `char` 只能放 ASCII
-
-不对。Rust 的 `char` 可以表示单个 Unicode 字符。
-
-### ❌ 忽视整数溢出
-
-在 debug 构建里，整数溢出会直接 panic。  
-这是 Rust 明确帮你暴露边界问题的一种方式。
-
-## 我的理解
-
-这一节最重要的不是背全类型表，而是先形成“值的形状”意识：
-
-- 一个值如果只是单个数字、真假或字符，它通常属于 primitive / scalar 类型
-- 选类型时，不只是写得过编译，还要考虑范围和语义
+---
 
 ## 下一步
 
-- 继续阅读：[5. Compound 数据类型：元组与数组](./5-Compound数据类型.md)
+- 继续阅读：[5. Compound 数据类型](./5-Compound数据类型.md)
 - 回到目录：[第 1 章：Quick Startup](./README.md)
