@@ -1,30 +1,24 @@
-# 第 8 章：Memory Management Features
+# 第 8 章：Functional Programming Aspects
 
-这一章把很多初学 Rust 时最容易紧张的词放到一起了：生命周期、Box、Rc、RefCell。它们看起来像四组分散语法，实际上都在回答同一组问题：
-
-- 谁拥有值
-- 值会活多久
-- 谁能读它
-- 谁能改它
+这一章开始把 Rust 里偏“函数式”的能力串起来看。闭包、函数指针、迭代器、组合子乍一看像四五个分散主题，实际上它们围绕的是同一件事：**把行为当成值，把数据处理写成流水线**。
 
 ## 本章目标
 
-- 理解生命周期是在描述引用关系，不是在“延长内存寿命”
-- 理解 Box、Rc、RefCell 各自解决的问题
-- 看清 `Rc<RefCell<T>>` 为什么经常一起出现
-- 为后面的链表、树形结构和错误排查打基础
+- 理解闭包和普通函数的边界
+- 区分 `fn`、`Fn`、`FnMut`、`FnOnce` 的使用语境
+- 建立 Iterator / IntoIterator 的基本模型
+- 看清 `iter`、`iter_mut`、`into_iter` 的所有权差异
+- 学会用组合子写最小可读的数据变换链
 
 ## 推荐阅读顺序
 
-1. [具体生命周期](./1-具体生命周期.md)
-2. [泛型生命周期](./2-泛型生命周期.md)
-3. [生命周期省略](./3-生命周期省略.md)
-4. [Struct 中的生命周期](./4-Struct中的生命周期.md)
-5. [Box 智能指针](./5-Box智能指针.md)
-6. [Box 的典型用法](./6-Box的典型用法.md)
-7. [Rc 智能指针](./7-Rc智能指针.md)
-8. [RefCell](./8-RefCell.md)
-9. [RefCell 示例](./9-RefCell示例.md)
+1. [闭包](./1-闭包.md)
+2. [函数指针](./2-函数指针.md)
+3. [迭代器](./3-迭代器.md)
+4. [IntoIterator](./4-IntoIterator.md)
+5. [遍历集合](./5-遍历集合.md)
+6. [组合子](./6-组合子.md)
+7. [遍历 Option](./7-遍历Option.md)
 
 ## 对应代码与实验
 
@@ -35,19 +29,18 @@
 
 主题模块：
 
-- [topic_01_concrete_lifetimes.rs](../../chapters/chapter08/src/topic_01_concrete_lifetimes.rs)
-- [topic_02_generic_lifetimes.rs](../../chapters/chapter08/src/topic_02_generic_lifetimes.rs)
-- [topic_03_lifetime_elision.rs](../../chapters/chapter08/src/topic_03_lifetime_elision.rs)
-- [topic_04_lifetimes_in_structs.rs](../../chapters/chapter08/src/topic_04_lifetimes_in_structs.rs)
-- [topic_05_box_smart_pointer.rs](../../chapters/chapter08/src/topic_05_box_smart_pointer.rs)
-- [topic_06_box_pointer_usecases.rs](../../chapters/chapter08/src/topic_06_box_pointer_usecases.rs)
-- [topic_07_rc_smart_pointer.rs](../../chapters/chapter08/src/topic_07_rc_smart_pointer.rs)
-- [topic_08_refcell.rs](../../chapters/chapter08/src/topic_08_refcell.rs)
-- [topic_09_refcell_example.rs](../../chapters/chapter08/src/topic_09_refcell_example.rs)
+- [topic_01_closures.rs](../../chapters/chapter08/src/topic_01_closures.rs)
+- [topic_02_function_pointers.rs](../../chapters/chapter08/src/topic_02_function_pointers.rs)
+- [topic_03_iterators.rs](../../chapters/chapter08/src/topic_03_iterators.rs)
+- [topic_04_into_iter.rs](../../chapters/chapter08/src/topic_04_into_iter.rs)
+- [topic_05_iterating_through_collections.rs](../../chapters/chapter08/src/topic_05_iterating_through_collections.rs)
+- [topic_06_combinators.rs](../../chapters/chapter08/src/topic_06_combinators.rs)
+- [topic_07_iterating_through_option.rs](../../chapters/chapter08/src/topic_07_iterating_through_option.rs)
 
-## 本章提醒
+## 这一章的主线
 
-- 生命周期先从“引用关系”理解，不要一上来就把它神秘化
-- `Rc` 解决共享所有权，不解决可变性
-- `RefCell` 解决内部可变性，但把借用检查推迟到运行时
-- `Rc<RefCell<T>>` 常见，不等于总是最佳选择
+- 闭包回答“行为能不能像值一样传来传去”
+- Iterator 回答“数据能不能按统一协议逐个产出”
+- 组合子回答“这些步骤能不能串起来形成流水线”
+
+理解了这三件事，后面读标准库、集合 API 和错误处理链式写法会顺很多。

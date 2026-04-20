@@ -21,5 +21,6 @@ members = [
     "chapters/chapter19",
     "chapters/chapter20",
     "chapters/chapter21",
+    "chapters/chapter22",
 ]
 resolver = "2"

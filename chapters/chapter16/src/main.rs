@@ -1,4 +1,4 @@
-// 第 16 章对应课程 Part 3 的章节：Variance and Its Types。
+// 第 15 章对应课程 Part 3 的章节：Beyond Basic References。
 // 这批内容比前面章节更偏高级主题，所以当前仓库先把原始代码完整纳入，
 // 再通过统一的 `main.rs` 入口把每个 topic 串起来。
 // 如果你第一次跑这一章，建议先只看三件事：
@@ -7,26 +7,18 @@
 // 3. `lab.rs` 放在最后，是为了把“收录原始代码”继续推进成“真正可运行的教学代码”。
 
 mod lab;
-mod topic_01_background_for_variance_references_refresher_part_1;
-mod topic_02_background_for_variance_references_refresher_part_2;
-mod topic_03_background_for_variance_lifetime_bounds;
-mod topic_04_background_for_variance_implied_bounds;
-mod topic_05_subtyping_and_variance_covariance;
-mod topic_06_contravariance;
-mod topic_07_invariance_part_1;
-mod topic_08_invariance_part_2;
+mod topic_01_types_of_references;
+mod topic_02_destructing_references;
+mod topic_03_forcing_variables_to_use_references;
+mod topic_04_referencing_in_compound_data_types;
 
 fn main() {
-    println!("Chapter 16: Variance and Its Types");
+    println!("Chapter 16: Beyond Basic References");
     println!();
 
-    topic_01_background_for_variance_references_refresher_part_1::run();
-    topic_02_background_for_variance_references_refresher_part_2::run();
-    topic_03_background_for_variance_lifetime_bounds::run();
-    topic_04_background_for_variance_implied_bounds::run();
-    topic_05_subtyping_and_variance_covariance::run();
-    topic_06_contravariance::run();
-    topic_07_invariance_part_1::run();
-    topic_08_invariance_part_2::run();
+    topic_01_types_of_references::run();
+    topic_02_destructing_references::run();
+    topic_03_forcing_variables_to_use_references::run();
+    topic_04_referencing_in_compound_data_types::run();
     lab::run();
 }

@@ -1,29 +1,19 @@
-# 第 6 章：Flexibility and Abstraction with Generics and Traits
+# 第 6 章：Generics（泛型）
 
-这一章开始真正进入 Rust 的抽象层。前面几章更像“值怎么流动、类型怎么声明、模块怎么组织”，这里开始回答另一类问题：
+在「类型怎么声明、模块怎么组织」之后，本章只聚焦一件事：**如何把同一套逻辑参数化成 `Vec<T>`、`fn foo<T>(...)` 这类写法**，以及编译期 **单态化** 带来的零成本抽象。
 
-- 一套逻辑如何复用到多种类型上
-- 一个类型怎样声明“我支持哪些能力”
-- 泛型、trait、trait bound、trait object 分别解决什么问题
-- 什么时候该用关联类型，什么时候该用泛型参数
+**Trait**（接口、多态、关联类型）已拆到 **[第 7 章：Traits](../chapter07/README.md)**，建议先完成本章再进入第 7 章。
 
 ## 本章目标
 
-- 建立“泛型负责参数化、trait 负责行为约束”的基本模型
-- 理解静态分发和动态分发的边界
-- 区分 trait bound、super trait、trait object、关联类型的使用场景
-- 为后面学习迭代器、错误处理和更复杂 API 打基础
+- 理解类型参数 `<T>` 与单态化（monomorphization）
+- 能读懂 `impl<T> ...`、`impl ConcreteType` 针对具体类型的额外实现
+- 知道何时需要 **turbofish** `::<T>` 补全推断
+- 为第 7 章的 trait bound 打基础
 
 ## 推荐阅读顺序
 
 1. [泛型](./1-泛型.md)
-2. [Trait](./2-Trait.md)
-3. [Trait 约束](./3-Trait约束.md)
-4. [Super Trait](./4-SuperTrait.md)
-5. [Trait Object](./5-TraitObject.md)
-6. [Derive 与 Marker Trait](./6-Derive与MarkerTrait.md)
-7. [Trait 中的关联类型](./7-Trait中的关联类型.md)
-8. [关联类型与泛型参数的取舍](./8-关联类型与泛型参数的取舍.md)
 
 ## 对应代码与实验
 
@@ -35,17 +25,14 @@
 主题模块：
 
 - [topic_01_generics.rs](../../chapters/chapter06/src/topic_01_generics.rs)
-- [topic_02_traits.rs](../../chapters/chapter06/src/topic_02_traits.rs)
-- [topic_03_trait_bounds.rs](../../chapters/chapter06/src/topic_03_trait_bounds.rs)
-- [topic_04_super_traits.rs](../../chapters/chapter06/src/topic_04_super_traits.rs)
-- [topic_05_trait_objects.rs](../../chapters/chapter06/src/topic_05_trait_objects.rs)
-- [topic_06_derived_and_marker_traits.rs](../../chapters/chapter06/src/topic_06_derived_and_marker_traits.rs)
-- [topic_07_associated_types_in_traits.rs](../../chapters/chapter06/src/topic_07_associated_types_in_traits.rs)
-- [topic_08_choosing_associated_vs_generic_type.rs](../../chapters/chapter06/src/topic_08_choosing_associated_vs_generic_type.rs)
 
-## 这一章最容易混淆的地方
+## 与第 7 章的分工
 
-- 泛型不是“任何类型都行”，它经常要配合 trait bound
-- trait 不是对象本身，它更像“行为合同”
-- trait object 和泛型都能做多态，但一个偏编译期，一个偏运行期
-- 关联类型不是泛型的替代品，而是“这个实现里只有一种合理输出类型”时的更清晰表达
+| 第 6 章 | 第 7 章 |
+|--------|--------|
+| 泛型语法、单态化、`Vec<T>` 与 `collect` 等前置 | `trait`、`impl`、trait bound、`dyn Trait`、关联类型 |
+
+## 本章最容易混淆的地方
+
+- 泛型不是「任何 `T` 都行」，常要配合 trait bound（第 7 章系统讲）
+- `impl Point<i32, i32>` 只对这一种具体类型多实现方法——不要和 C++ 模板偏特化混为一谈

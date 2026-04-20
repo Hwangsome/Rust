@@ -1,26 +1,19 @@
-# 第 11 章：Error Handling
+# 第 11 章：Useful Patterns for Handling Structs
 
-这一章是 Part 2 的收束点。前面学的所有权、借用、trait、迭代器，到这里都会以另一种方式重新出现：**失败怎么表达，边界怎么设计，信息要保留到什么程度**。
+这一章不再强调新语法，而是在讨论“怎样把 struct 设计得更像工程代码”。如果前面几章解决的是“Rust 能不能写”，这里开始解决“Rust 写出来后顺不顺手、是不是容易维护”。
 
 ## 本章目标
 
-- 建立 Rust 错误处理的分层思路
-- 理解 `panic!`、`Result`、`Option` 分别适合什么语义
-- 理解 `?` 的传播机制和统一错误类型要求
-- 区分 `anyhow` 与 `thiserror` 的边界
-- 理解错误处理会反过来影响 API 设计和方法链形状
+- 理解 Rust 里常见的初始化方式
+- 看懂 builder pattern 解决的真实问题
+- 理解结构拆分如何改善可读性和借用关系
+- 为以后设计配置对象、领域模型和状态对象打基础
 
 ## 推荐阅读顺序
 
-1. [Rust 错误处理思路](./1-Rust错误处理思路.md)
-2. [传播错误](./2-传播错误.md)
-3. [统一多种错误类型](./3-统一多种错误类型.md)
-4. [链式调用中的问号运算符](./4-链式调用中的问号运算符.md)
-5. [分层结果类型：Result<Option<T>, E>](./5-分层结果类型：ResultOption.md)
-6. [分层结果类型：Option<Result<T, E>>](./6-分层结果类型：OptionResult.md)
-7. [anyhow](./7-anyhow.md)
-8. [thiserror](./8-thiserror.md)
-9. [错误处理里的方法链约束](./9-错误处理里的方法链约束.md)
+1. [初始化 Struct 实例](./1-初始化Struct实例.md)
+2. [Builder 模式](./2-Builder模式.md)
+3. [简化大型 Struct](./3-简化大型Struct.md)
 
 ## 对应代码与实验
 
@@ -31,18 +24,12 @@
 
 主题模块：
 
-- [topic_01_rust_error_handling_approach.rs](../../chapters/chapter11/src/topic_01_rust_error_handling_approach.rs)
-- [topic_02_propagating_errors.rs](../../chapters/chapter11/src/topic_02_propagating_errors.rs)
-- [topic_03_multiple_error_types.rs](../../chapters/chapter11/src/topic_03_multiple_error_types.rs)
-- [topic_04_chaining_question_marks.rs](../../chapters/chapter11/src/topic_04_chaining_question_marks.rs)
-- [topic_05_layered_outcomes_result_option_part1.rs](../../chapters/chapter11/src/topic_05_layered_outcomes_result_option_part1.rs)
-- [topic_06_layered_outcomes_result_option_part2.rs](../../chapters/chapter11/src/topic_06_layered_outcomes_result_option_part2.rs)
-- [topic_07_anyhow_example.rs](../../chapters/chapter11/src/topic_07_anyhow_example.rs)
-- [topic_08_thiserror_example.rs](../../chapters/chapter11/src/topic_08_thiserror_example.rs)
-- [topic_09_method_chaining_constraints.rs](../../chapters/chapter11/src/topic_09_method_chaining_constraints.rs)
+- [topic_01_initializing_struct_instances.rs](../../chapters/chapter11/src/topic_01_initializing_struct_instances.rs)
+- [topic_02_builder_pattern.rs](../../chapters/chapter11/src/topic_02_builder_pattern.rs)
+- [topic_03_simplifying_structures.rs](../../chapters/chapter11/src/topic_03_simplifying_structures.rs)
 
-## 本章主线
+## 本章提醒
 
-- 先区分失败的语义：是 bug、缺值、还是可恢复错误
-- 再决定失败怎么往上传
-- 最后才决定要不要引入 `anyhow` / `thiserror` 这类工具
+- 初始化方式不是审美问题，而是 API 设计问题
+- builder 的目标不是“链起来更酷”，而是避免参数爆炸
+- struct 拆分的收益不只在借用层面，也在建模层面

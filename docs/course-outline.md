@@ -4,7 +4,7 @@
 > 公开课程页与公开课程摘要页
 > 核对日期：2026-04-16
 
-这份文档不是照搬课程目录，而是把仓库顶层章节调整成更接近课程大章的 21 个 chapter，并继续参考本地目录 `---- Part 1 Basic Programming with Rust ----`、`---- Part 2 Intermediate Level Concepts ----` 和 `---- Part 3 Advance Concepts ---` 补齐章内 topic。
+这份文档不是照搬课程目录，而是把仓库顶层章节调整成更接近课程大章的 22 个 chapter，并继续参考本地目录 `---- Part 1 Basic Programming with Rust ----`、`---- Part 2 Intermediate Level Concepts ----` 和 `---- Part 3 Advance Concepts ---` 补齐章内 topic。
 
 ## 课程大章与仓库映射
 
@@ -15,12 +15,23 @@
 | Custom and Library Provided Useful Types | `chapter03` | struct、enum、Option、Result、HashMap |
 | Organizing your Code | `chapter04` | modules、visibility、crate、re-export |
 | Testing | `chapter05` | unit test、integration test、benchmark |
-| Flexibility and Abstraction with Generics and Traits | `chapter06` | generics、traits、trait bounds、trait objects、associated types |
-| Functional Programming Aspects | `chapter07` | closures、function pointers、iterators、IntoIterator、combinators |
-| Memory Management Features | `chapter08` | lifetimes、Box、Rc、RefCell |
-| Implementing Typical Data Structures | `chapter09` | singly linked list、doubly linked list、reference cycles |
-| Useful Patterns for Handling Structs | `chapter10` | struct initialization、builder pattern、structure decomposition |
-| Error Handling | `chapter11` | Result、Option、`?`、layered outcomes、`anyhow`、`thiserror` |
+| Generics | `chapter06` | generics、monomorphization、泛型语法（trait 细节见 `chapter07`） |
+| Traits | `chapter07` | trait、trait bounds、super traits、trait objects、associated types |
+| Functional Programming Aspects | `chapter08` | closures、function pointers、iterators、IntoIterator、combinators |
+| Memory Management Features | `chapter09` | lifetimes、Box、Rc、RefCell |
+| Implementing Typical Data Structures | `chapter10` | singly linked list、doubly linked list、reference cycles |
+| Useful Patterns for Handling Structs | `chapter11` | struct initialization、builder pattern、structure decomposition |
+| Error Handling | `chapter12` | Result、Option、`?`、layered outcomes、`anyhow`、`thiserror` |
+| Understanding Size in Rust | `chapter13` | `Sized` / `?Sized`、ZST、PhantomData |
+| Coercion in Rust | `chapter14` | deref coercion、function item、trait object、LUB |
+| Concurrency | `chapter15` | threads、channels、shared state、async / Tokio |
+| Beyond Basic References | `chapter16` | reference kinds、destructuring、compound types |
+| Variance and Its Types | `chapter17` | subtyping、covariance、contravariance、invariance |
+| Trait Objects Limitations | `chapter18` | orphan rule、object safety、sealed traits |
+| Downcasting | `chapter19` | `Any`、`TypeId`、trait object downcast |
+| Dropcheck | `chapter20` | drop check、drop order、panic safety |
+| Structing Projects | `chapter21` | Cargo features（consumer / library 视角） |
+| Macros | `chapter22` | declarative macros、fragments |
 
 ## 当前仓库状态
 
@@ -82,6 +93,11 @@
 已经创建：
 
 - Generics
+
+### `chapter07`
+
+已经创建：
+
 - Traits
 - Trait Bounds
 - Super Traits
@@ -90,7 +106,7 @@
 - Associated Types in Traits
 - Choosing Associated vs Generic Type
 
-### `chapter07`
+### `chapter08`
 
 已经创建：
 
@@ -102,7 +118,7 @@
 - Combinators
 - Iterating Through Option
 
-### `chapter08`
+### `chapter09`
 
 已经创建：
 
@@ -116,7 +132,7 @@
 - RefCell
 - RefCell Example
 
-### `chapter09`
+### `chapter10`
 
 已经创建：
 
@@ -126,7 +142,7 @@
 - Doubly Linked List (Part 2)
 - Reference Cycles
 
-### `chapter10`
+### `chapter11`
 
 已经创建：
 
@@ -134,7 +150,7 @@
 - Builder Pattern
 - Simplifying Structures
 
-### `chapter11`
+### `chapter12`
 
 已经创建：
 
@@ -150,7 +166,7 @@
 
 后续继续扩展时，直接在对应章节内追加主题页和模块；如果继续补课程后续部分，也继续按同样规则新增新的顶层 chapter。
 
-### `chapter12`
+### `chapter13`
 
 已经创建：
 
@@ -161,7 +177,7 @@
 - Unsized Coercion
 - Zero Sized Types: Never / Unit / Unit Structs / Phantom Data
 
-### `chapter13`
+### `chapter14`
 
 已经创建：
 
@@ -175,7 +191,7 @@
 - Transitivity in Coercion
 - Least Upper Bound Coercion
 
-### `chapter14`
+### `chapter15`
 
 已经创建：
 
@@ -189,7 +205,7 @@
 - Async / Tokio / spawn_blocking
 - Webscrapping using Threads
 
-### `chapter15`
+### `chapter16`
 
 已经创建：
 
@@ -198,7 +214,7 @@
 - Forcing Variables to use References
 - Referencing in Compound Data Types
 
-### `chapter16`
+### `chapter17`
 
 已经创建：
 
@@ -206,7 +222,7 @@
 - Lifetime Bounds / Implied Bounds
 - Covariance / Contravariance / Invariance
 
-### `chapter17`
+### `chapter18`
 
 已经创建：
 
@@ -220,7 +236,7 @@
 - Operator Overloading
 - Sealed Traits
 
-### `chapter18`
+### `chapter19`
 
 已经创建：
 
@@ -229,7 +245,7 @@
 - Conversion Between Trait Objects
 - TypeId Checking
 
-### `chapter19`
+### `chapter20`
 
 已经创建：
 
@@ -240,14 +256,14 @@
 - Avoiding Drop
 - Panic Safety
 
-### `chapter20`
+### `chapter21`
 
 已经创建：
 
 - Cargo Features consumer side
 - Cargo Features library side
 
-### `chapter21`
+### `chapter22`
 
 已经创建：
 

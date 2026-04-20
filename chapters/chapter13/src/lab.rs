@@ -1,15 +1,48 @@
-//! 第 13 章练习：识别代码里"偷偷发生的 coercion"。
+//! 第 12 章练习：把类型大小和 ZST 的技巧放到实战里。
 
 pub fn run() {
     println!("== Lab ==");
-    println!("▷ 练习 1：写 `fn f(s: &str)` 然后传 &String、&Box<String>、&Rc<String>，全部能通过");
-    println!("▷ 练习 2：在 if/else 里用 &A 和 &B 两个不同类型，观察 E0308；改用 `as &dyn Trait` 让它通过");
-    println!("▷ 练习 3：对比 `fn f(x: i32)` 和 `fn g<T>(x: T)`——泛型上没有 coercion");
-    println!("▷ 练习 4：测试 `Box<Vec<i32>>` 在传给 `fn f(xs: &[i32])` 时发生的完整 coercion 链");
-    println!("▷ 练习 5：用 `let s: &str = &String::from(\"x\");` 观察 let 带类型标注位置的 coercion");
+
+    println!("▷ 练习 1：打印各种类型的大小");
+    println!("  - 用 size_of 打印 i32 / (i32,i32) / [i32;3] / &[i32] / &str / &dyn Trait");
+    println!("  - 猜答案，再跑验证");
+
     println!();
+
+    println!("▷ 练习 2：?Sized 泛型");
+    println!("  - 写 `fn show<T: ?Sized + Debug>(x: &T)`");
+    println!("  - 试着传 &str、&[i32]、&i32，观察全部通过");
+
+    println!();
+
+    println!("▷ 练习 3：unsized coercion");
+    println!("  - 写 `fn use_slice(s: &[i32])`，然后用 &[1,2,3] 传");
+    println!("  - 观察 &[i32; 3] 自动变 &[i32]");
+
+    println!();
+
+    println!("▷ 练习 4：never 类型");
+    println!("  - 写 `fn bail() -> ! {{ panic!(\"...\") }}`");
+    println!("  - 在 if 里把它作为分支，观察类型推断");
+
+    println!();
+
+    println!("▷ 练习 5：Unit struct + 类型状态");
+    println!("  - 仿照本节 Car<New/Delivered>，写 Connection<Disconnected/Connected>");
+    println!("  - 只有 Connected 才有 send() 方法");
+
+    println!();
+
+    println!("▷ 练习 6：PhantomData");
+    println!("  - 写 `struct Id<T>(u64, PhantomData<T>)`");
+    println!("  - 用它做强类型的 UserId / OrderId 区分");
+
+    println!();
+
     println!("完成标准：");
-    println!("  - 能指出一段代码里所有 coercion 发生的具体位置");
-    println!("  - 能说清为什么泛型位置不触发 coercion");
+    println!("  - 能独立说清 Sized vs ?Sized 触发时机");
+    println!("  - 能用 Unit struct 设计编译期状态机");
+    println!("  - 知道 PhantomData 的 3 个用途（生命周期绑定 / drop check / 协变性）");
+
     println!();
 }

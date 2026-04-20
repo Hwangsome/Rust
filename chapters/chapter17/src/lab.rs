@@ -1,10 +1,14 @@
+//! 第 16 章练习：方差是概念题，实践里真的会遇到。
+
 pub fn run() {
     println!("== Lab ==");
-    println!("▷ 练习 1：用 newtype 给 Vec<String> 实现 Display");
-    println!("▷ 练习 2：定义 `trait ReadLog: Read + Clone {{}}`，观察组合 trait 的价值");
-    println!("▷ 练习 3：尝试给 Box<dyn Iterator> 指定 Item 类型");
-    println!("▷ 练习 4：写 object-safe 的 trait，里面混入一个 `where Self: Sized` 的默认方法");
-    println!("▷ 练习 5：给自定义 struct 实现 `Add` / `Sub`，用 `+` 调用");
-    println!("▷ 练习 6：用 sealed trait 模式写一个第三方看不到的 trait");
+    println!("▷ 练习 1：把一个 &'static str 传给 `fn f<'a>(_: &'a str)`，理解协变");
+    println!("▷ 练习 2：尝试把 fn(&str) 赋给 fn(&'static str)——合法，逆变");
+    println!("▷ 练习 3：尝试在 &mut Vec<&'a str> 里换不同生命周期的引用，观察 E0308");
+    println!("▷ 练习 4：用 PhantomData<*mut T> 让 struct 在 T 上变成不变，做个小实验");
+    println!();
+    println!("完成标准：");
+    println!("  - 能说出 协变 / 逆变 / 不变 的典型例子");
+    println!("  - 遇到 生命周期 / &mut 相关的奇怪 error 能联想到方差");
     println!();
 }

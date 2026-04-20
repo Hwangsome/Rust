@@ -1,14 +1,11 @@
-//! 第 16 章练习：方差是概念题，实践里真的会遇到。
+//! 第 15 章练习：进一步巩固对各种引用 / 指针 / 借用的直觉。
 
 pub fn run() {
     println!("== Lab ==");
-    println!("▷ 练习 1：把一个 &'static str 传给 `fn f<'a>(_: &'a str)`，理解协变");
-    println!("▷ 练习 2：尝试把 fn(&str) 赋给 fn(&'static str)——合法，逆变");
-    println!("▷ 练习 3：尝试在 &mut Vec<&'a str> 里换不同生命周期的引用，观察 E0308");
-    println!("▷ 练习 4：用 PhantomData<*mut T> 让 struct 在 T 上变成不变，做个小实验");
-    println!();
-    println!("完成标准：");
-    println!("  - 能说出 协变 / 逆变 / 不变 的典型例子");
-    println!("  - 遇到 生命周期 / &mut 相关的奇怪 error 能联想到方差");
+    println!("▷ 练习 1：给一个 enum 添加两个不同形态的 &T 字段，用 match 拆出来");
+    println!("▷ 练习 2：写一个 `fn owners<'a>(v: &'a Vec<String>) -> Vec<&'a str>`");
+    println!("▷ 练习 3：为 `for x in v / &v / &mut v / v.iter() / v.iter_mut()` 各写一段，理解每种的产出类型");
+    println!("▷ 练习 4：把 Rc 换成 Arc，观察代码变化");
+    println!("▷ 练习 5：用 `*const T` 实现一个 C 风格的函数，观察为什么必须 unsafe");
     println!();
 }

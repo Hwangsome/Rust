@@ -1,7 +1,7 @@
-# 第 16 章：Variance and Its Types
+# 第 16 章：Beyond Basic References
 
-这一章对应本地课程目录 `5 - Variance and Its Types`。
-8 个 topic 模块都已实现为可运行教学代码，配套 8 篇主题笔记。
+这一章对应本地课程目录 `4 - Beyond Basic References`。
+4 个 topic 模块已实现为**可运行教学代码**，配套 4 篇主题笔记。
 
 ## 对应代码
 
@@ -12,11 +12,7 @@
 
 ## 主题顺序
 
-1. `Background for Variance (References Refresher (Part 1))`
-2. `Background for Variance (References Refresher (Part 2))`
-3. `Background for Variance (Lifetime Bounds)`
-4. `Background for Variance (Implied bounds)`
-5. `Subtyping and Variance (Covariance )`
-6. `Contravariance`
-7. `Invariance (Part 1)`
-8. `Invariance (Part 2)`
+1. `Types of References`
+2. `Destructing References`
+3. `Forcing Variables to use References`
+4. `Referencing in Compound Data Types`

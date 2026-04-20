@@ -51,14 +51,14 @@ version = "0.1.0"
 [[package]]
 name = "chapter11"
 version = "0.1.0"
-dependencies = [
- "anyhow",
- "thiserror",
-]
 
 [[package]]
 name = "chapter12"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
 
 [[package]]
 name = "chapter13"
@@ -94,6 +94,10 @@ version = "0.1.0"
 
 [[package]]
 name = "chapter21"
+version = "0.1.0"
+
+[[package]]
+name = "chapter22"
 version = "0.1.0"
 
 [[package]]

@@ -1,31 +1,26 @@
-// 第 7 章聚焦“函数式风格”的几块核心拼图：闭包、函数指针、迭代器和组合子。
-// 运行时重点观察：很多“像语法糖”的写法，本质上都依赖 trait 和所有权规则。
-// 如果这一章吃透，后面读标准库 API 会轻松很多。
-// 如果你第一次跑这一章，建议先只看三件事：
-// 1. `main.rs` 决定了这一章的演示顺序。
-// 2. 每个 `topic_XX_*.rs` 都只讲一个主题。
-// 3. `lab.rs` 放在最后，是为了先看例子，再自己动手改。
+// 第 7 章：Trait 与抽象行为（从 `trait` 定义到 trait object、关联类型）。
+// 第 6 章已单独覆盖泛型；本章专注「行为约束」与「多态」两条线。
+// 运行顺序由 `main.rs` 决定；`lab.rs` 放在最后。
 
 mod lab;
-mod topic_01_closures;
-mod topic_02_function_pointers;
-mod topic_03_iterators;
-mod topic_04_into_iter;
-mod topic_05_iterating_through_collections;
-mod topic_06_combinators;
-mod topic_07_iterating_through_option;
+mod topic_01_traits;
+mod topic_02_trait_bounds;
+mod topic_03_super_traits;
+mod topic_04_trait_objects;
+mod topic_05_derived_and_marker_traits;
+mod topic_06_associated_types_in_traits;
+mod topic_07_choosing_associated_vs_generic_type;
 
 fn main() {
-    println!("Chapter 07: Functional Programming Aspects");
+    println!("Chapter 07: Traits");
     println!();
 
-    // 顺序上先理解“可调用对象”，再理解“可迭代对象”，最后看组合子如何把操作串成流水线。
-    topic_01_closures::run();
-    topic_02_function_pointers::run();
-    topic_03_iterators::run();
-    topic_04_into_iter::run();
-    topic_05_iterating_through_collections::run();
-    topic_06_combinators::run();
-    topic_07_iterating_through_option::run();
+    topic_01_traits::run();
+    topic_02_trait_bounds::run();
+    topic_03_super_traits::run();
+    topic_04_trait_objects::run();
+    topic_05_derived_and_marker_traits::run();
+    topic_06_associated_types_in_traits::run();
+    topic_07_choosing_associated_vs_generic_type::run();
     lab::run();
 }

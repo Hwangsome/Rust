@@ -1,7 +1,7 @@
-# 第 17 章：Trait Objects Limitations
+# 第 17 章：Variance and Its Types
 
-这一章对应本地课程目录 `6 - Trait Objects Limitations`。
-9 个 topic 模块都已实现为可运行教学代码，配套 9 篇主题笔记。
+这一章对应本地课程目录 `5 - Variance and Its Types`。
+8 个 topic 模块都已实现为可运行教学代码，配套 8 篇主题笔记。
 
 ## 对应代码
 
@@ -12,12 +12,11 @@
 
 ## 主题顺序
 
-1. `Orphan Rule`
-2. `Multiple Traits`
-3. `Associated Types`
-4. `Methods with Generics`
-5. `Function with No Self Parameter`
-6. `Size and Trait Objects`
-7. `Partial Object Safety`
-8. `Operator Overloading`
-9. `Sealed Traits`
+1. `Background for Variance (References Refresher (Part 1))`
+2. `Background for Variance (References Refresher (Part 2))`
+3. `Background for Variance (Lifetime Bounds)`
+4. `Background for Variance (Implied bounds)`
+5. `Subtyping and Variance (Covariance )`
+6. `Contravariance`
+7. `Invariance (Part 1)`
+8. `Invariance (Part 2)`

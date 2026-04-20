@@ -1,7 +1,7 @@
-# 第 13 章：Coercion in Rust
+# 第 13 章：Understanding Size in Rust
 
-这一章对应本地课程目录 `2 - Coercion in Rust`。
-当前 9 个 topic 模块都已实现为**可运行教学代码** + 详细注释，配套 9 篇主题笔记。
+这一章对应本地课程目录 `1 - Understanding Size in Rust`。
+现在 9 个 topic 模块都已实现为**可运行教学代码** + 详细注释，配套 9 篇独立主题笔记。
 
 ## 对应代码
 
@@ -12,12 +12,12 @@
 
 ## 主题顺序
 
-1. `Coercion Basics (Deref Coercion)`
-2. `Coercion Sites`
-3. `Reference Coercion`
-4. `Function Item Coercion`
-5. `Trait Objects Coercion`
-6. `Unsized Coercion`
-7. `Coercion in Generics `
-8. `Transitivity in Coercion`
-9. `Least Upper Bound Coercion`
+1. `Size in Rust`
+2. `References to Unsized type`
+3. `Sized and Optionally Sized Trait`
+4. `Optionally Sized Trait and Generic Parameters`
+5. `Unsized Coercion`
+6. `Zero Sized Types- Never Type`
+7. `Zero Sized Types- Unit Type`
+8. `Zero Sized Types- Unit Structs`
+9. `Zero Sized Types - Phantom Data`

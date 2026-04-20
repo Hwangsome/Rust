@@ -1,24 +1,23 @@
-# 第 7 章：Functional Programming Aspects
+# 第 7 章：Traits（行为抽象与多态）
 
-这一章开始把 Rust 里偏“函数式”的能力串起来看。闭包、函数指针、迭代器、组合子乍一看像四五个分散主题，实际上它们围绕的是同一件事：**把行为当成值，把数据处理写成流水线**。
+本章承接 **[第 6 章：泛型](../chapter06/README.md)**：泛型解决「类型参数化」，**trait** 解决「行为如何抽象、如何约束、何时用静态分发 / 动态分发」。
 
 ## 本章目标
 
-- 理解闭包和普通函数的边界
-- 区分 `fn`、`Fn`、`FnMut`、`FnOnce` 的使用语境
-- 建立 Iterator / IntoIterator 的基本模型
-- 看清 `iter`、`iter_mut`、`into_iter` 的所有权差异
-- 学会用组合子写最小可读的数据变换链
+- 会写 `trait` / `impl Trait for Type`、默认方法、孤儿规则的基本直觉
+- 区分 trait bound、`super trait`、`dyn Trait` 与关联类型
+- 理解 object-safe 与 trait object 的运行期成本
+- 能在关联类型与泛型参数之间做初步取舍
 
 ## 推荐阅读顺序
 
-1. [闭包](./1-闭包.md)
-2. [函数指针](./2-函数指针.md)
-3. [迭代器](./3-迭代器.md)
-4. [IntoIterator](./4-IntoIterator.md)
-5. [遍历集合](./5-遍历集合.md)
-6. [组合子](./6-组合子.md)
-7. [遍历 Option](./7-遍历Option.md)
+1. [Trait](./1-Trait.md)
+2. [Trait 约束](./2-Trait约束.md)
+3. [Super Trait](./3-SuperTrait.md)
+4. [Trait Object](./4-TraitObject.md)
+5. [Derive 与 Marker Trait](./5-Derive与MarkerTrait.md)
+6. [Trait 中的关联类型](./6-Trait中的关联类型.md)
+7. [关联类型与泛型参数的取舍](./7-关联类型与泛型参数的取舍.md)
 
 ## 对应代码与实验
 
@@ -29,18 +28,16 @@
 
 主题模块：
 
-- [topic_01_closures.rs](../../chapters/chapter07/src/topic_01_closures.rs)
-- [topic_02_function_pointers.rs](../../chapters/chapter07/src/topic_02_function_pointers.rs)
-- [topic_03_iterators.rs](../../chapters/chapter07/src/topic_03_iterators.rs)
-- [topic_04_into_iter.rs](../../chapters/chapter07/src/topic_04_into_iter.rs)
-- [topic_05_iterating_through_collections.rs](../../chapters/chapter07/src/topic_05_iterating_through_collections.rs)
-- [topic_06_combinators.rs](../../chapters/chapter07/src/topic_06_combinators.rs)
-- [topic_07_iterating_through_option.rs](../../chapters/chapter07/src/topic_07_iterating_through_option.rs)
+- [topic_01_traits.rs](../../chapters/chapter07/src/topic_01_traits.rs)
+- [topic_02_trait_bounds.rs](../../chapters/chapter07/src/topic_02_trait_bounds.rs)
+- [topic_03_super_traits.rs](../../chapters/chapter07/src/topic_03_super_traits.rs)
+- [topic_04_trait_objects.rs](../../chapters/chapter07/src/topic_04_trait_objects.rs)
+- [topic_05_derived_and_marker_traits.rs](../../chapters/chapter07/src/topic_05_derived_and_marker_traits.rs)
+- [topic_06_associated_types_in_traits.rs](../../chapters/chapter07/src/topic_06_associated_types_in_traits.rs)
+- [topic_07_choosing_associated_vs_generic_type.rs](../../chapters/chapter07/src/topic_07_choosing_associated_vs_generic_type.rs)
 
-## 这一章的主线
+## 本章主线
 
-- 闭包回答“行为能不能像值一样传来传去”
-- Iterator 回答“数据能不能按统一协议逐个产出”
-- 组合子回答“这些步骤能不能串起来形成流水线”
-
-理解了这三件事，后面读标准库、集合 API 和错误处理链式写法会顺很多。
+- trait 回答「行为能不能像合同一样显式声明」
+- trait object 回答「何时需要 `dyn` 与虚表分发」
+- 关联类型回答「实现里『输出类型』只有一种时怎么写更干净」
