@@ -1,48 +1,63 @@
-//! 第 12 章练习：把类型大小和 ZST 的技巧放到实战里。
+//! 第 11 章练习：选对错误处理工具，而不是简单"能跑就行"。
 
 pub fn run() {
     println!("== Lab ==");
 
-    println!("▷ 练习 1：打印各种类型的大小");
-    println!("  - 用 size_of 打印 i32 / (i32,i32) / [i32;3] / &[i32] / &str / &dyn Trait");
-    println!("  - 猜答案，再跑验证");
+    println!("▷ 练习 1：最小 Result + match");
+    println!("  - 写 `fn safe_divide(a: i32, b: i32) -> Result<i32, String>`");
+    println!("  - 调用方用 match 同时处理 Ok / Err");
 
     println!();
 
-    println!("▷ 练习 2：?Sized 泛型");
-    println!("  - 写 `fn show<T: ?Sized + Debug>(x: &T)`");
-    println!("  - 试着传 &str、&[i32]、&i32，观察全部通过");
+    println!("▷ 练习 2：? 操作符");
+    println!("  - 把练习 1 改成用 `?` 传播错误");
+    println!("  - 必须保证外层函数也返回 Result");
 
     println!();
 
-    println!("▷ 练习 3：unsized coercion");
-    println!("  - 写 `fn use_slice(s: &[i32])`，然后用 &[1,2,3] 传");
-    println!("  - 观察 &[i32; 3] 自动变 &[i32]");
+    println!("▷ 练习 3：合并多种错误类型");
+    println!("  - 写 `fn read_and_parse() -> Result<i32, AppError>`");
+    println!("  - AppError 同时能容纳 io::Error 和 ParseIntError");
+    println!("  - 用手动 map_err 实现一遍；再用 #[from] + thiserror 实现一遍");
 
     println!();
 
-    println!("▷ 练习 4：never 类型");
-    println!("  - 写 `fn bail() -> ! {{ panic!(\"...\") }}`");
-    println!("  - 在 if 里把它作为分支，观察类型推断");
+    println!("▷ 练习 4：Result<Option<T>, E>");
+    println!("  - 写 `fn find_user(id: u32) -> Result<Option<User>, DbError>`");
+    println!("  - 调用方需要同时区分：查到 / 没查到 / 查询失败");
 
     println!();
 
-    println!("▷ 练习 5：Unit struct + 类型状态");
-    println!("  - 仿照本节 Car<New/Delivered>，写 Connection<Disconnected/Connected>");
-    println!("  - 只有 Connected 才有 send() 方法");
+    println!("▷ 练习 5：Option<Result<T, E>>");
+    println!("  - 写 `fn parse_optional(input: Option<&str>) -> Option<Result<i32, ParseIntError>>`");
+    println!("  - 用 `.transpose()` 把它转成 Result<Option<i32>, E>——观察两种形状在接口上的差异");
 
     println!();
 
-    println!("▷ 练习 6：PhantomData");
-    println!("  - 写 `struct Id<T>(u64, PhantomData<T>)`");
-    println!("  - 用它做强类型的 UserId / OrderId 区分");
+    println!("▷ 练习 6：anyhow + context");
+    println!("  - 写 `fn pipeline() -> anyhow::Result<i32>`");
+    println!("  - 每一步用 `.with_context(|| format!(\"step X\"))?`");
+    println!("  - 在 main 里用 `{{:#}}` 打印错误链");
+
+    println!();
+
+    println!("▷ 练习 7：thiserror 精确错误");
+    println!("  - 定义 `enum AppError {{ Io(...), Parse(...), BadInput(String) }}`");
+    println!("  - 用 `#[error(\"...\")]` 派生 Display");
+    println!("  - 调用方 match 分支按 variant 做不同的恢复");
+
+    println!();
+
+    println!("▷ 练习 8：方法链 + Result");
+    println!("  - 写一个 builder，某步返回 `Result<Self, String>`");
+    println!("  - 用 `?` 让链整体可读");
 
     println!();
 
     println!("完成标准：");
-    println!("  - 能独立说清 Sized vs ?Sized 触发时机");
-    println!("  - 能用 Unit struct 设计编译期状态机");
-    println!("  - 知道 PhantomData 的 3 个用途（生命周期绑定 / drop check / 协变性）");
+    println!("  - 能一眼判断：这里用 `?`、`match`、`unwrap_or`、`ok()?` 哪个最简洁");
+    println!("  - 能在 library crate 和 application crate 里分别选 thiserror vs anyhow");
+    println!("  - 能说清 Result<Option<T>> 和 Option<Result<T>> 的语义差异");
 
     println!();
 }

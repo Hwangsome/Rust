@@ -80,55 +80,60 @@
 6. [Trait 中的关联类型](./chapter07/6-Trait中的关联类型.md)
 7. [关联类型与泛型参数的取舍](./chapter07/7-关联类型与泛型参数的取舍.md)
 
-### [第 8 章：Functional Programming Aspects](./chapter08/README.md)
+### [第 8 章：Project Structure](./chapter08/README.md)
 
-1. [闭包](./chapter08/1-闭包.md)
-2. [函数指针](./chapter08/2-函数指针.md)
-3. [迭代器](./chapter08/3-迭代器.md)
-4. [IntoIterator](./chapter08/4-IntoIterator.md)
-5. [遍历集合](./chapter08/5-遍历集合.md)
-6. [组合子](./chapter08/6-组合子.md)
-7. [遍历 Option](./chapter08/7-遍历Option.md)
+1. [文件式模块](./chapter08/1-文件式模块.md)
+2. [Trait 关联常量](./chapter08/2-Trait关联常量.md)
 
-### [第 9 章：Memory Management Features](./chapter09/README.md)
+### [第 9 章：Functional Programming Aspects](./chapter09/README.md)
 
-1. [具体生命周期](./chapter09/1-具体生命周期.md)
-2. [泛型生命周期](./chapter09/2-泛型生命周期.md)
-3. [生命周期省略](./chapter09/3-生命周期省略.md)
-4. [Struct 中的生命周期](./chapter09/4-Struct中的生命周期.md)
-5. [Box 智能指针](./chapter09/5-Box智能指针.md)
-6. [Box 的典型用法](./chapter09/6-Box的典型用法.md)
-7. [Rc 智能指针](./chapter09/7-Rc智能指针.md)
-8. [RefCell](./chapter09/8-RefCell.md)
-9. [RefCell 示例](./chapter09/9-RefCell示例.md)
+1. [闭包](./chapter09/1-闭包.md)
+2. [函数指针](./chapter09/2-函数指针.md)
+3. [迭代器](./chapter09/3-迭代器.md)
+4. [IntoIterator](./chapter09/4-IntoIterator.md)
+5. [遍历集合](./chapter09/5-遍历集合.md)
+6. [组合子](./chapter09/6-组合子.md)
+7. [遍历 Option](./chapter09/7-遍历Option.md)
 
-### [第 10 章：Typical Data Structures](./chapter10/README.md)
+### [第 10 章：Memory Management Features](./chapter10/README.md)
 
-1. [单向链表（基础结构）](./chapter10/1-单向链表（基础结构）.md)
-2. [单向链表（添加与移除）](./chapter10/2-单向链表（添加与移除）.md)
-3. [双向链表（前端插入）](./chapter10/3-双向链表（前端插入）.md)
-4. [双向链表（移除与遍历）](./chapter10/4-双向链表（移除与遍历）.md)
-5. [引用环](./chapter10/5-引用环.md)
+1. [具体生命周期](./chapter10/1-具体生命周期.md)
+2. [泛型生命周期](./chapter10/2-泛型生命周期.md)
+3. [生命周期省略](./chapter10/3-生命周期省略.md)
+4. [Struct 中的生命周期](./chapter10/4-Struct中的生命周期.md)
+5. [Box 智能指针](./chapter10/5-Box智能指针.md)
+6. [Box 的典型用法](./chapter10/6-Box的典型用法.md)
+7. [Rc 智能指针](./chapter10/7-Rc智能指针.md)
+8. [RefCell](./chapter10/8-RefCell.md)
+9. [RefCell 示例](./chapter10/9-RefCell示例.md)
 
-### [第 11 章：Useful Patterns for Structs](./chapter11/README.md)
+### [第 11 章：Typical Data Structures](./chapter11/README.md)
 
-1. [初始化 Struct 实例](./chapter11/1-初始化Struct实例.md)
-2. [Builder 模式](./chapter11/2-Builder模式.md)
-3. [简化大型 Struct](./chapter11/3-简化大型Struct.md)
+1. [单向链表（基础结构）](./chapter11/1-单向链表（基础结构）.md)
+2. [单向链表（添加与移除）](./chapter11/2-单向链表（添加与移除）.md)
+3. [双向链表（前端插入）](./chapter11/3-双向链表（前端插入）.md)
+4. [双向链表（移除与遍历）](./chapter11/4-双向链表（移除与遍历）.md)
+5. [引用环](./chapter11/5-引用环.md)
 
-### [第 12 章：Error Handling](./chapter12/README.md)
+### [第 12 章：Useful Patterns for Structs](./chapter12/README.md)
 
-1. [Rust 错误处理思路](./chapter12/1-Rust错误处理思路.md)
-2. [传播错误](./chapter12/2-传播错误.md)
-3. [统一多种错误类型](./chapter12/3-统一多种错误类型.md)
-4. [链式调用中的问号运算符](./chapter12/4-链式调用中的问号运算符.md)
-5. [分层结果类型：Result<Option<T>, E>](./chapter12/5-分层结果类型：ResultOption.md)
-6. [分层结果类型：Option<Result<T, E>>](./chapter12/6-分层结果类型：OptionResult.md)
-7. [anyhow](./chapter12/7-anyhow.md)
-8. [thiserror](./chapter12/8-thiserror.md)
-9. [错误处理里的方法链约束](./chapter12/9-错误处理里的方法链约束.md)
+1. [初始化 Struct 实例](./chapter12/1-初始化Struct实例.md)
+2. [Builder 模式](./chapter12/2-Builder模式.md)
+3. [简化大型 Struct](./chapter12/3-简化大型Struct.md)
 
-### [第 13 章：Understanding Size in Rust](./chapter13/README.md)
+### [第 13 章：Error Handling](./chapter13/README.md)
+
+1. [Rust 错误处理思路](./chapter13/1-Rust错误处理思路.md)
+2. [传播错误](./chapter13/2-传播错误.md)
+3. [统一多种错误类型](./chapter13/3-统一多种错误类型.md)
+4. [链式调用中的问号运算符](./chapter13/4-链式调用中的问号运算符.md)
+5. [分层结果类型：Result<Option<T>, E>](./chapter13/5-分层结果类型：ResultOption.md)
+6. [分层结果类型：Option<Result<T, E>>](./chapter13/6-分层结果类型：OptionResult.md)
+7. [anyhow](./chapter13/7-anyhow.md)
+8. [thiserror](./chapter13/8-thiserror.md)
+9. [错误处理里的方法链约束](./chapter13/9-错误处理里的方法链约束.md)
+
+### [第 14 章：Understanding Size in Rust](./chapter14/README.md)
 
 1. `Size in Rust`
 2. `References to Unsized type`
@@ -140,7 +145,7 @@
 8. `Zero Sized Types- Unit Structs`
 9. `Zero Sized Types - Phantom Data`
 
-### [第 14 章：Coercion in Rust](./chapter14/README.md)
+### [第 15 章：Coercion in Rust](./chapter15/README.md)
 
 1. `Coercion Basics (Deref Coercion)`
 2. `Coercion Sites`
@@ -152,7 +157,7 @@
 8. `Transitivity in Coercion`
 9. `Least Upper Bound Coercion`
 
-### [第 15 章：Concurrency](./chapter15/README.md)
+### [第 16 章：Concurrency](./chapter16/README.md)
 
 1. `Thread basics`
 2. `Ownership in Threads`
@@ -168,14 +173,14 @@
 12. `Computationally Expensive Functions`
 13. `Project- Webscrapping using Threads`
 
-### [第 16 章：Beyond Basic References](./chapter16/README.md)
+### [第 17 章：Beyond Basic References](./chapter17/README.md)
 
 1. `Types of References`
 2. `Destructing References`
 3. `Forcing Variables to use References`
 4. `Referencing in Compound Data Types`
 
-### [第 17 章：Variance and Its Types](./chapter17/README.md)
+### [第 18 章：Variance and Its Types](./chapter18/README.md)
 
 1. `Background for Variance (References Refresher (Part 1))`
 2. `Background for Variance (References Refresher (Part 2))`
@@ -186,7 +191,7 @@
 7. `Invariance (Part 1)`
 8. `Invariance (Part 2)`
 
-### [第 18 章：Trait Objects Limitations](./chapter18/README.md)
+### [第 19 章：Trait Objects Limitations](./chapter19/README.md)
 
 1. `Orphan Rule`
 2. `Multiple Traits`
@@ -198,14 +203,14 @@
 8. `Operator Overloading`
 9. `Sealed Traits`
 
-### [第 19 章：Downcasting](./chapter19/README.md)
+### [第 20 章：Downcasting](./chapter20/README.md)
 
 1. `Downcasting Trait Objects`
 2. `Downcasting Example`
 3. `Downcasting for Conversion Between Trait Objects`
 4. `Checking type without Downcasting using TypeId`
 
-### [第 20 章：Dropcheck](./chapter20/README.md)
+### [第 21 章：Dropcheck](./chapter21/README.md)
 
 1. `Drop Check`
 2. `Drop Check and Partial Move`
@@ -215,12 +220,12 @@
 6. `Avoiding Drop`
 7. `Panic safety`
 
-### [第 21 章：Structing Projects](./chapter21/README.md)
+### [第 22 章：Structing Projects](./chapter22/README.md)
 
 1. `consumer_of_lib`
 2. `math`
 
-### [第 22 章：Macros](./chapter22/README.md)
+### [第 23 章：Macros](./chapter23/README.md)
 
 1. `Macros Basics`
 2. `Capturing Types`
@@ -240,19 +245,19 @@
 - 已深化：第 5 章 Testing 4 个主题
 - 已新增：第 6 章 Generics 1 个主题
 - 已新增：第 7 章 Traits 7 个主题
-- 已新增：第 8 章 Functional Programming Aspects 7 个主题
-- 已新增：第 9 章 Memory Management Features 9 个主题
-- 已新增：第 10 章 Typical Data Structures 5 个主题
-- 已新增：第 11 章 Useful Patterns for Structs 3 个主题
-- 已新增：第 12 章 Error Handling 9 个主题
-- 已新增：第 13 章 Understanding Size in Rust 9 个主题
-- 已新增：第 14 章 Coercion in Rust 9 个主题
-- 已新增：第 15 章 Concurrency 13 个主题
-- 已新增：第 16 章 Beyond Basic References 4 个主题
-- 已新增：第 17 章 Variance and Its Types 8 个主题
-- 已新增：第 18 章 Trait Objects Limitations 9 个主题
-- 已新增：第 19 章 Downcasting 4 个主题
-- 已新增：第 20 章 Dropcheck 7 个主题
-- 已新增：第 21 章 Structing Projects 2 个主题
-- 已新增：第 22 章 Macros 4 个主题
+- 已新增：第 9 章 Functional Programming Aspects 7 个主题
+- 已新增：第 10 章 Memory Management Features 9 个主题
+- 已新增：第 11 章 Typical Data Structures 5 个主题
+- 已新增：第 12 章 Useful Patterns for Structs 3 个主题
+- 已新增：第 13 章 Error Handling 9 个主题
+- 已新增：第 14 章 Understanding Size in Rust 9 个主题
+- 已新增：第 15 章 Coercion in Rust 9 个主题
+- 已新增：第 16 章 Concurrency 13 个主题
+- 已新增：第 17 章 Beyond Basic References 4 个主题
+- 已新增：第 18 章 Variance and Its Types 8 个主题
+- 已新增：第 19 章 Trait Objects Limitations 9 个主题
+- 已新增：第 20 章 Downcasting 4 个主题
+- 已新增：第 21 章 Dropcheck 7 个主题
+- 已新增：第 22 章 Structing Projects 2 个主题
+- 已新增：第 23 章 Macros 4 个主题
 - 后续方向：继续补更多实验输出、对比表、练习答案版和章节间交叉引用

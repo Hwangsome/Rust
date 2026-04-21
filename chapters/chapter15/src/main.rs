@@ -1,4 +1,4 @@
-// 第 14 章对应课程 Part 3 的章节：Concurrency。
+// 第 13 章对应课程 Part 3 的章节：Coercion in Rust。
 // 这批内容比前面章节更偏高级主题，所以当前仓库先把原始代码完整纳入，
 // 再通过统一的 `main.rs` 入口把每个 topic 串起来。
 // 如果你第一次跑这一章，建议先只看三件事：
@@ -7,36 +7,28 @@
 // 3. `lab.rs` 放在最后，是为了把“收录原始代码”继续推进成“真正可运行的教学代码”。
 
 mod lab;
-mod topic_01_thread_basics;
-mod topic_02_ownership_in_threads;
-mod topic_03_message_passing_through_channels_part_1;
-mod topic_04_message_passing_through_channels_part_2;
-mod topic_05_sharing_states_part_1;
-mod topic_06_sharing_states_part_2;
-mod topic_07_synchronization_through_barriers;
-mod topic_08_scoped_threads;
-mod topic_09_thread_parking;
-mod topic_10_async_await_basics;
-mod topic_11_tokio_tasks;
-mod topic_12_computationally_expensive_functions;
-mod topic_13_project_webscrapping_using_threads;
+mod topic_01_coercion_basics_deref_coercion;
+mod topic_02_coercion_sites;
+mod topic_03_reference_coercion;
+mod topic_04_function_item_coercion;
+mod topic_05_trait_objects_coercion;
+mod topic_06_unsized_coercion;
+mod topic_07_coercion_in_generics;
+mod topic_08_transitivity_in_coercion;
+mod topic_09_least_upper_bound_coercion;
 
 fn main() {
-    println!("Chapter 15: Concurrency");
+    println!("Chapter 14: Coercion in Rust");
     println!();
 
-    topic_01_thread_basics::run();
-    topic_02_ownership_in_threads::run();
-    topic_03_message_passing_through_channels_part_1::run();
-    topic_04_message_passing_through_channels_part_2::run();
-    topic_05_sharing_states_part_1::run();
-    topic_06_sharing_states_part_2::run();
-    topic_07_synchronization_through_barriers::run();
-    topic_08_scoped_threads::run();
-    topic_09_thread_parking::run();
-    topic_10_async_await_basics::run();
-    topic_11_tokio_tasks::run();
-    topic_12_computationally_expensive_functions::run();
-    topic_13_project_webscrapping_using_threads::run();
+    topic_01_coercion_basics_deref_coercion::run();
+    topic_02_coercion_sites::run();
+    topic_03_reference_coercion::run();
+    topic_04_function_item_coercion::run();
+    topic_05_trait_objects_coercion::run();
+    topic_06_unsized_coercion::run();
+    topic_07_coercion_in_generics::run();
+    topic_08_transitivity_in_coercion::run();
+    topic_09_least_upper_bound_coercion::run();
     lab::run();
 }

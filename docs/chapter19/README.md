@@ -1,7 +1,7 @@
-# 第 19 章：Downcasting
+# 第 18 章：Trait Objects Limitations
 
-这一章对应本地课程目录 `7 - Downcasting`。
-4 个 topic 模块都已实现为可运行教学代码，配套 4 篇主题笔记。
+这一章对应本地课程目录 `6 - Trait Objects Limitations`。
+9 个 topic 模块都已实现为可运行教学代码，配套 9 篇主题笔记。
 
 ## 对应代码
 
@@ -12,7 +12,12 @@
 
 ## 主题顺序
 
-1. `Downcasting Trait Objects`
-2. `Downcasting Example`
-3. `Downcasting for Conversion Between Trait Objects`
-4. `Checking type without Downcasting using TypeId`
+1. `Orphan Rule`
+2. `Multiple Traits`
+3. `Associated Types`
+4. `Methods with Generics`
+5. `Function with No Self Parameter`
+6. `Size and Trait Objects`
+7. `Partial Object Safety`
+8. `Operator Overloading`
+9. `Sealed Traits`

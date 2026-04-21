@@ -4,23 +4,27 @@
 
 mod lab;
 mod topic_01_traits;
-mod topic_02_trait_bounds;
-mod topic_03_super_traits;
-mod topic_04_trait_objects;
-mod topic_05_derived_and_marker_traits;
-mod topic_06_associated_types_in_traits;
-mod topic_07_choosing_associated_vs_generic_type;
+mod topic_02_static_dynamic_dispatch;
+mod topic_03_trait_in_scope;
+mod topic_04_trait_bounds;
+mod topic_05_super_traits;
+mod topic_06_trait_objects;
+mod topic_07_derived_and_marker_traits;
+mod topic_08_associated_types_in_traits;
+mod topic_09_choosing_associated_vs_generic_type;
 
 fn main() {
     println!("Chapter 07: Traits");
     println!();
 
     topic_01_traits::run();
-    topic_02_trait_bounds::run();
-    topic_03_super_traits::run();
-    topic_04_trait_objects::run();
-    topic_05_derived_and_marker_traits::run();
-    topic_06_associated_types_in_traits::run();
-    topic_07_choosing_associated_vs_generic_type::run();
+    topic_02_static_dynamic_dispatch::run();
+    topic_03_trait_in_scope::run();
+    topic_04_trait_bounds::run();
+    topic_05_super_traits::run();
+    topic_06_trait_objects::run();
+    topic_07_derived_and_marker_traits::run();
+    topic_08_associated_types_in_traits::run();
+    topic_09_choosing_associated_vs_generic_type::run();
     lab::run();
 }

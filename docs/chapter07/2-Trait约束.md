@@ -3,7 +3,7 @@
 > - **所属章节**：第 7 章 · Traits
 > - **Cargo package**：`chapter07`
 > - **运行方式**：`cargo run -p chapter07`
-> - **代码位置**：`chapters/chapter07/src/topic_02_trait_bounds.rs`
+> - **代码位置**：`chapters/chapter07/src/topic_04_trait_bounds.rs`
 > - **Lab**：`chapters/chapter07/src/lab.rs`
 > - **上一篇**：[1. Trait：行为抽象](./1-Trait.md)
 > - **下一篇**：[3. Super Trait](./3-SuperTrait.md)

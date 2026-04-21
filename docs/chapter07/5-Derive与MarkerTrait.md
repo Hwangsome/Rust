@@ -3,7 +3,7 @@
 > - **所属章节**：第 7 章 · Traits
 > - **Cargo package**：`chapter07`
 > - **运行方式**：`cargo run -p chapter07`
-> - **代码位置**：`chapters/chapter07/src/topic_05_derived_and_marker_traits.rs`
+> - **代码位置**：`chapters/chapter07/src/topic_07_derived_and_marker_traits.rs`
 > - **Lab**：`chapters/chapter07/src/lab.rs`
 > - **上一篇**：[4. Trait Object（`dyn Trait`）](./4-TraitObject.md)
 > - **下一篇**：[6. Trait 中的关联类型](./6-Trait中的关联类型.md)

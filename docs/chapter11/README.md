@@ -1,19 +1,21 @@
-# 第 11 章：Useful Patterns for Handling Structs
+# 第 10 章：Implementing Typical Data Structures
 
-这一章不再强调新语法，而是在讨论“怎样把 struct 设计得更像工程代码”。如果前面几章解决的是“Rust 能不能写”，这里开始解决“Rust 写出来后顺不顺手、是不是容易维护”。
+这一章是 Part 2 最能检验前面内容有没有真正吃透的一章。因为一旦开始手写链表，前面学过的 `Box`、`Rc`、`RefCell`、`Weak` 会立刻从“概念题”变成“结构题”。
 
 ## 本章目标
 
-- 理解 Rust 里常见的初始化方式
-- 看懂 builder pattern 解决的真实问题
-- 理解结构拆分如何改善可读性和借用关系
-- 为以后设计配置对象、领域模型和状态对象打基础
+- 理解单向链表为什么只需要 `Box`
+- 理解双向链表为什么常引出 `Rc<RefCell<T>>`
+- 学会用 `take()` 移动链表头节点
+- 理解引用环为什么会发生，以及 `Weak` 怎么拆掉它
 
 ## 推荐阅读顺序
 
-1. [初始化 Struct 实例](./1-初始化Struct实例.md)
-2. [Builder 模式](./2-Builder模式.md)
-3. [简化大型 Struct](./3-简化大型Struct.md)
+1. [单向链表（基础结构）](./1-单向链表（基础结构）.md)
+2. [单向链表（添加与移除）](./2-单向链表（添加与移除）.md)
+3. [双向链表（前端插入）](./3-双向链表（前端插入）.md)
+4. [双向链表（移除与遍历）](./4-双向链表（移除与遍历）.md)
+5. [引用环](./5-引用环.md)
 
 ## 对应代码与实验
 
@@ -24,12 +26,14 @@
 
 主题模块：
 
-- [topic_01_initializing_struct_instances.rs](../../chapters/chapter11/src/topic_01_initializing_struct_instances.rs)
-- [topic_02_builder_pattern.rs](../../chapters/chapter11/src/topic_02_builder_pattern.rs)
-- [topic_03_simplifying_structures.rs](../../chapters/chapter11/src/topic_03_simplifying_structures.rs)
+- [topic_01_singly_link_list_part1.rs](../../chapters/chapter11/src/topic_01_singly_link_list_part1.rs)
+- [topic_02_singly_link_list_part2.rs](../../chapters/chapter11/src/topic_02_singly_link_list_part2.rs)
+- [topic_03_doubly_link_list_part1.rs](../../chapters/chapter11/src/topic_03_doubly_link_list_part1.rs)
+- [topic_04_doubly_link_list_part2.rs](../../chapters/chapter11/src/topic_04_doubly_link_list_part2.rs)
+- [topic_05_reference_cycles.rs](../../chapters/chapter11/src/topic_05_reference_cycles.rs)
 
-## 本章提醒
+## 本章观察重点
 
-- 初始化方式不是审美问题，而是 API 设计问题
-- builder 的目标不是“链起来更酷”，而是避免参数爆炸
-- struct 拆分的收益不只在借用层面，也在建模层面
+- 数据结构设计和所有权设计是同一件事
+- 单向结构和双向结构的复杂度不只差在“多一根指针”
+- 只要出现父子互指、前后互指，就要立刻考虑引用计数与引用环

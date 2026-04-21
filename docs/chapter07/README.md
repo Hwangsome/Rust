@@ -29,12 +29,14 @@
 主题模块：
 
 - [topic_01_traits.rs](../../chapters/chapter07/src/topic_01_traits.rs)
-- [topic_02_trait_bounds.rs](../../chapters/chapter07/src/topic_02_trait_bounds.rs)
-- [topic_03_super_traits.rs](../../chapters/chapter07/src/topic_03_super_traits.rs)
-- [topic_04_trait_objects.rs](../../chapters/chapter07/src/topic_04_trait_objects.rs)
-- [topic_05_derived_and_marker_traits.rs](../../chapters/chapter07/src/topic_05_derived_and_marker_traits.rs)
-- [topic_06_associated_types_in_traits.rs](../../chapters/chapter07/src/topic_06_associated_types_in_traits.rs)
-- [topic_07_choosing_associated_vs_generic_type.rs](../../chapters/chapter07/src/topic_07_choosing_associated_vs_generic_type.rs)
+- [topic_02_static_dynamic_dispatch.rs](../../chapters/chapter07/src/topic_02_static_dynamic_dispatch.rs)（静态分派 / 动态分派、`Vec<&dyn Trait>`）
+- [topic_03_trait_in_scope.rs](../../chapters/chapter07/src/topic_03_trait_in_scope.rs)（trait 必须在作用域内、`use` / UFCS）
+- [topic_04_trait_bounds.rs](../../chapters/chapter07/src/topic_04_trait_bounds.rs)
+- [topic_05_super_traits.rs](../../chapters/chapter07/src/topic_05_super_traits.rs)
+- [topic_06_trait_objects.rs](../../chapters/chapter07/src/topic_06_trait_objects.rs)
+- [topic_07_derived_and_marker_traits.rs](../../chapters/chapter07/src/topic_07_derived_and_marker_traits.rs)
+- [topic_08_associated_types_in_traits.rs](../../chapters/chapter07/src/topic_08_associated_types_in_traits.rs)
+- [topic_09_choosing_associated_vs_generic_type.rs](../../chapters/chapter07/src/topic_09_choosing_associated_vs_generic_type.rs)
 
 ## 本章主线
 

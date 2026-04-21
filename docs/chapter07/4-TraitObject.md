@@ -3,7 +3,7 @@
 > - **所属章节**：第 7 章 · Traits
 > - **Cargo package**：`chapter07`
 > - **运行方式**：`cargo run -p chapter07`
-> - **代码位置**：`chapters/chapter07/src/topic_04_trait_objects.rs`
+> - **代码位置**：`chapters/chapter07/src/topic_06_trait_objects.rs`
 > - **Lab**：`chapters/chapter07/src/lab.rs`
 > - **上一篇**：[3. Super Trait](./3-SuperTrait.md)
 > - **下一篇**：[5. Derive 与 Marker Trait](./5-Derive与MarkerTrait.md)

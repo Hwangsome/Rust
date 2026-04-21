@@ -1,31 +1,58 @@
-// 第 7 章聚焦“函数式风格”的几块核心拼图：闭包、函数指针、迭代器和组合子。
-// 运行时重点观察：很多“像语法糖”的写法，本质上都依赖 trait 和所有权规则。
-// 如果这一章吃透，后面读标准库 API 会轻松很多。
-// 如果你第一次跑这一章，建议先只看三件事：
-// 1. `main.rs` 决定了这一章的演示顺序。
-// 2. 每个 `topic_XX_*.rs` 都只讲一个主题。
-// 3. `lab.rs` 放在最后，是为了先看例子，再自己动手改。
+//! 第 8 章：Project Structure
+//!
+//! 演示**文件式模块**（file-based module pattern）：
+//! 将 chapter07 里定义在单一文件中的 accommodation 业务拆分到
+//! `accommodation/` 子目录，通过 `mod.rs` + 独立结构体文件实现模块化。
 
+mod accommodation;
+mod display;
 mod lab;
-mod topic_01_closures;
-mod topic_02_function_pointers;
-mod topic_03_iterators;
-mod topic_04_into_iter;
-mod topic_05_iterating_through_collections;
-mod topic_06_combinators;
-mod topic_07_iterating_through_option;
+
+use accommodation::{Accommodation, Airbnb, Hostel, Hotel, StayPolicy};
 
 fn main() {
-    println!("Chapter 08: Functional Programming Aspects");
+    println!("=== Chapter 08 · Project Structure ===\n");
+
+    // 通过 mod.rs 的 pub use 直接引用各类型
+    let mut hotel = Hotel::new("Grand Palace");
+    let mut airbnb = Airbnb::new("Cozy Downtown Flat");
+    let mut hostel: Hostel<u32> = Hostel::new(1001_u32, "Backpackers Inn");
+
+    println!("-- 住宿列表 --");
+    println!("  {}", hotel.search_listing_line());
+    println!("  {}", airbnb.search_listing_line());
+    println!("  {}", hostel.search_listing_line());
+    println!("  Hostel payload (ID): {}", hostel.payload());
     println!();
 
-    // 顺序上先理解“可调用对象”，再理解“可迭代对象”，最后看组合子如何把操作串成流水线。
-    topic_01_closures::run();
-    topic_02_function_pointers::run();
-    topic_03_iterators::run();
-    topic_04_into_iter::run();
-    topic_05_iterating_through_collections::run();
-    topic_06_combinators::run();
-    topic_07_iterating_through_option::run();
+    println!("-- 预订 --");
+    match hotel.book("Alice", 3) {
+        Ok(()) => println!("  Hotel booking OK"),
+        Err(e) => println!("  Hotel booking ERR: {e}"),
+    }
+    match airbnb.book("Bob", 10) {
+        Ok(()) => println!("  Airbnb booking OK"),
+        Err(e) => println!("  Airbnb booking ERR: {e}"),
+    }
+    match hostel.book("Carol", 7) {
+        Ok(()) => println!("  Hostel booking OK"),
+        Err(e) => println!("  Hostel booking ERR: {e}"),
+    }
+    // 超出限制
+    match hostel.book("Dave", 10) {
+        Ok(()) => println!("  Hostel booking OK"),
+        Err(e) => println!("  Hostel booking ERR: {e}"),
+    }
+    println!();
+
+    println!("-- 最大晚数政策 --");
+    println!("  Hotel  : {} nights", hotel.max_nights_per_booking());
+    println!("  Airbnb : {} nights", airbnb.max_nights_per_booking());
+    println!("  Hostel : {} nights", hostel.max_nights_per_booking());
+
     lab::run();
+
+    accommodation::tax::run();
+
+    display::run();
 }

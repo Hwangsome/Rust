@@ -3,7 +3,7 @@
 > - **所属章节**：第 7 章 · Traits
 > - **Cargo package**：`chapter07`
 > - **运行方式**：`cargo run -p chapter07`
-> - **代码位置**：`chapters/chapter07/src/topic_03_super_traits.rs`
+> - **代码位置**：`chapters/chapter07/src/topic_05_super_traits.rs`
 > - **Lab**：`chapters/chapter07/src/lab.rs`
 > - **上一篇**：[2. Trait 约束](./2-Trait约束.md)
 > - **下一篇**：[4. Trait Object（`dyn Trait`）](./4-TraitObject.md)

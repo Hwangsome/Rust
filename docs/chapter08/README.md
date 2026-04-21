@@ -1,46 +1,34 @@
-# 第 8 章：Functional Programming Aspects
+# 第 8 章：Project Structure
 
-这一章开始把 Rust 里偏“函数式”的能力串起来看。闭包、函数指针、迭代器、组合子乍一看像四五个分散主题，实际上它们围绕的是同一件事：**把行为当成值，把数据处理写成流水线**。
+> **Cargo package**：`chapter08`  
+> **运行方式**：`cargo run -p chapter08`  
+> **源码**：`chapters/chapter08/src/`
 
 ## 本章目标
 
-- 理解闭包和普通函数的边界
-- 区分 `fn`、`Fn`、`FnMut`、`FnOnce` 的使用语境
-- 建立 Iterator / IntoIterator 的基本模型
-- 看清 `iter`、`iter_mut`、`into_iter` 的所有权差异
-- 学会用组合子写最小可读的数据变换链
+将 chapter07 中定义在单一文件内的 accommodation 业务，用**文件式模块**（file-based module pattern）重新组织，演示 Rust 项目如何按职责拆分文件并通过 `mod.rs` + `pub use` 对外暴露统一接口。
 
-## 推荐阅读顺序
+## 目录结构
 
-1. [闭包](./1-闭包.md)
-2. [函数指针](./2-函数指针.md)
-3. [迭代器](./3-迭代器.md)
-4. [IntoIterator](./4-IntoIterator.md)
-5. [遍历集合](./5-遍历集合.md)
-6. [组合子](./6-组合子.md)
-7. [遍历 Option](./7-遍历Option.md)
+```
+chapters/chapter08/src/
+├── main.rs
+├── lab.rs
+└── accommodation/
+    ├── mod.rs      ← 声明子模块、定义 trait、pub use re-export
+    ├── hotel.rs    ← Hotel 结构体及其 impl
+    ├── airbnb.rs   ← Airbnb 结构体及其 impl
+    └── hostel.rs   ← Hostel<T> 结构体及其 impl
+```
 
-## 对应代码与实验
+## 主题模块
 
-- Cargo package：`chapter08`
-- 运行方式：`cargo run -p chapter08`
-- 章节入口：[chapters/chapter08/src/main.rs](../../chapters/chapter08/src/main.rs)
-- 练习模块：[chapters/chapter08/src/lab.rs](../../chapters/chapter08/src/lab.rs)
+| # | 文件 | 主题 |
+|---|------|------|
+| 1 | [1-文件式模块.md](./1-文件式模块.md) | 文件式模块（mod.rs 模式） |
+| 2 | [2-Trait关联常量.md](./2-Trait关联常量.md) | Trait 关联常量（Associated Constants） |
 
-主题模块：
+## 前后章节
 
-- [topic_01_closures.rs](../../chapters/chapter08/src/topic_01_closures.rs)
-- [topic_02_function_pointers.rs](../../chapters/chapter08/src/topic_02_function_pointers.rs)
-- [topic_03_iterators.rs](../../chapters/chapter08/src/topic_03_iterators.rs)
-- [topic_04_into_iter.rs](../../chapters/chapter08/src/topic_04_into_iter.rs)
-- [topic_05_iterating_through_collections.rs](../../chapters/chapter08/src/topic_05_iterating_through_collections.rs)
-- [topic_06_combinators.rs](../../chapters/chapter08/src/topic_06_combinators.rs)
-- [topic_07_iterating_through_option.rs](../../chapters/chapter08/src/topic_07_iterating_through_option.rs)
-
-## 这一章的主线
-
-- 闭包回答“行为能不能像值一样传来传去”
-- Iterator 回答“数据能不能按统一协议逐个产出”
-- 组合子回答“这些步骤能不能串起来形成流水线”
-
-理解了这三件事，后面读标准库、集合 API 和错误处理链式写法会顺很多。
+- **上一章**：[第 7 章 · Traits](../chapter07/README.md)
+- **下一章**：[第 9 章 · Functional Programming Aspects](../chapter09/README.md)

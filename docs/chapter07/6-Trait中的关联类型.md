@@ -3,7 +3,7 @@
 > - **所属章节**：第 7 章 · Traits
 > - **Cargo package**：`chapter07`
 > - **运行方式**：`cargo run -p chapter07`
-> - **代码位置**：`chapters/chapter07/src/topic_06_associated_types_in_traits.rs`
+> - **代码位置**：`chapters/chapter07/src/topic_08_associated_types_in_traits.rs`
 > - **Lab**：`chapters/chapter07/src/lab.rs`
 > - **上一篇**：[5. Derive 与 Marker Trait](./5-Derive与MarkerTrait.md)
 > - **下一篇**：[7. 关联类型 vs 泛型参数的取舍](./7-关联类型与泛型参数的取舍.md)

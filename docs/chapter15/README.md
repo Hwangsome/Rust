@@ -1,7 +1,7 @@
-# 第 15 章：Concurrency
+# 第 14 章：Coercion in Rust
 
-这一章对应本地课程目录 `3 - Concurrency`。
-现在 13 个 topic 模块都已实现为**可运行教学代码**，配套 13 篇主题笔记。
+这一章对应本地课程目录 `2 - Coercion in Rust`。
+当前 9 个 topic 模块都已实现为**可运行教学代码** + 详细注释，配套 9 篇主题笔记。
 
 ## 对应代码
 
@@ -12,16 +12,12 @@
 
 ## 主题顺序
 
-1. `Thread basics`
-2. `Ownership in Threads`
-3. `Message passing through channels (Part 1)`
-4. `Message passing through channels (Part 2)`
-5. `Sharing States (Part 1)`
-6. `Sharing States (Part 2)`
-7. `Synchronization through Barriers`
-8. `Scoped Threads`
-9. `Thread Parking`
-10. `Async-Await (Basics)`
-11. `Tokio Tasks`
-12. `Computationally Expensive Functions`
-13. `Project- Webscrapping using Threads`
+1. `Coercion Basics (Deref Coercion)`
+2. `Coercion Sites`
+3. `Reference Coercion`
+4. `Function Item Coercion`
+5. `Trait Objects Coercion`
+6. `Unsized Coercion`
+7. `Coercion in Generics `
+8. `Transitivity in Coercion`
+9. `Least Upper Bound Coercion`

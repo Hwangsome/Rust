@@ -1,7 +1,7 @@
-# 第 22 章：Macros
+# 第 21 章：Structing Projects
 
-这一章对应本地课程目录 `10 - Macros`。
-4 个 topic 模块都已实现为可运行教学代码，配套 4 篇主题笔记。
+这一章对应本地课程目录 `9 - Structing Projects`。
+2 个 topic 模块都已实现为可运行教学代码，配套 2 篇主题笔记。
 
 ## 对应代码
 
@@ -12,7 +12,5 @@
 
 ## 主题顺序
 
-1. `Macros Basics`
-2. `Capturing Types`
-3. `Repeating Patterns`
-4. `Question Mark Operator`
+1. `consumer_of_lib`
+2. `math`

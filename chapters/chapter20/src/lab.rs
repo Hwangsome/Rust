@@ -1,9 +1,7 @@
 pub fn run() {
     println!("== Lab ==");
-    println!("▷ 练习 1：写 `impl Drop for T {{ ... }}` 记录 drop 时机，观察栈 LIFO");
-    println!("▷ 练习 2：给 struct 各字段加 Drop，观察按声明顺序 drop");
-    println!("▷ 练习 3：尝试写自引用 struct，看 E0597 / E0515");
-    println!("▷ 练习 4：用 mem::forget / Box::leak 制造一个合法但永不 drop 的值");
-    println!("▷ 练习 5：用 catch_unwind 捕获子作用域的 panic");
+    println!("▷ 练习 1：给自己的 trait 加 `as_any() -> &dyn Any`，让下游能 downcast");
+    println!("▷ 练习 2：用 Box<dyn Any>::downcast::<T>() 拿所有权版");
+    println!("▷ 练习 3：用 TypeId::of::<T>() 做分支，而不取回具体值");
     println!();
 }

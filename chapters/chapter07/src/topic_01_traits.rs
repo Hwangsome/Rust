@@ -4,7 +4,7 @@
 //!
 //! - 定义方法**签名**，可以带默认实现也可以不带
 //! - 不同类型分别 `impl Trait for Type {...}`，**没有继承，只有组合**
-//! - 调用方用 `impl Trait` 或 `dyn Trait` 消费"具备这种能力的任何类型"
+//! - 调用方用泛型约束与 `impl Trait` 参数消费「具备这种能力的类型」
 //! - 可以给**别人定义的类型**实现你自己的 trait（孤儿规则下），这一点比 Java interface 强
 //!
 //! 本节覆盖：
@@ -16,6 +16,7 @@
 //! 6. 业务示例 `Accommodation`：`&mut self` 与预订、`HashMap` / `Vec` 存状态
 //! 7. 泛型 + trait bound：`fn f<T: Accommodation>(x: &mut T)` 与 `impl Trait` 的对比
 //! 8. **第二个业务 trait `StayPolicy`**：与 `Accommodation` 正交；演示 `T: Accommodation + StayPolicy` 多 bound
+//! 9. **`-> impl Accommodation + StayPolicy` 返回位置**：实现为 `ChosenStay` 枚举，签名上只暴露 trait 能力（无需 `dyn`/`Box`）
 //!
 //! **关于 `&mut`：** 若 trait 方法需要修改接收者（如 `book` 写入订单），参数必须是 `&mut T`，
 //! 不能对 `&T` 调用 `&mut self` 方法——这是 Rust 借用检查器的核心规则。
@@ -99,9 +100,9 @@ fn print_shape_details(name: &str, shape: &impl Shape) {
 // 场景：旅游搜索 / 预订（Expedia、Kayak、Skyscanner 等）
 // ---------------------------------------------------------------------------
 // 用户搜索不同住宿并下单；调用方只关心「能描述、能预订」的抽象，不关心是酒店还是民宿。
-// **trait 名称**表示能力合同：实现者可以有很多种，今天 `Hotel` / `Airbnb`，以后可加 `Hostel`。
+// **trait 名称**表示能力合同：实现者可以有很多种，今天 `Hotel` / `Airbnb` / `Hostel`。
 //
-trait Accommodation {
+pub(crate) trait Accommodation {
     /// 只读展示名（搜索列表、详情页标题）；不修改 `self`，故 `&self`。
     fn description(&self) -> &str;
 
@@ -130,7 +131,7 @@ trait StayPolicy {
 
 /// 酒店：用 **`HashMap<姓名, 晚数>`** 表示「每个客人当前预订的晚数」；同名再次预订会**覆盖**旧值。
 #[derive(Debug)]
-struct Hotel {
+pub(crate) struct Hotel {
     name: String,
     availability: bool,
     reservations: HashMap<String, u32>,
@@ -138,14 +139,104 @@ struct Hotel {
 
 /// 民宿：用 **`Vec<(姓名, 晚数)>`** 保留**多次预订顺序**；同一人多次下单会产生多条记录（与 `HashMap` 键唯一不同）。
 #[derive(Debug)]
-struct Airbnb {
+pub(crate) struct Airbnb {
     name: String,
     availability: bool,
     guests: Vec<(String, u32)>,
 }
 
+/// `name` 可以是任意类型（内部编号、配置句柄等）；对外展示用 `listing_title`，满足 `Accommodation::description -> &str`。
+#[derive(Debug)]
+pub(crate) struct Hostel<T> {
+    name: T,
+    listing_title: String,
+    availability: bool,
+    guests: Vec<(String, u32)>,
+}
+
+impl<T> Hostel<T> {
+    pub(crate) fn new(name: T, listing_title: String) -> Self {
+        Self {
+            name,
+            listing_title,
+            availability: true,
+            guests: Vec::new(),
+        }
+    }
+
+    /// 构造时存入的载荷（与 `Accommodation::book` 里客人姓名参数不是同一个概念）。
+    fn payload(&self) -> &T {
+        &self.name
+    }
+}
+
+impl<T> StayPolicy for Hostel<T> {
+    fn max_nights_per_booking(&self) -> u32 {
+        7
+    }
+}
+
+impl<T> Accommodation for Hostel<T> {
+    fn description(&self) -> &str {
+        &self.listing_title
+    }
+
+    fn book(&mut self, name: &str, nights: u32) -> Result<(), String> {
+        if !self.availability {
+            return Err(String::from("Not available"));
+        }
+        if name.trim().is_empty() {
+            return Err(String::from("Guest name required"));
+        }
+        if nights == 0 {
+            return Err(String::from("Must book at least 1 night"));
+        }
+        let cap = self.max_nights_per_booking();
+        if nights > cap {
+            return Err(format!("Hostel stays limited to {cap} nights"));
+        }
+        self.guests.push((name.to_string(), nights));
+        Ok(())
+    }
+}
+
+/// `choose_best_place_to_stay` 的返回值：要么是酒店要么是民宿。
+///
+/// 在还没学 **`Box` / `dyn`** 时，用 **枚举**表达「两种具体类型只取其一」；需要统一调用 `Accommodation` 方法时，
+/// 对 `ChosenStay` 再写 **`impl Accommodation` / `impl StayPolicy`**，在分支里**转发**到内部的 `Hotel` / `Airbnb`。
+#[derive(Debug)]
+enum ChosenStay {
+    Hotel(Hotel),
+    Airbnb(Airbnb),
+}
+
+impl StayPolicy for ChosenStay {
+    fn max_nights_per_booking(&self) -> u32 {
+        match self {
+            ChosenStay::Hotel(h) => h.max_nights_per_booking(),
+            ChosenStay::Airbnb(a) => a.max_nights_per_booking(),
+        }
+    }
+}
+
+impl Accommodation for ChosenStay {
+    fn description(&self) -> &str {
+        match self {
+            ChosenStay::Hotel(h) => h.description(),
+            ChosenStay::Airbnb(a) => a.description(),
+        }
+    }
+
+    fn book(&mut self, name: &str, nights: u32) -> Result<(), String> {
+        match self {
+            ChosenStay::Hotel(h) => h.book(name, nights),
+            ChosenStay::Airbnb(a) => a.book(name, nights),
+        }
+    }
+}
+
 impl Hotel {
-    fn new(name: String) -> Self {
+    pub(crate) fn new(name: String) -> Self {
         Self {
             name,
             availability: true,
@@ -163,7 +254,7 @@ impl Hotel {
 }
 
 impl Airbnb {
-    fn new(name: String) -> Self {
+    pub(crate) fn new(name: String) -> Self {
         Self {
             name,
             availability: true,
@@ -280,6 +371,78 @@ fn preview_long_stay_quote<T: Accommodation + StayPolicy>(stay: &T, nights: u32)
     )
 }
 
+/// 使用 **`where` 子句** 分离复杂约束：主选项与备选可以是**不同类型**，各自一套 bound。
+///
+/// **业务：搜索结果「并排比价」快照**
+/// - **主选项 `primary`**：须实现 `Accommodation + StayPolicy`，用于展示**带政策上限**的详情
+///   （例如用户点开的酒店详情页：名称 + 单次最多几晚 + 列表行文案）。
+/// - **备选 `alternative`**：只需 `Accommodation`，表示列表里另一条可切换的住宿
+///   （例如推荐的民宿：名称 + 列表行即可，不必在本函数里读政策 trait）。
+///
+/// 这样拆 trait 的好处：`U` 可以是尚未实现 `StayPolicy` 的未来类型（如仅草稿房源），
+/// 只要它能 `description` / `search_listing_line` 仍能参与对比。
+fn log_compare_accommodations<T, U>(primary: &T, alternative: &U)
+where
+    T: Accommodation + StayPolicy,
+    U: Accommodation,
+{
+    println!(
+        "  [compare] primary (with policy): {} | max {} nights/stay | {}",
+        primary.description(),
+        primary.max_nights_per_booking(),
+        primary.search_listing_line()
+    );
+    println!(
+        "  [compare] alternative (listing only): {} | {}",
+        alternative.description(),
+        alternative.search_listing_line()
+    );
+}
+
+/// 在 **`Hotel` 与 `Airbnb` 之间二选一**，**返回类型写成 trait**：`impl Accommodation + StayPolicy`。
+///
+/// **业务（示例）**：比较两边「单次可订最大晚数」(`StayPolicy`)，选**政策更宽松**的一方；持平时优先酒店。
+///
+/// **实现机制（为何能写「返回 trait」）**
+/// - **`impl Trait` 位于返回位置**时，表示「返回某个**满足**所列 trait 的具体类型」，调用方只依赖 trait 方法。
+/// - Rust 要求**每一条** `return` 必须是**同一种**具体类型；因此不能一个分支 `Hotel`、另一个 `Airbnb`，
+///   先用枚举 **`ChosenStay`** 统一承载二者，再为 `ChosenStay` 实现 `Accommodation` / `StayPolicy`（见上）。
+/// - 函数体里实际返回的永远是 **`ChosenStay`**，与签名中的 `impl Accommodation + StayPolicy` 一致；**静态分派**，无 `dyn`/`Box`。
+fn choose_best_place_to_stay(hotel: Hotel, airbnb: Airbnb) -> impl Accommodation + StayPolicy {
+    let h = hotel.max_nights_per_booking();
+    let a = airbnb.max_nights_per_booking();
+    if h > a {
+        ChosenStay::Hotel(hotel)
+    } else if a > h {
+        ChosenStay::Airbnb(airbnb)
+    } else {
+        ChosenStay::Hotel(hotel) // 平局示例：优先酒店
+    }
+}
+
+/// 场景：搜索结果页要把酒店 / 民宿 / 青旅放进**同一条 Vec**，统一按 `Accommodation` 做只读展示（`dyn` 动态分派）。
+///
+/// - 不能 `vec![hotel, airbnb, hostel]`：具体类型不一致（`expected Hotel, found Airbnb`）。
+/// - 不能 `let stays: Vec<impl Accommodation>`：`impl Trait` 仅用于函数参数/返回值等位置，**不能**写局部变量类型。
+/// - 用 `Vec<&dyn Accommodation>`：存「实现了该 trait 的类型」的**引用**，运行时按 vtable 调 `description` / `search_listing_line`。
+fn print_mixed_accommodation_search_results() {
+    let hotel = Hotel::new(String::from("Search Hotel"));
+    let airbnb = Airbnb::new(String::from("Search Airbnb"));
+    let hostel = Hostel::new(1001_u32, String::from("Search Hostel"));
+
+    let stays: Vec<&dyn Accommodation> = vec![&hotel, &airbnb, &hostel];
+
+    println!("  [search] 混合结果 {} 条（trait object 统一列表）:", stays.len());
+    for (i, stay) in stays.iter().enumerate() {
+        println!(
+            "    {}. {} | {}",
+            i + 1,
+            stay.description(),
+            stay.search_listing_line()
+        );
+    }
+}
+
 pub fn run() {
     println!("== Traits ==");
 
@@ -326,9 +489,17 @@ pub fn run() {
     println!("  Booking airbnb: {:?}", airbnb.book("John", 2));
     println!("  Hotel: {:?}", hotel);
     println!("  Airbnb: {:?}", airbnb);
+    let demo_hostel = Hostel::new(1001_u32, String::from("Demo Hostel"));
+    println!(
+        "  Hostel listing: {} | payload (name 字段): {}",
+        demo_hostel.description(),
+        demo_hostel.payload()
+    );
     println!();
 
-
+    println!("  -- 异构住宿同 Vec：`&dyn Accommodation`（模拟搜索列表）--");
+    print_mixed_accommodation_search_results();
+    println!();
 
     // `book_for_one_night`：同一函数分别单态化为 `T=Hotel` 与 `T=Airbnb`，无需两套函数名。
     let mut hotel2 = Hotel::new(String::from("Hotel2"));
@@ -348,6 +519,25 @@ pub fn run() {
         "  preview (Airbnb2): {}",
         preview_long_stay_quote(&airbnb2, 10)
     );
+    println!();
+
+    // `where T: …, U: …`：酒店为主（政策 + 列表），民宿为备选（仅列表）——并排比价日志。
+    println!("  -- where 子句：两条住宿对比快照 --");
+    log_compare_accommodations(&hotel2, &airbnb2);
+    println!();
+
+    println!("  -- 返回值：impl Accommodation + StayPolicy（choose_best_place_to_stay） --");
+    let mut best = choose_best_place_to_stay(
+        Hotel::new(String::from("Grand Hotel")),
+        Airbnb::new(String::from("Cozy Airbnb")),
+    );
+    println!(
+        "  chosen: {} | policy cap {} nights/stay | {}",
+        best.description(),
+        best.max_nights_per_booking(),
+        best.search_listing_line()
+    );
+    println!("  book on chosen: {:?}", best.book("Alex", 2));
     println!();
 
     println!("  Mixing and matching: {:?}", mix_and_match(&mut hotel2, &mut airbnb2));
